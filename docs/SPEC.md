@@ -151,11 +151,14 @@ limpeza observável e elementos desconectados; `pnpm check` e `pnpm build` concl
 
 ### 4.1 Registro
 
-- [ ] Criar o entrypoint `cifraclub.content`.
-- [ ] Restringir o match às URLs de impressão suportadas.
-- [ ] Executar no mundo isolado padrão.
-- [ ] Inicializar sem service worker ou eventos globais de abas.
-- [ ] Não solicitar `tabs`, `activeTab` ou `scripting`.
+- [x] Criar o entrypoint `cifraclub.content`.
+- [x] Restringir o match às URLs de impressão suportadas.
+- [x] Executar no mundo isolado padrão.
+- [x] Inicializar sem service worker ou eventos globais de abas.
+- [x] Não solicitar `tabs`, `activeTab` ou `scripting`.
+
+Validação de 2026-08-25: contrato-fonte e manifesto MV3 gerado aprovados; content script estático,
+mundo isolado, match restrito e permissão exclusiva `storage`; `pnpm check` e `pnpm build` concluídos.
 
 ### 4.2 Inicialização
 
