@@ -31,26 +31,41 @@ async function mountPanel(ctx: ContentScriptContext): Promise<void> {
   let ui: ShadowRootContentScriptUi<Root> | undefined;
 
   try {
-    const capabilities = new CifraClubPage(document).inspect();
+    const page = new CifraClubPage(document);
+    const capabilities = page.inspect();
+    const nativeControls = page.getNativeControls();
+    const placement = nativeControls ? 'inline' : 'overlay';
     let reactRoot: Root | undefined;
 
-    ui = await createShadowRootUi<Root>(ctx, {
+    const sharedOptions = {
       name: 'cifraink-panel',
-      position: 'overlay',
-      alignment: 'top-right',
-      zIndex: 2_147_483_647,
+      inheritStyles: false,
       isolateEvents: true,
-      onMount(container) {
+      onMount(container: HTMLElement) {
         reactRoot = createRoot(container);
-        reactRoot.render(<Panel capabilities={capabilities} />);
+        reactRoot.render(<Panel capabilities={capabilities} onRestore={restoreAll} />);
         return reactRoot;
       },
-      onRemove(mountedRoot) {
+      onRemove(mountedRoot: Root | undefined) {
         (mountedRoot ?? reactRoot)?.unmount();
         reactRoot = undefined;
         restoreAll();
       },
-    });
+    } as const;
+
+    ui = nativeControls
+      ? await createShadowRootUi<Root>(ctx, {
+          ...sharedOptions,
+          position: 'inline',
+          anchor: nativeControls,
+          append: 'first',
+        })
+      : await createShadowRootUi<Root>(ctx, {
+          ...sharedOptions,
+          position: 'overlay',
+          alignment: 'top-right',
+          zIndex: 2_147_483_647,
+        });
 
     if (document.querySelector(panelHostSelector)) {
       ui.remove();
@@ -58,6 +73,13 @@ async function mountPanel(ctx: ContentScriptContext): Promise<void> {
     }
 
     ui.shadowHost.setAttribute('data-cifraink', 'panel-host');
+    ui.shadowHost.setAttribute('data-cifraink-placement', placement);
+
+    if (placement === 'inline') {
+      ui.shadowHost.style.setProperty('display', 'block', 'important');
+      ui.shadowHost.style.setProperty('width', '100%', 'important');
+    }
+
     ui.mount();
   } catch {
     ui?.remove();

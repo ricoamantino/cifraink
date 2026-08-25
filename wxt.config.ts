@@ -7,5 +7,11 @@ export default defineConfig({
     description: 'Edite e prepare cifras do Cifra Club para impressão.',
     version: '0.1.0',
     permissions: ['storage'],
+    web_accessible_resources: [
+      {
+        resources: ['icon/cifraink.svg'],
+        matches: ['https://www.cifraclub.com.br/*'],
+      },
+    ],
   },
 });

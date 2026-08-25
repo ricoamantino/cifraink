@@ -49,12 +49,16 @@ describe('seletores do Cifra Club', () => {
   it('não confunde controles nativos com o conteúdo musical', () => {
     const document = parseFixture();
     const printRoot = document.querySelector(cifraClubSelectors.printRoot);
-    const nativeControls = document.querySelector('aside');
+    const nativeControls = printRoot?.parentElement?.querySelector(
+      cifraClubSelectors.nativeControls,
+    );
 
-    expect(printRoot).not.toBeNull();
-    expect(nativeControls).not.toBeNull();
-    expect(printRoot?.contains(nativeControls)).toBe(false);
-    expect(nativeControls?.querySelector(cifraClubSelectors.content)).toBeNull();
+    if (!printRoot || !nativeControls) {
+      throw new Error('Fixture sem raiz de impressão ou controles nativos');
+    }
+
+    expect(printRoot.contains(nativeControls)).toBe(false);
+    expect(nativeControls.querySelector(cifraClubSelectors.content)).toBeNull();
   });
 
   it('não depende de classes geradas', () => {

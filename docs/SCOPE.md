@@ -77,7 +77,10 @@ O sucesso do MVP será medido pela confiabilidade desse fluxo, não pela quantid
 
 #### Interface
 
-- Painel flutuante, recolhível e isolado com Shadow DOM.
+- Painel recolhível e isolado com Shadow DOM, integrado à coluna de controles quando disponível.
+- Fallback flutuante quando a coluna nativa não existir, inclusive em layouts estreitos.
+- Linguagem visual coerente com o painel e os controles nativos da página de impressão.
+- Superfícies, densidade, hierarquia e estados de controle familiares ao contexto da página.
 - Seções: Cabeçalho, Conteúdo e Diagramas.
 - Controles com rótulos acessíveis e operação por teclado.
 - Botão único de **Restaurar página**.
@@ -123,7 +126,7 @@ Esta matriz registra todas as funções observadas no projeto legado. “Depois�
 
 | Função do legado | Decisão no CifraInk | Fase |
 |---|---|---|
-| Criar um menu lateral na página | Substituir por painel flutuante e recolhível em Shadow DOM | MVP |
+| Criar um menu lateral na página | Integrar um painel recolhível à coluna nativa, com fallback flutuante | MVP |
 | Simplificar título e artista | Implementar modo de cabeçalho compacto | MVP |
 | Mostrar ou ocultar compositor | Manter como controle individual quando o campo existir | MVP |
 | Mostrar ou ocultar logotipo | Manter como controle de elemento de marca quando for localizado com segurança | MVP |
@@ -171,6 +174,7 @@ interface CifraClubPage {
   getChordDiagrams(): HTMLElement[];
   getChordDiagramSection(): HTMLElement | null;
   getBrand(): HTMLElement | null;
+  getNativeControls(): HTMLElement | null;
 }
 ```
 
@@ -217,6 +221,28 @@ Regras:
 
 O React controla apenas a interface do CifraInk. O DOM do Cifra Club continua sendo a fonte de verdade para o documento.
 
+O painel deve parecer uma extensão natural das ferramentas de impressão já presentes. Isso significa
+seguir a mesma gramática visual observável: composição compacta, grupos claros, superfícies neutras,
+tipografia funcional, bordas e sombras discretas, além de controles com estados reconhecíveis. A
+identidade do CifraInk deve aparecer de forma contida, sem competir com a cifra ou simular que o
+recurso pertence oficialmente ao Cifra Club.
+
+A integração visual será recriada com CSS próprio dentro do Shadow DOM. Não copiar folhas de estilo,
+classes geradas, fontes, ícones ou assets do site, nem depender de herança acidental da página. Os
+componentes devem usar elementos HTML nativos sempre que possível e preservar a anatomia familiar de
+rótulo, valor, alternância e ação observada nos controles existentes.
+
+Quando o agrupador estrutural dos controles nativos estiver disponível, o host do CifraInk será o
+primeiro item dessa coluna e acompanhará seu scroll. A ausência desse agrupador não impede a
+inicialização: o painel usa o posicionamento flutuante como fallback, sem consultar classes geradas.
+
+Na montagem inline, os blocos usam superfície branca, borda neutra de baixa opacidade, raio de 16
+px e nenhuma sombra, conforme o padrão observado. Ações globais ficam fora dos blocos, com 40 px de
+altura, raio de 12 px e superfície neutra. Os ícones nativos dependem de um sprite CSS privado do
+site e não são reutilizáveis com segurança no Shadow DOM. O CifraInk usa o conjunto gratuito do
+Hugeicons para ícones funcionais, com imports nomeados e sem carregar assets remotos. O logotipo
+oficial permanece um SVG próprio e não faz parte dessa biblioteca.
+
 O estado do painel contém:
 
 - capacidades encontradas;
@@ -261,6 +287,7 @@ src/
     types.ts
   components/
     FieldToggle.tsx
+    RestoreButton.tsx
     Section.tsx
     Status.tsx
 
@@ -287,6 +314,7 @@ Diretrizes:
 - **WXT** — build e estrutura da extensão Manifest V3.
 - **TypeScript** — configuração estrita.
 - **React** — painel interativo.
+- **Hugeicons Free** — ícones funcionais do painel, importados individualmente.
 - **CSS comum dentro do Shadow DOM** — estilos simples com custom properties.
 - **WXT Storage / `chrome.storage.local`** — preferências globais.
 
@@ -296,6 +324,7 @@ Não usar no MVP:
 
 - Tailwind;
 - biblioteca de componentes;
+- outros pacotes de ícones além do Hugeicons Free aprovado;
 - Zustand ou Redux;
 - Immer;
 - Zod;

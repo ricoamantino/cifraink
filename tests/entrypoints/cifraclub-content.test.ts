@@ -6,6 +6,7 @@ describe('registro do content script do Cifra Club', () => {
   it('declara o contrato estático da página de impressão', () => {
     expect(contentScript).toMatchObject({
       matches: ['https://www.cifraclub.com.br/*/imprimir.html*'],
+      cssInjectionMode: 'ui',
       registration: 'manifest',
       runAt: 'document_idle',
       world: 'ISOLATED',
@@ -19,6 +20,12 @@ describe('registro do content script do Cifra Club', () => {
       description: 'Edite e prepare cifras do Cifra Club para impressão.',
       version: '0.1.0',
       permissions: ['storage'],
+      web_accessible_resources: [
+        {
+          resources: ['icon/cifraink.svg'],
+          matches: ['https://www.cifraclub.com.br/*'],
+        },
+      ],
     });
     expect(wxtConfig).not.toHaveProperty('manifest.background');
   });

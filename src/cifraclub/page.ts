@@ -73,6 +73,15 @@ export class CifraClubPage {
     return this.getHeader()?.querySelector<HTMLElement>(cifraClubSelectors.brand) ?? null;
   }
 
+  getNativeControls(): HTMLElement | null {
+    const printRoot = this.getPrintRoot();
+
+    return (
+      printRoot?.parentElement?.querySelector<HTMLElement>(cifraClubSelectors.nativeControls) ??
+      null
+    );
+  }
+
   private getPrintRoot(): HTMLElement | null {
     return this.document.querySelector<HTMLElement>(cifraClubSelectors.printRoot);
   }

@@ -23,6 +23,8 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
+    "@hugeicons/core-free-icons": "^4.3.0",
+    "@hugeicons/react": "^1.1.10",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },

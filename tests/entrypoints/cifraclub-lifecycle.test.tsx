@@ -87,7 +87,15 @@ beforeEach(() => {
         shadow,
         uiContainer,
         mount() {
-          document.body.append(shadowHost);
+          if (options.anchor instanceof Element) {
+            if (options.append === 'first') {
+              options.anchor.prepend(shadowHost);
+            } else {
+              options.anchor.append(shadowHost);
+            }
+          } else {
+            document.body.append(shadowHost);
+          }
           mounted = options.onMount(uiContainer, shadow, shadowHost);
 
           if (failOnMount) {
@@ -159,6 +167,7 @@ describe('inicialização do CifraInk', () => {
   it('mantém um único host em chamadas concorrentes e repetidas', async () => {
     loadHtml(fullPageHtml);
     const { context } = createContext();
+    const nativeControls = document.querySelector('aside > div');
 
     await act(async () => {
       await Promise.all([initializeCifraInk(context), initializeCifraInk(context)]);
@@ -166,8 +175,45 @@ describe('inicialização do CifraInk', () => {
     });
 
     expect(mocks.createShadowRootUi).toHaveBeenCalledTimes(1);
+    expect(mocks.createShadowRootUi).toHaveBeenCalledWith(
+      context,
+      expect.objectContaining({
+        inheritStyles: false,
+        isolateEvents: true,
+        position: 'inline',
+        anchor: nativeControls,
+        append: 'first',
+      }),
+    );
     expect(document.querySelectorAll('[data-cifraink="panel-host"]')).toHaveLength(1);
     expect(getPanelHost()).toHaveAttribute('data-cifraink', 'panel-host');
+    expect(getPanelHost()).toHaveAttribute('data-cifraink-placement', 'inline');
+    expect(getPanelHost().style.getPropertyValue('display')).toBe('block');
+    expect(getPanelHost().style.getPropertyPriority('display')).toBe('important');
+    expect(getPanelHost().style.getPropertyValue('width')).toBe('100%');
+    expect(getPanelHost().style.getPropertyPriority('width')).toBe('important');
+    expect(nativeControls?.firstElementChild).toBe(getPanelHost());
+  });
+
+  it('usa o overlay como fallback quando os controles nativos estão ausentes', async () => {
+    loadHtml(fullPageHtml);
+    document.querySelector('aside')?.remove();
+    const { context } = createContext();
+
+    await act(async () => {
+      await initializeCifraInk(context);
+    });
+
+    expect(mocks.createShadowRootUi).toHaveBeenCalledWith(
+      context,
+      expect.objectContaining({
+        alignment: 'top-right',
+        position: 'overlay',
+        zIndex: 2_147_483_647,
+      }),
+    );
+    expect(getPanelHost()).toHaveAttribute('data-cifraink-placement', 'overlay');
+    expect(getPanelHost().parentElement).toBe(document.body);
   });
 
   it('desmonta React, remove o host e restaura a sessão ao invalidar', async () => {
@@ -194,6 +240,31 @@ describe('inicialização do CifraInk', () => {
     expect(title.textContent).toBe('Canção de Teste');
     expect(document.querySelector('[data-cifraink="panel-host"]')).toBeNull();
     expect(uiContainer).toBeEmptyDOMElement();
+  });
+
+  it('restaura a página pela ação do painel', async () => {
+    loadHtml(fullPageHtml);
+    const { context } = createContext();
+
+    await act(async () => {
+      await initializeCifraInk(context);
+    });
+
+    const title = document.querySelector('h1');
+
+    if (!title) {
+      throw new Error('Fixture sem título');
+    }
+
+    setText(title, 'Título alterado');
+
+    await act(async () => {
+      getPanelHost()
+        .shadowRoot?.querySelector<HTMLButtonElement>('.cifraink-restore-button')
+        ?.click();
+    });
+
+    expect(title.textContent).toBe('Canção de Teste');
   });
 
   it.each(['criação', 'montagem'])('preserva a página quando a %s da UI falha', async (stage) => {

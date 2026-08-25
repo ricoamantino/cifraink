@@ -201,21 +201,49 @@ reativa foi transferida para a fase 8, depois dos recursos do MVP.
 ### 5.1 Fundação visual
 
 - [x] Criar Shadow Root UI com a API do WXT.
-- [ ] Criar `Panel.tsx` e `panel.css`.
-- [ ] Definir custom properties mínimas para cor, espaço, tipografia e borda.
-- [ ] Criar painel flutuante que não altere a largura do documento impresso.
-- [ ] Implementar abrir e recolher.
-- [ ] Esconder o painel durante a impressão.
-- [ ] Garantir foco visível e navegação por teclado.
-- [ ] Garantir contraste adequado dos controles.
+- [x] Evoluir `Panel.tsx` e criar `panel.css`.
+- [x] Mapear a linguagem visual observável dos controles nativos sem copiar CSS, classes ou assets.
+- [x] Definir custom properties próprias para cor, espaço, tipografia, borda, raio e sombra.
+- [x] Reproduzir a densidade, as superfícies neutras e a hierarquia compacta do painel nativo.
+- [x] Usar a identidade do CifraInk como destaque contido, sem competir com a cifra.
+- [x] Manter o painel reconhecível como extensão, sem sugerir recurso oficial do Cifra Club.
+- [x] Não depender de estilos herdados da página fora do Shadow DOM.
+- [x] Integrar o painel à coluna nativa, com fallback flutuante que não altera a impressão.
+- [x] Localizar o agrupador nativo por relação estrutural, sem classes geradas.
+- [x] Usar no bloco inline borda, raio e ausência de sombra coerentes com os blocos nativos.
+- [x] Manter ações globais fora dos blocos, com dimensões e estados coerentes com os botões nativos.
+- [x] Auditar o modelo nativo e usar Hugeicons Free quando o sprite não for reutilizável.
+- [x] Implementar abrir e recolher.
+- [x] Esconder o painel durante a impressão.
+- [x] Implementar estados coerentes de hover, foco, pressionado e desabilitado.
+- [x] Garantir foco visível e navegação por teclado sem divergir da linguagem visual adotada.
+- [x] Garantir contraste adequado dos controles.
+- [ ] Executar smoke visual da montagem inline e do fallback responsivo no Chrome.
+- [x] Tornar o ícone do painel acessível ao content script no manifesto gerado.
+- [x] Preservar os cliques do painel nas montagens inline e flutuante.
+
+Validação automatizada de 2026-08-25: montagem inline no agrupador `aside > div`, fallback overlay,
+painel aberto e recolhido, marca oficial, estados de compatibilidade e atributos acessíveis cobertos;
+CSS isolado gerado sem entrada `css` no content script do manifesto; 67 testes, `pnpm check` e
+`pnpm build` aprovados. O smoke da nova montagem permanece pendente.
 
 ### 5.2 Componentes pequenos
 
-- [ ] Criar componente de seção do painel.
-- [ ] Criar controle de visibilidade com label associado.
-- [ ] Criar status de compatibilidade.
-- [ ] Criar botão **Restaurar página**.
-- [ ] Evitar biblioteca externa de componentes e ícones no MVP.
+- [x] Criar componente de seção do painel.
+- [x] Criar controle de visibilidade com label associado.
+- [x] Criar status de compatibilidade.
+- [x] Criar botão **Restaurar página**.
+- [x] Usar controles HTML nativos e a anatomia familiar de rótulo, valor, alternância e ação.
+- [x] Preparar o agrupamento dos recursos sem renderizar controles indisponíveis antes da fase 6.
+- [x] Evitar biblioteca externa de componentes e limitar ícones ao Hugeicons Free aprovado.
+- [x] Importar individualmente somente os ícones funcionais usados no painel.
+
+Validação de 2026-08-25: componentes semânticos de seção, visibilidade, status e restauração
+aprovados; o painel integra somente status e restauração funcional, deixando os grupos da fase 6
+fora da interface até possuírem comportamento real. Hugeicons Free foi limitado aos ícones de ação,
+com imports nomeados e sem assets remotos. Foram aprovados `pnpm install --frozen-lockfile`, 67 testes,
+`pnpm check`, `pnpm build`, manifesto MV3 e `git diff --check`; o smoke visual final depende do
+recarregamento da extensão no Chrome.
 
 ### 5.3 Estado do painel
 
@@ -335,6 +363,9 @@ reativa foi transferida para a fase 8, depois dos recursos do MVP.
 ### 9.2 Verificação visual
 
 - [ ] Revisar painel aberto e recolhido em viewport comum.
+- [ ] Comparar lado a lado o painel do CifraInk e os controles nativos da página.
+- [ ] Confirmar coerência de densidade, tipografia, superfícies, bordas, sombras e estados.
+- [ ] Confirmar que a identidade do CifraInk permanece distinguível sem quebrar a integração visual.
 - [ ] Revisar foco, hover, disabled e incompatibilidade parcial.
 - [ ] Revisar página longa com o painel fixo.
 - [ ] Revisar impressão A4 de múltiplas páginas.

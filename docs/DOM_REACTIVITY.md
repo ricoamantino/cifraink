@@ -43,6 +43,16 @@ atual de `CifraClubPage` não encontra páginas nessa página real. A correção
 Em todos os cenários, a raiz de impressão, o cabeçalho, o título, o artista e o compositor
 permaneceram conectados e com a mesma identidade.
 
+### Coluna de controles
+
+No viewport desktop observado, a raiz de impressão e o `aside` são filhos do mesmo contêiner. O
+`aside` possui um único `div` interno que agrupa os controles em coluna, com largura de 270 px e
+espaçamento de 12 px. Esse agrupador é a âncora estrutural do painel inline do CifraInk.
+
+Em um viewport de 360 px, o `aside` deixa de existir e os controles essenciais são apresentados em
+outra composição. Nesse caso, o CifraInk mantém o overlay responsivo como fallback, sem observar ou
+alterar a barra nativa móvel.
+
 | Controle | Efeito estrutural estabilizado | Elementos preservados | Elementos substituídos ou repaginados |
 |---|---|---|---|
 | Tamanho do texto | 8 para 10 páginas e blocos; contagens de acordes e diagramas mantidas | Raiz, cabeçalho e campos | Lista de páginas e blocos, parte dos acordes, seção e todos os diagramas |

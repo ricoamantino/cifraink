@@ -11,7 +11,7 @@ Elas não são cópias da página, não preservam aparência visual e não cont�
 
 A estrutura preservada inclui páginas em `section`, cabeçalho semântico, marca em
 `header > span > i`, conteúdo em `pre`, acordes em `b[data-chord-name]`, diagramas com
-`data-chord-mode` e controles nativos em `aside`.
+`data-chord-mode` e controles nativos agrupados estruturalmente em `aside > div`.
 
 A marca real usa um sprite CSS externo. A fixture mantém somente sua relação estrutural, sem
 copiar classe, estilo ou asset.

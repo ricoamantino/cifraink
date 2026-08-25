@@ -63,6 +63,7 @@ describe.each(fixtures)('$name', ({ diagramCount, hasComposer, html, pageCount }
     expect(containsComposer(document)).toBe(hasComposer);
     expect(document.querySelectorAll('[data-chord-mode="guitar"]')).toHaveLength(diagramCount);
     expect(document.querySelector('aside')).not.toBeNull();
+    expect(document.querySelector('aside > div')).not.toBeNull();
     expect(document.querySelector('aside pre')).toBeNull();
   });
 

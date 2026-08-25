@@ -33,6 +33,7 @@ describe('CifraClubPage', () => {
     expect(page.getChordDiagramSection()?.textContent).toContain('Bm7');
     expect(page.getChordDiagrams()).toHaveLength(2);
     expect(page.getBrand()).not.toBeNull();
+    expect(page.getNativeControls()?.textContent).toContain('Imprimir');
     expect(page.inspect()).toEqual(completeCapabilities);
     expect(page.getContentBlocks().every((content) => printRoot?.contains(content))).toBe(true);
   });
@@ -91,6 +92,13 @@ describe('CifraClubPage', () => {
     expect(contentBlocks).toHaveLength(2);
   });
 
+  it('retorna null quando o agrupador de controles nativos está ausente', () => {
+    const document = parseHtml(fullPageHtml);
+    document.querySelector('aside')?.remove();
+
+    expect(new CifraClubPage(document).getNativeControls()).toBeNull();
+  });
+
   it('repete consultas sem cache ou compartilhamento das listas retornadas', () => {
     const document = parseHtml(fullPageHtml);
     const originalHtml = document.documentElement.outerHTML;
@@ -132,6 +140,7 @@ describe('CifraClubPage', () => {
     page.getChordDiagramSection();
     page.getChordDiagrams();
     page.getBrand();
+    page.getNativeControls();
     page.inspect();
 
     expect(document.documentElement.outerHTML).toBe(originalHtml);
