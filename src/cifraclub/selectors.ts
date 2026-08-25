@@ -4,7 +4,7 @@
  */
 export const cifraClubSelectors = {
   printRoot: '[data-print-scroll="true"]',
-  page: ':scope > section[data-size]',
+  page: 'section[data-size]',
   header: ':scope > header',
   title: ':scope h1',
   artist: ':scope h2',

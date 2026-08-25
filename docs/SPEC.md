@@ -77,16 +77,19 @@ Validação de 2026-08-25: seletores e estados cobertos por testes; fixtures apr
 
 ### 2.3 `CifraClubPage`
 
-- [ ] Criar `src/cifraclub/page.ts` sem dependência de React.
-- [ ] Implementar localização do título.
-- [ ] Implementar localização do artista.
-- [ ] Implementar localização do compositor opcional.
-- [ ] Implementar localização do conteúdo musical principal.
-- [ ] Implementar localização da seção de diagramas.
-- [ ] Implementar localização individual dos diagramas.
-- [ ] Implementar localização de elementos de marca opcionais.
-- [ ] Implementar `inspect()` com diagnóstico legível pela interface.
-- [ ] Manter o adaptador somente leitura.
+- [x] Criar `src/cifraclub/page.ts` sem dependência de React.
+- [x] Implementar localização do título.
+- [x] Implementar localização do artista.
+- [x] Implementar localização do compositor opcional.
+- [x] Implementar localização do conteúdo musical principal.
+- [x] Implementar localização da seção de diagramas.
+- [x] Implementar localização individual dos diagramas.
+- [x] Implementar localização de elementos de marca opcionais.
+- [x] Implementar `inspect()` com diagnóstico legível pela interface.
+- [x] Manter o adaptador somente leitura.
+
+Validação de 2026-08-25: adaptador e casos de ausência cobertos por testes; isolamento da
+raiz e comportamento somente leitura verificados; `pnpm check` e `pnpm build` concluídos.
 
 ### 2.4 Testes do adaptador
 

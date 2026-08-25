@@ -167,11 +167,15 @@ interface CifraClubPage {
   getTitle(): HTMLElement | null;
   getArtist(): HTMLElement | null;
   getComposer(): HTMLElement | null;
-  getContent(): HTMLElement | null;
+  getContentBlocks(): HTMLElement[];
   getChordDiagrams(): HTMLElement[];
   getChordDiagramSection(): HTMLElement | null;
+  getBrand(): HTMLElement | null;
 }
 ```
+
+O conteúdo musical é retornado como uma lista porque uma cifra pode possuir um bloco `<pre>` por
+página. A ordem do DOM é preservada.
 
 Regras:
 
