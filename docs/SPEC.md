@@ -107,13 +107,16 @@ atualização após mudança do DOM e isolamento da raiz; `pnpm check` e `pnpm b
 
 ### 3.1 Snapshot
 
-- [ ] Criar os tipos de snapshot em `src/dom/snapshot.ts`.
-- [ ] Capturar texto original apenas quando ele for alterado.
-- [ ] Capturar atributos originais apenas quando forem alterados.
-- [ ] Capturar propriedades de estilo originais apenas quando forem alteradas.
-- [ ] Usar `Map<Element, Snapshot>` como registro enumerável da sessão.
-- [ ] Garantir que a segunda alteração não substitua o valor original capturado.
-- [ ] Limpar o registro ao restaurar ou desmontar a extensão.
+- [x] Criar os tipos de snapshot em `src/dom/snapshot.ts`.
+- [x] Capturar texto original apenas quando ele for alterado.
+- [x] Capturar atributos originais apenas quando forem alterados.
+- [x] Capturar propriedades de estilo originais apenas quando forem alteradas.
+- [x] Usar `Map<Element, Snapshot>` como registro enumerável da sessão.
+- [x] Garantir que a segunda alteração não substitua o valor original capturado.
+- [x] Expor limpeza individual e total para restauração e desmontagem da extensão.
+
+Validação de 2026-08-25: sete cenários de captura e limpeza aprovados; primeira captura,
+atributos ausentes, estilos e prioridade preservados; `pnpm check` e `pnpm build` concluídos.
 
 ### 3.2 Operações
 
