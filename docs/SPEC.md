@@ -39,11 +39,14 @@ e `pnpm build` concluídos com sucesso.
 
 ### 1.3 Integração contínua
 
-- [ ] Criar workflow do GitHub Actions com pnpm e cache.
-- [ ] Instalar dependências com lockfile imutável no CI.
-- [ ] Executar `pnpm check` no CI.
-- [ ] Executar `pnpm build` no CI.
-- [ ] Salvar o pacote da extensão como artefato do workflow quando apropriado.
+- [x] Criar workflow do GitHub Actions com pnpm e cache.
+- [x] Instalar dependências com lockfile imutável no CI.
+- [x] Executar `pnpm check` no CI.
+- [x] Executar `pnpm build` no CI.
+- [x] Salvar o pacote da extensão como artefato do workflow quando apropriado.
+
+Validação de 2026-08-25: workflow aprovado pelo `actionlint`; instalação imutável, checks,
+build e conteúdo do artefato validados localmente.
 
 ## 2. Contrato com o DOM do Cifra Club
 
