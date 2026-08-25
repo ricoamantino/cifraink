@@ -162,13 +162,17 @@ mundo isolado, match restrito e permissão exclusiva `storage`; `pnpm check` e `
 
 ### 4.2 Inicialização
 
-- [ ] Inspecionar capacidades antes de montar controles.
-- [ ] Montar uma única instância do host do painel.
-- [ ] Marcar o host criado pela extensão com `data-cifraink`.
-- [ ] Impedir duplicação após chamadas repetidas.
-- [ ] Desmontar listeners, React root e snapshots corretamente.
-- [ ] Preservar a página original quando a inicialização falhar.
-- [ ] Exibir estado incompatível sem detalhes internos.
+- [x] Inspecionar capacidades antes de montar controles.
+- [x] Montar uma única instância do host do painel.
+- [x] Marcar o host criado pela extensão com `data-cifraink`.
+- [x] Impedir duplicação após chamadas repetidas.
+- [x] Desmontar listeners, React root e snapshots corretamente.
+- [x] Preservar a página original quando a inicialização falhar.
+- [x] Exibir estado incompatível sem detalhes internos.
+
+Validação de 2026-08-25: estados compatível, parcial e incompatível aprovados; host único,
+inicialização concorrente, invalidação e falhas de montagem cobertos; `pnpm check` e `pnpm build`
+concluídos.
 
 ### 4.3 Reatividade do site
 
@@ -185,7 +189,7 @@ mundo isolado, match restrito e permissão exclusiva `storage`; `pnpm check` e `
 
 ### 5.1 Fundação visual
 
-- [ ] Criar Shadow Root UI com a API do WXT.
+- [x] Criar Shadow Root UI com a API do WXT.
 - [ ] Criar `Panel.tsx` e `panel.css`.
 - [ ] Definir custom properties mínimas para cor, espaço, tipografia e borda.
 - [ ] Criar painel flutuante que não altere a largura do documento impresso.
