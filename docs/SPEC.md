@@ -52,12 +52,15 @@ build e conteúdo do artefato validados localmente.
 
 ### 2.1 Fixtures
 
-- [ ] Criar fixture sanitizada representando uma página completa.
-- [ ] Criar fixture sem compositor.
-- [ ] Criar fixture sem diagramas.
-- [ ] Remover letras completas, scripts, anúncios e dados desnecessários das fixtures.
-- [ ] Preservar apenas a estrutura necessária para os testes de compatibilidade.
-- [ ] Documentar como atualizar uma fixture quando o site mudar.
+- [x] Criar fixture sanitizada representando uma página completa.
+- [x] Criar fixture sem compositor.
+- [x] Criar fixture sem diagramas.
+- [x] Remover letras completas, scripts, anúncios e dados desnecessários das fixtures.
+- [x] Preservar apenas a estrutura necessária para os testes de compatibilidade.
+- [x] Documentar como atualizar uma fixture quando o site mudar.
+
+Validação de 2026-08-25: três fixtures aprovadas pelo `html-validate`; integridade,
+sanitização, `pnpm check` e `pnpm build` validados localmente.
 
 ### 2.2 Seletores e capacidades
 
