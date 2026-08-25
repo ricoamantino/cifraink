@@ -103,6 +103,14 @@ raiz e comportamento somente leitura verificados; `pnpm check` e `pnpm build` co
 Validação de 2026-08-25: sete cenários do adaptador aprovados, incluindo chamadas repetidas,
 atualização após mudança do DOM e isolamento da raiz; `pnpm check` e `pnpm build` concluídos.
 
+### 2.5 Drift do wrapper de impressão
+
+- [ ] Atualizar as fixtures sanitizadas com o wrapper intermediário observado na página real.
+- [ ] Adaptar a localização de páginas sem ampliar consultas para fora da raiz de impressão.
+- [ ] Corrigir a localização da seção de diagramas para a hierarquia atual.
+- [ ] Cobrir a hierarquia real e a ausência do wrapper sem usar classes geradas.
+- [ ] Revalidar `inspect()` na página real antes de iniciar os controles do painel.
+
 ## 3. Alterações reversíveis do DOM
 
 ### 3.1 Snapshot
@@ -176,14 +184,17 @@ concluídos.
 
 ### 4.3 Reatividade do site
 
-- [ ] Testar manualmente mudanças de tamanho do texto.
-- [ ] Testar alternância entre uma e duas colunas.
-- [ ] Testar mudança de tom.
-- [ ] Testar alteração da posição dos diagramas.
-- [ ] Registrar quais controles recriam elementos do DOM.
-- [ ] Reanexar edição e controles somente quando necessário.
-- [ ] Adicionar `MutationObserver` apenas se os testes anteriores demonstrarem necessidade.
-- [ ] Se adicionado, testar debounce, desconexão e ausência de ciclos.
+- [x] Testar manualmente mudanças de tamanho do texto.
+- [x] Testar alternância entre uma e duas colunas.
+- [x] Testar mudança de tom.
+- [x] Testar alteração da posição dos diagramas.
+- [x] Registrar quais controles recriam elementos do DOM.
+- [x] Documentar a decisão de não antecipar infraestrutura reativa.
+
+Validação de 2026-08-25: baseline real registrada em `docs/DOM_REACTIVITY.md`; tamanho do texto,
+colunas, tom e posição dos diagramas exercitados e restaurados; raiz e cabeçalho permaneceram
+estáveis, enquanto páginas, acordes ou diagramas foram recriados conforme o controle. A integração
+reativa foi transferida para a fase 8, depois dos recursos do MVP.
 
 ## 5. Painel do CifraInk
 
@@ -290,6 +301,13 @@ concluídos.
 
 ## 8. Robustez e compatibilidade
 
+- [ ] Repetir a baseline nativa com edições e controles do CifraInk ativos.
+- [ ] Reconsultar alvos por `CifraClubPage` após mudanças nativas relevantes.
+- [ ] Reaplicar somente estados do CifraInk perdidos por elementos recriados.
+- [ ] Preferir revalidação explícita quando ela for suficiente.
+- [ ] Adicionar um único `MutationObserver` apenas se a necessidade for demonstrada.
+- [ ] Se adicionado, restringir a raiz, aplicar debounce e suspender mutações próprias.
+- [ ] Se adicionado, testar desconexão, desmontagem e ausência de ciclos.
 - [ ] Validar página compatível sem compositor.
 - [ ] Validar página compatível sem diagramas.
 - [ ] Validar cifra com várias páginas.
