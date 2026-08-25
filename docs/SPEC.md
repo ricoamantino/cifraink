@@ -93,12 +93,15 @@ raiz e comportamento somente leitura verificados; `pnpm check` e `pnpm build` co
 
 ### 2.4 Testes do adaptador
 
-- [ ] Testar página completa compatível.
-- [ ] Testar página sem compositor.
-- [ ] Testar página sem diagramas.
-- [ ] Testar documento sem conteúdo musical como incompatível.
-- [ ] Testar chamadas repetidas do adaptador.
-- [ ] Testar que componentes fora do escopo não são retornados como conteúdo musical.
+- [x] Testar página completa compatível.
+- [x] Testar página sem compositor.
+- [x] Testar página sem diagramas.
+- [x] Testar documento sem conteúdo musical como incompatível.
+- [x] Testar chamadas repetidas do adaptador.
+- [x] Testar que componentes fora do escopo não são retornados como conteúdo musical.
+
+Validação de 2026-08-25: sete cenários do adaptador aprovados, incluindo chamadas repetidas,
+atualização após mudança do DOM e isolamento da raiz; `pnpm check` e `pnpm build` concluídos.
 
 ## 3. Alterações reversíveis do DOM
 
