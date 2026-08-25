@@ -96,22 +96,43 @@ describe('mutações reversíveis do DOM', () => {
     expect(withEmptyStyle.getAttribute('style')).toBe('');
   });
 
-  it('torna restore e restoreAll idempotentes', () => {
+  it('consome o snapshot em restore e captura uma nova sessão', () => {
+    const element = document.createElement('h1');
+    element.textContent = 'Original';
+
+    setText(element, 'Alterado');
+    restore(element);
+    element.textContent = 'Nova base';
+    restore(element);
+
+    expect(element.textContent).toBe('Nova base');
+
+    setText(element, 'Nova alteração');
+    restore(element);
+    restore(element);
+
+    expect(element.textContent).toBe('Nova base');
+  });
+
+  it('consome todos os snapshots em restoreAll', () => {
     const title = document.createElement('h1');
     const artist = document.createElement('h2');
-    title.textContent = 'Título';
-    artist.textContent = 'Artista';
+    title.textContent = 'Título original';
+    artist.textContent = 'Artista original';
 
     setText(title, 'Título alterado');
-    restore(title);
-    restore(title);
-    setText(title, 'Nova sessão');
     setText(artist, 'Artista alterado');
     restoreAll();
+
+    expect(title.textContent).toBe('Título original');
+    expect(artist.textContent).toBe('Artista original');
+
+    title.textContent = 'Título externo';
+    artist.textContent = 'Artista externo';
     restoreAll();
 
-    expect(title.textContent).toBe('Título');
-    expect(artist.textContent).toBe('Artista');
+    expect(title.textContent).toBe('Título externo');
+    expect(artist.textContent).toBe('Artista externo');
   });
 
   it('restaura com segurança um elemento removido do documento', () => {
@@ -121,7 +142,7 @@ describe('mutações reversíveis do DOM', () => {
     setText(element, 'Alterado');
     element.remove();
 
-    restore(element);
+    restoreAll();
 
     expect(element.isConnected).toBe(false);
     expect(element.textContent).toBe('Original');

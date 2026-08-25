@@ -134,15 +134,18 @@ originais preservados; `pnpm check` e `pnpm build` concluídos com sucesso.
 
 ### 3.3 Testes das operações
 
-- [ ] Testar alteração e restauração de texto.
-- [ ] Testar alteração e restauração de visibilidade.
-- [ ] Testar alteração e restauração de `contenteditable`.
-- [ ] Testar múltiplas propriedades de estilo.
-- [ ] Testar duas alterações consecutivas no mesmo elemento.
-- [ ] Testar `restore()` repetido.
-- [ ] Testar `restoreAll()` repetido.
-- [ ] Testar limpeza dos snapshots após restauração.
-- [ ] Testar elementos removidos pelo próprio site antes da restauração.
+- [x] Testar alteração e restauração de texto.
+- [x] Testar alteração e restauração de visibilidade.
+- [x] Testar alteração e restauração de `contenteditable`.
+- [x] Testar múltiplas propriedades de estilo.
+- [x] Testar duas alterações consecutivas no mesmo elemento.
+- [x] Testar `restore()` repetido.
+- [x] Testar `restoreAll()` repetido.
+- [x] Testar limpeza dos snapshots após restauração.
+- [x] Testar elementos removidos pelo próprio site antes da restauração.
+
+Validação de 2026-08-25: nove cenários das operações aprovados, incluindo novas sessões,
+limpeza observável e elementos desconectados; `pnpm check` e `pnpm build` concluídos.
 
 ## 4. Content script e ciclo de vida
 
