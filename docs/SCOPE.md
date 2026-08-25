@@ -198,6 +198,10 @@ restore(element);
 restoreAll();
 ```
 
+`setVisible` usa o atributo `hidden`, preservando seu valor anterior sem presumir o `display` do
+elemento. `setStyles` recebe nomes de propriedades CSS, altera somente as propriedades declaradas e
+aceita `null` para removê-las.
+
 O estado original é capturado em um `Map<Element, Snapshot>` na primeira alteração. O `Map` permite que `restoreAll()` percorra todos os alvos; ele deve ser limpo após a restauração ou desmontagem da extensão. Isso evita classes de comando, IDs artificiais e cópias completas do HTML.
 
 Regras:

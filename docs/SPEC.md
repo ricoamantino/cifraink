@@ -120,14 +120,17 @@ atributos ausentes, estilos e prioridade preservados; `pnpm check` e `pnpm build
 
 ### 3.2 Operações
 
-- [ ] Implementar `setText` usando `textContent`.
-- [ ] Implementar `setVisible` sem presumir o display original.
-- [ ] Implementar `setEditable` preservando o atributo anterior.
-- [ ] Implementar `setStyles` alterando somente propriedades declaradas.
-- [ ] Implementar `restore(element)`.
-- [ ] Implementar `restoreAll()`.
-- [ ] Tornar inicialização, restauração e desmontagem idempotentes.
-- [ ] Marcar somente nós criados pela extensão com `data-cifraink`.
+- [x] Implementar `setText` usando `textContent`.
+- [x] Implementar `setVisible` sem presumir o display original.
+- [x] Implementar `setEditable` preservando o atributo anterior.
+- [x] Implementar `setStyles` alterando somente propriedades declaradas.
+- [x] Implementar `restore(element)`.
+- [x] Implementar `restoreAll()`.
+- [x] Tornar mutações e restaurações idempotentes.
+- [x] Não marcar elementos existentes do site com `data-cifraink`.
+
+Validação de 2026-08-25: oito cenários de mutação e restauração aprovados; atributos e estilos
+originais preservados; `pnpm check` e `pnpm build` concluídos com sucesso.
 
 ### 3.3 Testes das operações
 
@@ -155,6 +158,7 @@ atributos ausentes, estilos e prioridade preservados; `pnpm check` e `pnpm build
 
 - [ ] Inspecionar capacidades antes de montar controles.
 - [ ] Montar uma única instância do host do painel.
+- [ ] Marcar o host criado pela extensão com `data-cifraink`.
 - [ ] Impedir duplicação após chamadas repetidas.
 - [ ] Desmontar listeners, React root e snapshots corretamente.
 - [ ] Preservar a página original quando a inicialização falhar.
