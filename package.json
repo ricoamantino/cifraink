@@ -6,11 +6,19 @@
   "type": "module",
   "packageManager": "pnpm@10.28.2",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.22.2"
   },
   "scripts": {
     "dev": "wxt",
     "build": "wxt build",
+    "typecheck": "wxt prepare && tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "lint:fix": "biome check --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test tests/e2e --pass-with-no-tests",
+    "check": "pnpm typecheck && pnpm lint && pnpm test",
     "zip": "wxt zip",
     "postinstall": "wxt prepare"
   },
@@ -19,11 +27,18 @@
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.10",
+    "@playwright/test": "^1.62.1",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@wxt-dev/module-react": "^1.1.5",
+    "jsdom": "^30.0.1",
     "typescript": "^5.9.3",
     "vite": "^8.2.2",
+    "vitest": "^4.1.11",
     "wxt": "^0.21.3"
   }
 }

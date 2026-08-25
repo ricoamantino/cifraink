@@ -26,13 +26,16 @@ Checklist executável do projeto. Uma tarefa só recebe `[x]` depois de implemen
 
 ### 1.2 Scripts e qualidade
 
-- [ ] Configurar Biome para lint e formatação.
-- [ ] Configurar Vitest com ambiente jsdom.
-- [ ] Configurar React Testing Library.
-- [ ] Adicionar scripts `dev`, `build`, `typecheck`, `lint`, `test`, `test:e2e` e `check`.
-- [ ] Garantir que `pnpm check` execute typecheck, lint e testes unitários.
-- [ ] Fixar dependências no lockfile.
-- [ ] Executar e registrar o primeiro build limpo.
+- [x] Configurar Biome para lint e formatação.
+- [x] Configurar Vitest com ambiente jsdom.
+- [x] Configurar React Testing Library.
+- [x] Adicionar scripts `dev`, `build`, `typecheck`, `lint`, `test`, `test:e2e` e `check`.
+- [x] Garantir que `pnpm check` execute typecheck, lint e testes unitários.
+- [x] Fixar dependências no lockfile.
+- [x] Executar e registrar o primeiro build limpo.
+
+Validação de 2026-08-25: `pnpm install --frozen-lockfile`, `pnpm check`, `pnpm test:e2e`
+e `pnpm build` concluídos com sucesso.
 
 ### 1.3 Integração contínua
 
