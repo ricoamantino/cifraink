@@ -64,13 +64,16 @@ sanitização, `pnpm check` e `pnpm build` validados localmente.
 
 ### 2.2 Seletores e capacidades
 
-- [ ] Criar `src/cifraclub/selectors.ts`.
-- [ ] Priorizar atributos semânticos e relações estruturais.
-- [ ] Documentar seletores baseados em texto ou classes geradas.
-- [ ] Criar o tipo `PageCapabilities`.
-- [ ] Implementar detecção de página compatível, parcial e incompatível.
-- [ ] Distinguir elementos obrigatórios de opcionais.
-- [ ] Garantir que a ausência de um elemento opcional não lance exceção.
+- [x] Criar `src/cifraclub/selectors.ts`.
+- [x] Priorizar atributos semânticos e relações estruturais.
+- [x] Documentar seletores baseados em texto ou classes geradas.
+- [x] Criar o tipo `PageCapabilities`.
+- [x] Implementar detecção de página compatível, parcial e incompatível.
+- [x] Distinguir elementos obrigatórios de opcionais.
+- [x] Garantir que a ausência de um elemento opcional não lance exceção.
+
+Validação de 2026-08-25: seletores e estados cobertos por testes; fixtures aprovadas pelo
+`html-validate`; `pnpm check` e `pnpm build` concluídos com sucesso.
 
 ### 2.3 `CifraClubPage`
 
