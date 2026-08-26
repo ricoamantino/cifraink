@@ -82,6 +82,18 @@ export class CifraClubPage {
     );
   }
 
+  getHeader(): HTMLElement | null {
+    for (const page of this.getPages()) {
+      const header = page.querySelector<HTMLElement>(cifraClubSelectors.header);
+
+      if (header) {
+        return header;
+      }
+    }
+
+    return null;
+  }
+
   private getPrintRoot(): HTMLElement | null {
     return this.document.querySelector<HTMLElement>(cifraClubSelectors.printRoot);
   }
@@ -96,17 +108,5 @@ export class CifraClubPage {
     return Array.from(printRoot.children).filter((child): child is HTMLElement =>
       child.matches(cifraClubSelectors.page),
     );
-  }
-
-  private getHeader(): HTMLElement | null {
-    for (const page of this.getPages()) {
-      const header = page.querySelector<HTMLElement>(cifraClubSelectors.header);
-
-      if (header) {
-        return header;
-      }
-    }
-
-    return null;
   }
 }

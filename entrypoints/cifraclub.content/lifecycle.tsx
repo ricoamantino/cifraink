@@ -4,6 +4,12 @@ import {
   createShadowRootUi,
   type ShadowRootContentScriptUi,
 } from 'wxt/utils/content-script-ui/shadow-root';
+import {
+  applyHeaderControlAction,
+  type HeaderControlAction,
+  type HeaderControlState,
+  readHeaderControlState,
+} from '../../src/cifraclub/header';
 import { CifraClubPage } from '../../src/cifraclub/page';
 import { restoreAll } from '../../src/dom/mutations';
 import { Panel } from './Panel';
@@ -33,6 +39,7 @@ async function mountPanel(ctx: ContentScriptContext): Promise<void> {
   try {
     const page = new CifraClubPage(document);
     const capabilities = page.inspect();
+    const initialHeader = readHeaderControlState(page);
     const nativeControls = page.getNativeControls();
     const placement = nativeControls ? 'inline' : 'overlay';
     let reactRoot: Root | undefined;
@@ -43,7 +50,16 @@ async function mountPanel(ctx: ContentScriptContext): Promise<void> {
       isolateEvents: true,
       onMount(container: HTMLElement) {
         reactRoot = createRoot(container);
-        reactRoot.render(<Panel capabilities={capabilities} onRestore={restoreAll} />);
+        reactRoot.render(
+          <Panel
+            capabilities={capabilities}
+            initialHeader={initialHeader}
+            onHeaderAction={(current: HeaderControlState, action: HeaderControlAction) =>
+              applyHeaderControlAction(page, current, action)
+            }
+            onRestore={restoreAll}
+          />,
+        );
         return reactRoot;
       },
       onRemove(mountedRoot: Root | undefined) {

@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import {
   restore,
   restoreAll,
+  restoreStyles,
   setEditable,
   setStyles,
   setText,
@@ -94,6 +95,44 @@ describe('mutações reversíveis do DOM', () => {
     expect(withoutStyle.hasAttribute('style')).toBe(false);
     expect(withEmptyStyle.hasAttribute('style')).toBe(true);
     expect(withEmptyStyle.getAttribute('style')).toBe('');
+  });
+
+  it('restaura estilos selecionados sem consumir texto ou atributos capturados', () => {
+    const element = document.createElement('h1');
+    element.textContent = 'Original';
+    element.style.setProperty('font-size', '20px', 'important');
+
+    setText(element, 'Alterado');
+    setVisible(element, false);
+    setStyles(element, { 'font-size': '16px', 'line-height': '22px' });
+    element.style.setProperty('color', 'red');
+
+    restoreStyles(element, ['font-size', 'line-height']);
+
+    expect(element.textContent).toBe('Alterado');
+    expect(element.hidden).toBe(true);
+    expect(element.style.getPropertyValue('font-size')).toBe('20px');
+    expect(element.style.getPropertyPriority('font-size')).toBe('important');
+    expect(element.style.getPropertyValue('line-height')).toBe('');
+    expect(element.style.getPropertyValue('color')).toBe('red');
+
+    restore(element);
+
+    expect(element.textContent).toBe('Original');
+    expect(element.hidden).toBe(false);
+    expect(element.style.getPropertyValue('color')).toBe('red');
+  });
+
+  it('torna a restauração seletiva repetida segura e preserva style vazio original', () => {
+    const element = document.createElement('div');
+    element.setAttribute('style', '');
+
+    setStyles(element, { gap: '0px' });
+    restoreStyles(element, ['gap']);
+    restoreStyles(element, ['gap']);
+
+    expect(element.hasAttribute('style')).toBe(true);
+    expect(element.getAttribute('style')).toBe('');
   });
 
   it('consome o snapshot em restore e captura uma nova sessão', () => {

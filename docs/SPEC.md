@@ -247,26 +247,41 @@ recarregamento da extensão no Chrome.
 
 ### 5.3 Estado do painel
 
-- [ ] Modelar apenas capacidades, valores visíveis e estado aberto/recolhido.
-- [ ] Usar `useState` para estados independentes.
-- [ ] Introduzir `useReducer` somente se as transições compartilhadas justificarem.
-- [ ] Sincronizar controles com o estado real do DOM ao montar.
-- [ ] Atualizar o controle quando uma ação nativa alterar o alvo relacionado.
+- [x] Modelar somente capacidades externas e o estado visual aberto/recolhido já utilizado.
+- [x] Usar `useState` para o estado local independente.
+- [x] Derivar mensagens, nomes, ícones e visibilidades sem duplicar estado.
+- [x] Manter capacidades como propriedades imutáveis, sem sincronização artificial por efeito.
+- [x] Não introduzir `useReducer` antes de existirem transições compartilhadas que o justifiquem.
+
+Validação de 2026-08-25: compatibilidade derivada das propriedades, estado recolhido preservado em
+rerender, nova montagem aberta e restauração independente do estado visual cobertos por testes. A
+sincronização inicial dos controles permanece na fase 6, a persistência na fase 7 e a revalidação
+após ações nativas na fase 8. Foram aprovados os testes isolados do painel e ciclo de vida, 69 testes
+em `pnpm check`, `pnpm build` e `git diff --check`.
 
 ## 6. Funcionalidades do MVP
 
+- [x] Inicializar cada controle funcional com o valor real do DOM, sem assumir valores padrão.
+
 ### 6.1 Cabeçalho
 
-- [ ] Editar título.
-- [ ] Editar artista.
-- [ ] Editar compositor quando presente.
-- [ ] Mostrar ou ocultar título.
-- [ ] Mostrar ou ocultar artista.
-- [ ] Mostrar ou ocultar compositor.
-- [ ] Mostrar ou ocultar elemento de marca quando localizado com segurança.
-- [ ] Implementar cabeçalho compacto com estilos próprios mínimos.
-- [ ] Restaurar textos, visibilidade e estilos do cabeçalho.
-- [ ] Ocultar controles de campos ausentes.
+- [x] Editar título.
+- [x] Editar artista.
+- [x] Editar compositor quando presente.
+- [x] Mostrar ou ocultar título.
+- [x] Mostrar ou ocultar artista.
+- [x] Mostrar ou ocultar compositor.
+- [x] Mostrar ou ocultar elemento de marca quando localizado com segurança.
+- [x] Implementar cabeçalho compacto com estilos próprios mínimos.
+- [x] Restaurar textos, visibilidade e estilos do cabeçalho.
+- [x] Ocultar controles de campos ausentes.
+- [ ] Executar smoke na página real após concluir o drift estrutural da 2.5 e recarregar a extensão.
+
+Validação automatizada de 2026-08-25: valores iniciais lidos do DOM, edição imediata, prefixo do
+compositor, visibilidade individual, marca e campos ausentes, compactação seletiva e restauração
+integral cobertos. Foram aprovados 85 testes em `pnpm check`, `pnpm build`, manifesto MV3 com
+permissão exclusiva `storage` e `git diff --check`. O smoke real permanece bloqueado pelo wrapper
+intermediário já registrado na seção 2.5.
 
 ### 6.2 Conteúdo musical
 

@@ -1,4 +1,4 @@
-import { act } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import type { Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ContentScriptContext } from 'wxt/utils/content-script-context';
@@ -64,6 +64,22 @@ function getPanelHost(): HTMLElement {
   }
 
   return host;
+}
+
+function getPanelControl<T extends HTMLInputElement>(label: string): T {
+  const shadow = getPanelHost().shadowRoot;
+  const labelElement = Array.from(shadow?.querySelectorAll('label') ?? []).find(
+    (candidate) => candidate.textContent === label,
+  );
+  const control = labelElement?.htmlFor
+    ? (shadow?.getElementById(labelElement.htmlFor) as T | null | undefined)
+    : null;
+
+  if (!control) {
+    throw new Error(`Controle não encontrado: ${label}`);
+  }
+
+  return control;
 }
 
 beforeEach(() => {
@@ -265,6 +281,79 @@ describe('inicialização do CifraInk', () => {
     });
 
     expect(title.textContent).toBe('Canção de Teste');
+  });
+
+  it('edita, oculta, compacta e restaura o cabeçalho pela interface', async () => {
+    loadHtml(fullPageHtml);
+    const { context } = createContext();
+
+    await act(async () => {
+      await initializeCifraInk(context);
+    });
+
+    const title = document.querySelector<HTMLElement>('h1');
+    const artist = document.querySelector<HTMLElement>('h2');
+    const composer = document.querySelector<HTMLElement>('header > small');
+    const header = document.querySelector<HTMLElement>('header');
+    const titleLink = title?.parentElement;
+
+    if (!title || !artist || !composer || !header) {
+      throw new Error('Fixture sem cabeçalho completo');
+    }
+
+    const titleInput = getPanelControl<HTMLInputElement>('Título');
+    const composerInput = getPanelControl<HTMLInputElement>('Compositor');
+    const artistVisibility = getPanelControl<HTMLInputElement>('Mostrar artista');
+    const compact = getPanelControl<HTMLInputElement>('Cabeçalho compacto');
+
+    await act(async () => {
+      fireEvent.change(titleInput, { target: { value: 'Título pela interface' } });
+      fireEvent.change(composerInput, { target: { value: '' } });
+      artistVisibility.click();
+      compact.click();
+    });
+
+    expect(title.textContent).toBe('Título pela interface');
+    expect(title.parentElement).toBe(titleLink);
+    expect(composer.textContent).toBe('Composição de:');
+    expect(artist.hidden).toBe(true);
+    expect(header.style.getPropertyValue('gap')).toBe('0px');
+    expect(title.style.getPropertyValue('font-size')).toBe('16px');
+    expect(getPanelControl<HTMLInputElement>('Título')).toHaveValue('Título pela interface');
+    expect(getPanelControl<HTMLInputElement>('Mostrar artista')).not.toBeChecked();
+    expect(getPanelControl<HTMLInputElement>('Cabeçalho compacto')).toBeChecked();
+
+    await act(async () => {
+      getPanelHost()
+        .shadowRoot?.querySelector<HTMLButtonElement>('.cifraink-restore-button')
+        ?.click();
+    });
+
+    expect(title.textContent).toBe('Canção de Teste');
+    expect(composer.textContent).toBe('Composição de: Pessoa Autora');
+    expect(artist.hidden).toBe(false);
+    expect(header.style.getPropertyValue('gap')).toBe('');
+    expect(title.style.getPropertyValue('font-size')).toBe('');
+    expect(getPanelControl<HTMLInputElement>('Título')).toHaveValue('Canção de Teste');
+    expect(getPanelControl<HTMLInputElement>('Mostrar artista')).toBeChecked();
+    expect(getPanelControl<HTMLInputElement>('Cabeçalho compacto')).not.toBeChecked();
+  });
+
+  it('omite apenas o controle do compositor quando ele não existe', async () => {
+    loadHtml(missingComposerHtml);
+    const { context } = createContext();
+
+    await act(async () => {
+      await initializeCifraInk(context);
+    });
+
+    expect(getPanelControl<HTMLInputElement>('Título')).toBeVisible();
+    expect(getPanelControl<HTMLInputElement>('Artista')).toBeVisible();
+    expect(
+      Array.from(getPanelHost().shadowRoot?.querySelectorAll('label') ?? []).some(
+        (label) => label.textContent === 'Compositor',
+      ),
+    ).toBe(false);
   });
 
   it.each(['criação', 'montagem'])('preserva a página quando a %s da UI falha', async (stage) => {

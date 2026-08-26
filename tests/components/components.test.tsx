@@ -4,6 +4,7 @@ import { FieldToggle } from '../../src/components/FieldToggle';
 import { RestoreButton } from '../../src/components/RestoreButton';
 import { Section } from '../../src/components/Section';
 import { Status } from '../../src/components/Status';
+import { TextField } from '../../src/components/TextField';
 
 describe('componentes do painel', () => {
   it('associa o título à seção semântica', () => {
@@ -48,6 +49,19 @@ describe('componentes do painel', () => {
     toggle.click();
 
     expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('edita um campo de texto controlado com label associado', () => {
+    const onChange = vi.fn();
+    const { rerender } = render(<TextField label="Título" onChange={onChange} value="Original" />);
+
+    const input = screen.getByRole('textbox', { name: 'Título' });
+    fireEvent.change(input, { target: { value: 'Novo título' } });
+
+    expect(onChange).toHaveBeenCalledWith('Novo título');
+
+    rerender(<TextField disabled label="Título" onChange={onChange} value="Novo título" />);
+    expect(screen.getByRole('textbox', { name: 'Título' })).toBeDisabled();
   });
 
   it.each([

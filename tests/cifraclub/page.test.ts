@@ -33,6 +33,7 @@ describe('CifraClubPage', () => {
     expect(page.getChordDiagramSection()?.textContent).toContain('Bm7');
     expect(page.getChordDiagrams()).toHaveLength(2);
     expect(page.getBrand()).not.toBeNull();
+    expect(page.getHeader()?.tagName).toBe('HEADER');
     expect(page.getNativeControls()?.textContent).toContain('Imprimir');
     expect(page.inspect()).toEqual(completeCapabilities);
     expect(page.getContentBlocks().every((content) => printRoot?.contains(content))).toBe(true);
@@ -140,6 +141,7 @@ describe('CifraClubPage', () => {
     page.getChordDiagramSection();
     page.getChordDiagrams();
     page.getBrand();
+    page.getHeader();
     page.getNativeControls();
     page.inspect();
 

@@ -1,4 +1,4 @@
-import { type Snapshot, SnapshotRegistry } from './snapshot';
+import { type Snapshot, SnapshotRegistry, type StyleSnapshot } from './snapshot';
 
 export type StyleChanges = Readonly<Record<string, string | null>>;
 
@@ -71,8 +71,37 @@ export function restore(element: Element): void {
 
   restoreText(element, snapshot);
   restoreAttributes(element, snapshot);
-  restoreStyles(element as HTMLElement, snapshot);
+  restoreCapturedStyles(element as HTMLElement, snapshot);
   snapshots.delete(element);
+}
+
+export function restoreStyles(element: HTMLElement, properties: readonly string[]): void {
+  const snapshot = snapshots.get(element);
+
+  if (!snapshot) {
+    return;
+  }
+
+  for (const property of properties) {
+    const style = snapshot.styles.get(property);
+
+    if (!style) {
+      continue;
+    }
+
+    restoreCapturedStyle(element, property, style);
+    snapshot.styles.delete(property);
+  }
+
+  removeEmptyStyleAttribute(element, snapshot);
+
+  if (
+    !('textContent' in snapshot) &&
+    snapshot.attributes.size === 0 &&
+    snapshot.styles.size === 0
+  ) {
+    snapshots.delete(element);
+  }
 }
 
 export function restoreAll(): void {
@@ -99,15 +128,23 @@ function restoreAttributes(element: Element, snapshot: Snapshot): void {
   }
 }
 
-function restoreStyles(element: HTMLElement, snapshot: Snapshot): void {
+function restoreCapturedStyles(element: HTMLElement, snapshot: Snapshot): void {
   for (const [property, style] of snapshot.styles) {
-    if (style.existed) {
-      element.style.setProperty(property, style.value, style.priority);
-    } else {
-      element.style.removeProperty(property);
-    }
+    restoreCapturedStyle(element, property, style);
   }
 
+  removeEmptyStyleAttribute(element, snapshot);
+}
+
+function restoreCapturedStyle(element: HTMLElement, property: string, style: StyleSnapshot): void {
+  if (style.existed) {
+    element.style.setProperty(property, style.value, style.priority);
+  } else {
+    element.style.removeProperty(property);
+  }
+}
+
+function removeEmptyStyleAttribute(element: HTMLElement, snapshot: Snapshot): void {
   if (snapshot.hadStyleAttribute === false && element.getAttribute('style') === '') {
     element.removeAttribute('style');
   }

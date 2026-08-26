@@ -167,6 +167,7 @@ Não haverá service worker, mensageria interna ou página separada de editor no
 ```ts
 interface CifraClubPage {
   inspect(): PageCapabilities;
+  getHeader(): HTMLElement | null;
   getTitle(): HTMLElement | null;
   getArtist(): HTMLElement | null;
   getComposer(): HTMLElement | null;
@@ -198,6 +199,7 @@ setText(element, value);
 setVisible(element, visible);
 setEditable(element, editable);
 setStyles(element, styles);
+restoreStyles(element, properties);
 restore(element);
 restoreAll();
 ```
@@ -205,6 +207,10 @@ restoreAll();
 `setVisible` usa o atributo `hidden`, preservando seu valor anterior sem presumir o `display` do
 elemento. `setStyles` recebe nomes de propriedades CSS, altera somente as propriedades declaradas e
 aceita `null` para removê-las.
+
+`restoreStyles` restaura apenas as propriedades indicadas e mantém no snapshot textos, atributos e
+outros estilos ainda pendentes. Isso permite desligar modos visuais sem perder edições da mesma
+sessão.
 
 O estado original é capturado em um `Map<Element, Snapshot>` na primeira alteração. O `Map` permite que `restoreAll()` percorra todos os alvos; ele deve ser limpo após a restauração ou desmontagem da extensão. Isso evita classes de comando, IDs artificiais e cópias completas do HTML.
 
@@ -243,15 +249,26 @@ site e não são reutilizáveis com segurança no Shadow DOM. O CifraInk usa o c
 Hugeicons para ícones funcionais, com imports nomeados e sem carregar assets remotos. O logotipo
 oficial permanece um SVG próprio e não faz parte dessa biblioteca.
 
-O estado do painel contém:
+O estado do painel é dividido por origem e só entra quando possui uso real:
 
-- capacidades encontradas;
-- valores atuais dos controles;
-- preferências globais;
-- estado aberto/recolhido;
-- mensagem de compatibilidade.
+- capacidades são inspecionadas pelo `CifraClubPage` e recebidas como propriedades imutáveis;
+- aberto/recolhido é estado visual local e independente;
+- mensagens, nomes, ícones e visibilidades da interface são derivados, não duplicados em estado;
+- valores dos controles funcionais serão consultados do DOM na fase 6;
+- preferências globais só serão incorporadas após a persistência da fase 7.
 
-Usar `useReducer` somente se o número de transições justificar; estado local com `useState` é aceitável para componentes independentes.
+Enquanto aberto/recolhido for a única transição local, usar `useState`. Introduzir `useReducer` somente
+se transições compartilhadas futuras justificarem a complexidade. Não copiar propriedades para estado
+nem usar efeitos apenas para mantê-las sincronizadas.
+
+Os controles do cabeçalho leem seu estado inicial pelo adaptador e aplicam cada ação em um alvo
+reconsultado. O compositor é apresentado sem o prefixo `Composição de:`, mas o prefixo permanece no
+DOM mesmo quando seu valor editável estiver vazio. Inputs continuam disponíveis quando o elemento é
+ocultado e recursos ausentes não geram controles.
+
+O modo compacto altera somente `gap` e `margin-bottom` do cabeçalho, `font-size` e `line-height` de
+título e artista, e `margin-top` do compositor. Desativá-lo restaura essas propriedades capturadas,
+sem presumir os estilos do site e sem restaurar antecipadamente texto ou visibilidade.
 
 ### 5.4 Atualizações do site
 
@@ -272,11 +289,13 @@ entrypoints/
   cifraclub.content/
     index.tsx          # inicialização e ciclo de vida
     Panel.tsx          # composição do painel
+    HeaderSection.tsx  # controles funcionais do cabeçalho
     panel.css          # estilos isolados pelo Shadow DOM
 
 src/
   cifraclub/
     page.ts            # consultas semânticas ao DOM
+    header.ts          # estado e ações do cabeçalho
     selectors.ts       # seletores do site
     capabilities.ts    # inspeção e diagnóstico
   dom/
@@ -290,6 +309,7 @@ src/
     RestoreButton.tsx
     Section.tsx
     Status.tsx
+    TextField.tsx
 
 tests/
   fixtures/

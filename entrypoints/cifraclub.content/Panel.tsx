@@ -3,11 +3,18 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { useState } from 'react';
 import { browser } from 'wxt/browser';
 import type { PageCapabilities } from '../../src/cifraclub/capabilities';
+import type { HeaderControlAction, HeaderControlState } from '../../src/cifraclub/header';
 import { RestoreButton } from '../../src/components/RestoreButton';
 import { Status } from '../../src/components/Status';
+import { HeaderSection } from './HeaderSection';
 
 interface PanelProps {
   readonly capabilities: PageCapabilities;
+  readonly initialHeader: HeaderControlState;
+  readonly onHeaderAction: (
+    current: HeaderControlState,
+    action: HeaderControlAction,
+  ) => HeaderControlState;
   readonly onRestore: () => void;
 }
 
@@ -15,9 +22,19 @@ const panelContentId = 'cifraink-panel-content';
 const panelActionsId = 'cifraink-panel-actions';
 const iconUrl = browser.runtime.getURL('/icon/cifraink.svg');
 
-export function Panel({ capabilities, onRestore }: PanelProps) {
+export function Panel({ capabilities, initialHeader, onHeaderAction, onRestore }: PanelProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const [header, setHeader] = useState(initialHeader);
   const toggleLabel = collapsed ? 'Abrir painel' : 'Recolher painel';
+
+  function handleHeaderAction(action: HeaderControlAction): void {
+    setHeader(onHeaderAction(header, action));
+  }
+
+  function handleRestore(): void {
+    onRestore();
+    setHeader(initialHeader);
+  }
 
   return (
     <section
@@ -52,11 +69,12 @@ export function Panel({ capabilities, onRestore }: PanelProps) {
 
         <div className="cifraink-panel__content" hidden={collapsed} id={panelContentId}>
           <Status status={capabilities.status} />
+          <HeaderSection onAction={handleHeaderAction} state={header} />
         </div>
       </div>
 
       <div className="cifraink-panel__actions" hidden={collapsed} id={panelActionsId}>
-        <RestoreButton onRestore={onRestore} />
+        <RestoreButton onRestore={handleRestore} />
       </div>
     </section>
   );
