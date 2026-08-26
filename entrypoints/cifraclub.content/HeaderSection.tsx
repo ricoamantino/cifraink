@@ -1,11 +1,18 @@
 import {
+  Heading01Icon,
+  Image02Icon,
+  LayoutAlignTopIcon,
+  UserIcon,
+  UserPenIcon,
+} from '@hugeicons/core-free-icons';
+import {
   type HeaderControlAction,
   type HeaderControlState,
   hasHeaderControls,
 } from '../../src/cifraclub/header';
+import { ControlGroup } from '../../src/components/ControlGroup';
 import { FieldToggle } from '../../src/components/FieldToggle';
-import { Section } from '../../src/components/Section';
-import { TextField } from '../../src/components/TextField';
+import { HeaderTextControl } from './HeaderTextControl';
 
 interface HeaderSectionProps {
   readonly state: HeaderControlState;
@@ -18,57 +25,50 @@ export function HeaderSection({ state, onAction }: HeaderSectionProps) {
   }
 
   return (
-    <Section title="Cabeçalho">
+    <ControlGroup title="Cabeçalho">
       {state.title ? (
-        <>
-          <TextField
-            label="Título"
-            onChange={(value) => onAction({ type: 'set-text', field: 'title', value })}
-            value={state.title.value}
-          />
-          <FieldToggle
-            checked={state.title.visible}
-            label="Mostrar título"
-            onChange={(visible) => onAction({ type: 'set-visibility', target: 'title', visible })}
-          />
-        </>
+        <HeaderTextControl
+          icon={Heading01Icon}
+          label="Título"
+          onTextChange={(value) => onAction({ type: 'set-text', field: 'title', value })}
+          onVisibilityChange={(visible) =>
+            onAction({ type: 'set-visibility', target: 'title', visible })
+          }
+          value={state.title.value}
+          visible={state.title.visible}
+        />
       ) : null}
 
       {state.artist ? (
-        <>
-          <TextField
-            label="Artista"
-            onChange={(value) => onAction({ type: 'set-text', field: 'artist', value })}
-            value={state.artist.value}
-          />
-          <FieldToggle
-            checked={state.artist.visible}
-            label="Mostrar artista"
-            onChange={(visible) => onAction({ type: 'set-visibility', target: 'artist', visible })}
-          />
-        </>
+        <HeaderTextControl
+          icon={UserIcon}
+          label="Artista"
+          onTextChange={(value) => onAction({ type: 'set-text', field: 'artist', value })}
+          onVisibilityChange={(visible) =>
+            onAction({ type: 'set-visibility', target: 'artist', visible })
+          }
+          value={state.artist.value}
+          visible={state.artist.visible}
+        />
       ) : null}
 
       {state.composer ? (
-        <>
-          <TextField
-            label="Compositor"
-            onChange={(value) => onAction({ type: 'set-text', field: 'composer', value })}
-            value={state.composer.value}
-          />
-          <FieldToggle
-            checked={state.composer.visible}
-            label="Mostrar compositor"
-            onChange={(visible) =>
-              onAction({ type: 'set-visibility', target: 'composer', visible })
-            }
-          />
-        </>
+        <HeaderTextControl
+          icon={UserPenIcon}
+          label="Compositor"
+          onTextChange={(value) => onAction({ type: 'set-text', field: 'composer', value })}
+          onVisibilityChange={(visible) =>
+            onAction({ type: 'set-visibility', target: 'composer', visible })
+          }
+          value={state.composer.value}
+          visible={state.composer.visible}
+        />
       ) : null}
 
       {state.brand ? (
         <FieldToggle
           checked={state.brand.visible}
+          icon={Image02Icon}
           label="Mostrar marca"
           onChange={(visible) => onAction({ type: 'set-visibility', target: 'brand', visible })}
         />
@@ -77,10 +77,11 @@ export function HeaderSection({ state, onAction }: HeaderSectionProps) {
       {state.compactAvailable ? (
         <FieldToggle
           checked={state.compact}
+          icon={LayoutAlignTopIcon}
           label="Cabeçalho compacto"
           onChange={(compact) => onAction({ type: 'set-compact', compact })}
         />
       ) : null}
-    </Section>
+    </ControlGroup>
   );
 }

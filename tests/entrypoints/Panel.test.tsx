@@ -153,8 +153,13 @@ describe('painel do CifraInk', () => {
       'chrome-extension://test-extension-id/icon/cifraink.svg',
     );
     expect(screen.getByRole('region', { name: 'Cabeçalho' })).toBeVisible();
-    expect(screen.getByRole('region', { name: 'Conteúdo' })).toBeVisible();
-    expect(screen.getByRole('region', { name: 'Diagramas' })).toBeVisible();
+    expect(screen.getByRole('region', { name: 'Documento' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Cabeçalho' })).toHaveClass(
+      'cifraink-visually-hidden',
+    );
+    expect(screen.getByRole('heading', { name: 'Documento' })).toHaveClass(
+      'cifraink-visually-hidden',
+    );
 
     const restoreButton = screen.getByRole('button', { name: 'Restaurar página' });
     expect(restoreButton).toBeEnabled();
@@ -174,7 +179,7 @@ describe('painel do CifraInk', () => {
     expect(openButton).toHaveAttribute('aria-expanded', 'false');
     expect(openButton.querySelector('path')).not.toHaveAttribute('d', collapseIcon);
     expect(screen.getByText('CifraInk')).toBeVisible();
-    expect(screen.getByRole('status', { hidden: true })).not.toBeVisible();
+    expect(screen.getByRole('status')).toBeVisible();
     expect(screen.getByRole('textbox', { name: 'Título', hidden: true })).toHaveValue(
       'Título original',
     );
@@ -186,17 +191,42 @@ describe('painel do CifraInk', () => {
       'aria-expanded',
       'true',
     );
-    expect(screen.getByRole('textbox', { name: 'Título' })).toHaveValue('Título original');
+    expect(screen.getByRole('button', { name: 'TítuloTítulo original' })).toBeVisible();
+    expect(screen.getByRole('textbox', { hidden: true, name: 'Título' })).toHaveValue(
+      'Título original',
+    );
+  });
+
+  it('fecha popovers abertos ao recolher e ao restaurar', () => {
+    render(panel());
+
+    const titleTrigger = screen.getByRole('button', { name: 'TítuloTítulo original' });
+    const popoverId = titleTrigger.getAttribute('popovertarget');
+    const popover = popoverId ? document.getElementById(popoverId) : null;
+    const hidePopover = vi.fn();
+
+    expect(popover).not.toBeNull();
+    Object.defineProperty(popover, 'hidePopover', { configurable: true, value: hidePopover });
+    vi.spyOn(popover as HTMLElement, 'matches').mockImplementation(
+      (selector) => selector === ':popover-open',
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Recolher painel' }));
+    expect(hidePopover).toHaveBeenCalledOnce();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir painel' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Restaurar página' }));
+    expect(hidePopover).toHaveBeenCalledTimes(2);
   });
 
   it('edita valores e visibilidades por ações controladas', () => {
     const onHeaderAction = vi.fn(updateHeaderState);
     render(panel('compatible', completeHeader, () => {}, onHeaderAction));
 
-    fireEvent.change(screen.getByRole('textbox', { name: 'Título' }), {
+    fireEvent.change(screen.getByRole('textbox', { hidden: true, name: 'Título' }), {
       target: { value: 'Novo título' },
     });
-    fireEvent.click(screen.getByRole('switch', { name: 'Mostrar título' }));
+    fireEvent.click(screen.getByRole('switch', { hidden: true, name: 'Mostrar título' }));
     fireEvent.click(screen.getByRole('switch', { name: 'Cabeçalho compacto' }));
 
     expect(onHeaderAction).toHaveBeenNthCalledWith(1, completeHeader, {
@@ -204,18 +234,20 @@ describe('painel do CifraInk', () => {
       field: 'title',
       value: 'Novo título',
     });
-    expect(screen.getByRole('textbox', { name: 'Título' })).toHaveValue('Novo título');
-    expect(screen.getByRole('textbox', { name: 'Título' })).toBeEnabled();
-    expect(screen.getByRole('switch', { name: 'Mostrar título' })).not.toBeChecked();
+    expect(screen.getByRole('textbox', { hidden: true, name: 'Título' })).toHaveValue(
+      'Novo título',
+    );
+    expect(screen.getByRole('textbox', { hidden: true, name: 'Título' })).toBeEnabled();
+    expect(screen.getByRole('switch', { hidden: true, name: 'Mostrar título' })).not.toBeChecked();
     expect(screen.getByRole('switch', { name: 'Cabeçalho compacto' })).toBeChecked();
   });
 
   it('omite somente controles dos recursos ausentes', () => {
     render(panel('partial', { ...completeHeader, composer: null, brand: null }));
 
-    expect(screen.getByRole('textbox', { name: 'Título' })).toBeVisible();
-    expect(screen.getByRole('textbox', { name: 'Artista' })).toBeVisible();
-    expect(screen.queryByRole('textbox', { name: 'Compositor' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'TítuloTítulo original' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'ArtistaArtista original' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: /Compositor/ })).toBeNull();
     expect(screen.queryByRole('switch', { name: 'Mostrar marca' })).toBeNull();
     expect(screen.getByRole('switch', { name: 'Cabeçalho compacto' })).toBeVisible();
   });
@@ -254,13 +286,14 @@ describe('painel do CifraInk', () => {
     expect(toggle).toBeChecked();
   });
 
-  it('omite a seção Conteúdo quando não há blocos musicais', () => {
+  it('omite o controle de conteúdo quando não há blocos musicais', () => {
     render(panel('incompatible', emptyHeader, () => {}, updateHeaderState, unavailableContent));
 
-    expect(screen.queryByRole('region', { name: 'Conteúdo' })).toBeNull();
+    expect(screen.queryByRole('switch', { name: 'Editar conteúdo' })).toBeNull();
+    expect(screen.getByRole('region', { name: 'Documento' })).toBeVisible();
   });
 
-  it('mantém a lista individual recolhida e controla diagramas por índice', () => {
+  it('relaciona a linha ao seletor lateral e controla diagramas por índice', () => {
     const onDiagramAction = vi.fn((action: DiagramControlAction) =>
       updateDiagramState(availableDiagrams, action),
     );
@@ -277,29 +310,24 @@ describe('painel do CifraInk', () => {
       ),
     );
 
-    const summary = screen.getByText('Diagramas individuais (2)').closest('summary');
-    const details = summary?.closest('details');
-    expect(summary).not.toBeNull();
-    expect(summary?.querySelector('.cifraink-diagram-list__toggle-icon')).not.toBeNull();
-    expect(details).not.toHaveAttribute('open');
+    const trigger = screen.getByRole('button', { name: 'Diagramas individuais2 de 2' });
+    const popoverId = trigger.getAttribute('popovertarget');
+    const popover = popoverId ? document.getElementById(popoverId) : null;
+    expect(popoverId).toBeTruthy();
+    expect(popover).toHaveAttribute('id', popoverId);
+    expect(popover).toHaveAttribute('popover', 'auto');
+    expect(popover).toHaveAttribute('data-scrollable', 'true');
 
-    summary?.focus();
-    expect(summary).toHaveFocus();
-    if (summary) {
-      fireEvent.click(summary);
-    }
-
-    const firstDiagram = screen.getByRole('switch', { name: 'A' });
+    const firstDiagram = screen.getByRole('switch', { hidden: true, name: 'A' });
     fireEvent.click(firstDiagram);
 
-    expect(details).toHaveAttribute('open');
     expect(onDiagramAction).toHaveBeenCalledWith({
       type: 'set-diagram-visible',
       index: 0,
       visible: false,
     });
     expect(firstDiagram).not.toBeChecked();
-    expect(screen.getByRole('switch', { name: 'Bm7' })).toBeChecked();
+    expect(screen.getByRole('switch', { hidden: true, name: 'Bm7' })).toBeChecked();
   });
 
   it('omite a seção Diagramas quando nenhum diagrama está disponível', () => {
@@ -315,7 +343,7 @@ describe('painel do CifraInk', () => {
       ),
     );
 
-    expect(screen.queryByRole('region', { name: 'Diagramas' })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Diagramas individuais/ })).toBeNull();
   });
 
   it('deriva a compatibilidade das propriedades sem perder o estado visual local', () => {
@@ -359,6 +387,13 @@ describe('painel do CifraInk', () => {
       expect(panelRegion).toHaveAttribute('data-compatibility', status);
       expect(statusElement).toHaveTextContent(message);
       expect(statusElement.textContent).not.toMatch(/selector|exception|data-print-scroll/i);
+      const notice = document.querySelector('.cifraink-status-notice');
+
+      if (status === 'compatible') {
+        expect(notice).toBeNull();
+      } else {
+        expect(notice).toHaveTextContent(message);
+      }
     },
   );
 
@@ -366,20 +401,21 @@ describe('painel do CifraInk', () => {
     const onRestore = vi.fn();
     render(panel('compatible', completeHeader, onRestore));
 
-    fireEvent.change(screen.getByRole('textbox', { name: 'Título' }), {
+    fireEvent.change(screen.getByRole('textbox', { hidden: true, name: 'Título' }), {
       target: { value: 'Alterado' },
     });
     fireEvent.click(screen.getByRole('switch', { name: 'Mostrar marca' }));
     fireEvent.click(screen.getByRole('switch', { name: 'Editar conteúdo' }));
-    fireEvent.click(screen.getByText('Diagramas individuais (2)'));
-    fireEvent.click(screen.getByRole('switch', { name: 'A' }));
+    fireEvent.click(screen.getByRole('switch', { hidden: true, name: 'A' }));
     fireEvent.click(screen.getByRole('button', { name: 'Restaurar página' }));
 
     expect(onRestore).toHaveBeenCalledOnce();
-    expect(screen.getByRole('textbox', { name: 'Título' })).toHaveValue('Título original');
+    expect(screen.getByRole('textbox', { hidden: true, name: 'Título' })).toHaveValue(
+      'Título original',
+    );
     expect(screen.getByRole('switch', { name: 'Mostrar marca' })).toBeChecked();
     expect(screen.getByRole('switch', { name: 'Editar conteúdo' })).not.toBeChecked();
-    expect(screen.getByRole('switch', { name: 'A' })).toBeChecked();
+    expect(screen.getByRole('switch', { hidden: true, name: 'A' })).toBeChecked();
     expect(screen.getByRole('region', { name: 'CifraInk' })).toHaveAttribute(
       'data-collapsed',
       'false',

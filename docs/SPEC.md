@@ -263,6 +263,21 @@ sincronização inicial dos controles permanece na fase 6, a persistência na fa
 após ações nativas na fase 8. Foram aprovados os testes isolados do painel e ciclo de vida, 69 testes
 em `pnpm check`, `pnpm build` e `git diff --check`.
 
+### 5.4 Integração visual nativa
+
+- [ ] Organizar os controles em dois blocos sem títulos visíveis, preservando regiões nomeadas.
+- [ ] Padronizar dimensões, densidade, separadores, labels, valores e switches conforme a gramática
+  visual observada nos controles nativos.
+- [ ] Transformar título, artista e compositor em linhas compactas com editores laterais.
+- [ ] Transformar a lista individual de diagramas em seletor lateral rolável com contagem visível.
+- [ ] Usar Popover API e CSS Anchor Positioning com abertura exclusiva, light dismiss, Escape,
+  gestão de foco e fallback responsivo.
+- [ ] Integrar o status ao cabeçalho, exibindo aviso textual somente para estados problemáticos.
+- [ ] Aplicar os Hugeicons semânticos aprovados, sem reutilizar o sprite remoto do site.
+- [ ] Fechar popovers durante restauração e recolhimento do painel.
+- [ ] Revalidar painel, ciclo de vida, restauração e ausência de regressões no manifesto.
+- [ ] Executar smoke no Chrome em montagem inline, viewport de 360 px e impressão.
+
 ## 6. Funcionalidades do MVP
 
 - [x] Inicializar cada controle funcional com o valor real do DOM, sem assumir valores padrão.
@@ -313,7 +328,7 @@ foram aprovados. O marcador temporário foi removido e a página terminou no est
 - [ ] Tratar nomes repetidos sem usar o texto como ID único.
 - [ ] Tratar ausência total de diagramas sem erro.
 - [ ] Não duplicar o controle nativo de visibilidade da seção.
-- [ ] Usar no grupo recolhível o padrão de seta do cabeçalho do CifraInk.
+- [ ] Exibir a lista individual em seletor lateral rolável, com contagem de itens visíveis.
 
 ### 6.4 Integração com impressão
 

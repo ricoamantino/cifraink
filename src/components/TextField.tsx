@@ -5,9 +5,16 @@ interface TextFieldProps {
   readonly value: string;
   readonly onChange: (value: string) => void;
   readonly disabled?: boolean;
+  readonly focusOnPopoverOpen?: boolean;
 }
 
-export function TextField({ label, value, onChange, disabled = false }: TextFieldProps) {
+export function TextField({
+  label,
+  value,
+  onChange,
+  disabled = false,
+  focusOnPopoverOpen = false,
+}: TextFieldProps) {
   const inputId = useId();
 
   return (
@@ -17,6 +24,7 @@ export function TextField({ label, value, onChange, disabled = false }: TextFiel
       </label>
       <input
         className="cifraink-text-field__input"
+        data-cifraink-popover-focus={focusOnPopoverOpen ? '' : undefined}
         disabled={disabled}
         id={inputId}
         onChange={(event) => onChange(event.currentTarget.value)}

@@ -1,22 +1,67 @@
+import { Heading01Icon } from '@hugeicons/core-free-icons';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { ControlGroup } from '../../src/components/ControlGroup';
+import { ControlRow } from '../../src/components/ControlRow';
 import { FieldToggle } from '../../src/components/FieldToggle';
 import { RestoreButton } from '../../src/components/RestoreButton';
-import { Section } from '../../src/components/Section';
-import { Status } from '../../src/components/Status';
+import { SidePopover } from '../../src/components/SidePopover';
+import { Status, StatusNotice } from '../../src/components/Status';
 import { TextField } from '../../src/components/TextField';
 
 describe('componentes do painel', () => {
   it('associa o título à seção semântica', () => {
     render(
-      <Section title="Cabeçalho">
+      <ControlGroup title="Cabeçalho">
         <p>Conteúdo da seção</p>
-      </Section>,
+      </ControlGroup>,
     );
 
     expect(screen.getByRole('region', { name: 'Cabeçalho' })).toHaveTextContent(
       'Conteúdo da seção',
     );
+    expect(screen.getByRole('heading', { name: 'Cabeçalho' })).toHaveClass(
+      'cifraink-visually-hidden',
+    );
+  });
+
+  it('relaciona uma linha compacta ao popover lateral nativo', () => {
+    render(
+      <ControlRow
+        icon={Heading01Icon}
+        label="Título"
+        popoverTarget="editor-titulo"
+        value="Canção longa"
+      >
+        <SidePopover id="editor-titulo" label="Editar título">
+          <TextField focusOnPopoverOpen label="Título" onChange={() => {}} value="Canção longa" />
+        </SidePopover>
+      </ControlRow>,
+    );
+
+    const trigger = screen.getByRole('button', { name: 'TítuloCanção longa' });
+    const popover = document.getElementById('editor-titulo');
+    expect(trigger).toHaveAttribute('popovertarget', 'editor-titulo');
+    expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
+    expect(trigger.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
+    expect(popover).toHaveAttribute('popover', 'auto');
+  });
+
+  it('foca o controle principal quando o popover é aberto', () => {
+    render(
+      <SidePopover id="editor" label="Editar título">
+        <TextField focusOnPopoverOpen label="Título" onChange={() => {}} value="Original" />
+      </SidePopover>,
+    );
+
+    const popover = document.getElementById('editor');
+    const toggleEvent = new Event('toggle', { bubbles: true });
+    Object.defineProperty(toggleEvent, 'newState', { value: 'open' });
+    if (popover) {
+      fireEvent(popover, toggleEvent);
+    }
+
+    expect(screen.getByRole('textbox', { hidden: true, name: 'Título' })).toHaveFocus();
   });
 
   it('expõe um controle de visibilidade associado ao label e à descrição', () => {
@@ -74,6 +119,16 @@ describe('componentes do painel', () => {
     const statusElement = screen.getByRole('status');
     expect(statusElement).toHaveTextContent(message);
     expect(statusElement.textContent).not.toMatch(/selector|exception|data-print-scroll/i);
+  });
+
+  it('exibe aviso textual somente quando a compatibilidade exige atenção', () => {
+    const { rerender } = render(<StatusNotice status="compatible" />);
+    expect(document.querySelector('.cifraink-status-notice')).toBeNull();
+
+    rerender(<StatusNotice status="partial" />);
+    expect(document.querySelector('.cifraink-status-notice')).toHaveTextContent(
+      'CifraInk disponível com alguns recursos limitados.',
+    );
   });
 
   it('executa a restauração e respeita o estado desabilitado', () => {

@@ -1,8 +1,9 @@
-import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react';
+import { GuitarIcon } from '@hugeicons/core-free-icons';
+import { useId } from 'react';
 import type { DiagramControlAction, DiagramControlState } from '../../src/cifraclub/diagrams';
+import { ControlRow } from '../../src/components/ControlRow';
 import { FieldToggle } from '../../src/components/FieldToggle';
-import { Section } from '../../src/components/Section';
+import { SidePopover } from '../../src/components/SidePopover';
 
 interface DiagramSectionProps {
   readonly state: DiagramControlState;
@@ -10,25 +11,23 @@ interface DiagramSectionProps {
 }
 
 export function DiagramSection({ state, onAction }: DiagramSectionProps) {
+  const popoverId = `cifraink-diagrams-${useId().replaceAll(':', '')}`;
+
   if (!state.available) {
     return null;
   }
 
+  const visibleCount = state.items.filter((item) => item.visible).length;
+
   return (
-    <Section title="Diagramas">
-      <details className="cifraink-diagram-list">
-        <summary className="cifraink-diagram-list__summary">
-          <span>Diagramas individuais ({state.items.length})</span>
-          <span aria-hidden="true" className="cifraink-diagram-list__toggle">
-            <HugeiconsIcon
-              className="cifraink-diagram-list__toggle-icon"
-              icon={ArrowDown01Icon}
-              size={18}
-              strokeWidth={2}
-            />
-          </span>
-        </summary>
-        <div className="cifraink-diagram-list__items">
+    <ControlRow
+      icon={GuitarIcon}
+      label="Diagramas individuais"
+      popoverTarget={popoverId}
+      value={`${visibleCount} de ${state.items.length}`}
+    >
+      <SidePopover id={popoverId} label="Diagramas individuais" scrollable>
+        <div className="cifraink-diagram-options">
           {state.items.map((item) => (
             <FieldToggle
               checked={item.visible}
@@ -40,7 +39,7 @@ export function DiagramSection({ state, onAction }: DiagramSectionProps) {
             />
           ))}
         </div>
-      </details>
-    </Section>
+      </SidePopover>
+    </ControlRow>
   );
 }

@@ -406,15 +406,16 @@ describe('inicialização do CifraInk', () => {
       throw new Error('Fixture sem diagramas completos');
     }
 
-    const summary = getPanelHost().shadowRoot?.querySelector<HTMLElement>(
-      '.cifraink-diagram-list__summary',
-    );
-
     expect(getPanelHost().shadowRoot?.textContent).not.toContain('Mostrar diagramas');
     expect(getPanelHost().shadowRoot?.textContent).not.toContain('Diagramas compactos');
+    expect(
+      Array.from(
+        getPanelHost().shadowRoot?.querySelectorAll<HTMLButtonElement>('.cifraink-control-row') ??
+          [],
+      ).some((button) => button.textContent?.startsWith('Diagramas individuais')),
+    ).toBe(true);
 
     await act(async () => {
-      summary?.click();
       getPanelControl<HTMLInputElement>('A').click();
     });
 
@@ -439,8 +440,11 @@ describe('inicialização do CifraInk', () => {
       await initializeCifraInk(context);
     });
 
-    expect(getPanelControl<HTMLInputElement>('Título')).toBeVisible();
-    expect(getPanelControl<HTMLInputElement>('Artista')).toBeVisible();
+    const controlRows = Array.from(
+      getPanelHost().shadowRoot?.querySelectorAll<HTMLButtonElement>('.cifraink-control-row') ?? [],
+    );
+    expect(controlRows.find((button) => button.textContent?.startsWith('Título'))).toBeVisible();
+    expect(controlRows.find((button) => button.textContent?.startsWith('Artista'))).toBeVisible();
     expect(
       Array.from(getPanelHost().shadowRoot?.querySelectorAll('label') ?? []).some(
         (label) => label.textContent === 'Compositor',

@@ -80,7 +80,8 @@ O sucesso do MVP será medido pela confiabilidade desse fluxo, não pela quantid
 - Fallback flutuante quando a coluna nativa não existir, inclusive em layouts estreitos.
 - Linguagem visual coerente com o painel e os controles nativos da página de impressão.
 - Superfícies, densidade, hierarquia e estados de controle familiares ao contexto da página.
-- Seções: Cabeçalho, Conteúdo e Diagramas.
+- Dois grupos sem títulos visíveis: **Cabeçalho** e **Documento**, preservando regiões nomeadas para
+  tecnologias assistivas.
 - Controles com rótulos acessíveis e operação por teclado.
 - Botão único de **Restaurar página**.
 - Status de compatibilidade visível sem mensagens técnicas.
@@ -249,12 +250,32 @@ Quando o agrupador estrutural dos controles nativos estiver disponível, o host 
 primeiro item dessa coluna e acompanhará seu scroll. A ausência desse agrupador não impede a
 inicialização: o painel usa o posicionamento flutuante como fallback, sem consultar classes geradas.
 
-Na montagem inline, os blocos usam superfície branca, borda neutra de baixa opacidade, raio de 16
-px e nenhuma sombra, conforme o padrão observado. Ações globais ficam fora dos blocos, com 40 px de
-altura, raio de 12 px e superfície neutra. Os ícones nativos dependem de um sprite CSS privado do
-site e não são reutilizáveis com segurança no Shadow DOM. O CifraInk usa o conjunto gratuito do
-Hugeicons para ícones funcionais, com imports nomeados e sem carregar assets remotos. O logotipo
-oficial permanece um SVG próprio e não faz parte dessa biblioteca.
+Na montagem inline, o bloco superior e os grupos funcionais têm 270 px, superfície branca, borda
+neutra de baixa opacidade, raio de 16 px e nenhuma sombra, conforme o padrão observado. Os grupos
+**Cabeçalho** e **Documento** continuam sendo `<section>` com heading acessível, mas não exibem
+títulos ou divisórias externas. Ações globais ficam fora dos blocos, com 40 px de altura, raio de 12
+px e superfície neutra.
+
+Cada opção ocupa uma linha externa de 54 px com área interativa mínima de 48 px, padding de 8 px por
+12 px e separadores internos de 1 px. Labels usam 14 px regulares; valores secundários usam 12 px e
+são truncados; switches medem aproximadamente 32 px por 20 px. Hover e estado ativo usam superfícies
+neutras e o foco permanece visível.
+
+Título, artista e compositor aparecem como linhas compactas e abrem um popover lateral para edição
+imediata e visibilidade. Diagramas usam o mesmo padrão, mostrando a contagem visível e uma lista
+rolável de opções individuais limitada a aproximadamente 320 px. Os popovers usam a API nativa com
+`popover="auto"`, vínculo `popovertarget`, light dismiss, fechamento por Escape, foco inicial no
+controle principal e retorno do foco ao acionador. CSS Anchor Positioning abre o conteúdo à esquerda;
+em viewport estreita ou sem espaço suficiente, o fallback abre abaixo e limita a largura à viewport.
+Recolher o painel ou restaurar a página fecha os popovers abertos.
+
+O status de compatibilidade fica ao lado do nome CifraInk: indicador verde, âmbar ou vermelho, com a
+mensagem completa acessível. Apenas os estados parcial e incompatível exibem também aviso textual.
+Os ícones nativos dependem de um sprite CSS privado do site e não são reutilizáveis com segurança no
+Shadow DOM. O CifraInk usa Hugeicons Free com 24 px e traço consistente: `Heading01Icon`, `UserIcon`,
+`UserPenIcon`, `Image02Icon`, `LayoutAlignTopIcon`, `FilePenIcon`, `GuitarIcon` e `RefreshCwIcon`.
+Imports são nomeados e nenhum asset remoto é carregado. O logotipo oficial permanece um SVG próprio
+e não faz parte dessa biblioteca.
 
 O estado do painel é dividido por origem e só entra quando possui uso real:
 
@@ -290,11 +311,10 @@ ou o próprio diagrama como fallback. Ações individuais usam o índice atual, 
 como identificador. Nomes repetidos recebem sufixos de ocorrência, como `A (1)` e `A (2)`, e nomes
 ausentes usam `Diagrama N`.
 
-A lista individual fica em um `<details>` nativo fechado por padrão. Quando a seção completa está
-fechada, não cria estado React adicional. Seu indicador usa o mesmo ícone, dimensões e estados
-visuais do recolhimento principal do CifraInk. O painel não oferece visibilidade da seção completa
-nem compactação: o primeiro recurso já existe nos controles nativos e o segundo foi retirado por
-não acrescentar valor suficiente ao MVP.
+A lista individual fica em um popover lateral nativo aberto pela linha **Diagramas individuais**. A
+linha mostra a quantidade visível em relação ao total e o popover limita sua altura com scroll
+interno. O painel não oferece visibilidade da seção completa nem compactação: o primeiro recurso já
+existe nos controles nativos e o segundo foi retirado por não acrescentar valor suficiente ao MVP.
 
 ### 5.4 Atualizações do site
 
@@ -315,7 +335,9 @@ entrypoints/
   cifraclub.content/
     index.tsx          # inicialização e ciclo de vida
     Panel.tsx          # composição do painel
+    DocumentSection.tsx # grupo com conteúdo musical e diagramas
     HeaderSection.tsx  # controles funcionais do cabeçalho
+    HeaderTextControl.tsx # editor lateral de texto e visibilidade
     ContentSection.tsx # ativação da edição do conteúdo musical
     DiagramSection.tsx # visibilidade individual dos diagramas
     panel.css          # estilos isolados pelo Shadow DOM
@@ -335,9 +357,11 @@ src/
     storage.ts         # leitura, escrita e valores padrão
     types.ts
   components/
+    ControlGroup.tsx
+    ControlRow.tsx
     FieldToggle.tsx
     RestoreButton.tsx
-    Section.tsx
+    SidePopover.tsx
     Status.tsx
     TextField.tsx
 

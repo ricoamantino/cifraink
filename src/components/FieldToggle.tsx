@@ -1,3 +1,4 @@
+import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
 import { useId } from 'react';
 
 interface FieldToggleProps {
@@ -6,6 +7,7 @@ interface FieldToggleProps {
   readonly onChange: (visible: boolean) => void;
   readonly disabled?: boolean;
   readonly description?: string;
+  readonly icon?: IconSvgElement;
 }
 
 export function FieldToggle({
@@ -14,31 +16,41 @@ export function FieldToggle({
   onChange,
   disabled = false,
   description,
+  icon,
 }: FieldToggleProps) {
   const inputId = useId();
   const descriptionId = useId();
 
   return (
-    <div className="cifraink-field-toggle">
-      <label className="cifraink-field-toggle__label" htmlFor={inputId}>
-        {label}
+    <div className="cifraink-control-item">
+      <label className="cifraink-field-toggle" htmlFor={inputId}>
+        {icon ? (
+          <HugeiconsIcon
+            aria-hidden="true"
+            className="cifraink-field-toggle__icon"
+            icon={icon}
+            size={24}
+            strokeWidth={2}
+          />
+        ) : null}
+        <span className="cifraink-field-toggle__label">{label}</span>
+        <input
+          aria-checked={checked}
+          aria-describedby={description ? descriptionId : undefined}
+          checked={checked}
+          className="cifraink-field-toggle__input"
+          disabled={disabled}
+          id={inputId}
+          onChange={(event) => onChange(event.currentTarget.checked)}
+          role="switch"
+          type="checkbox"
+        />
       </label>
       {description ? (
-        <p className="cifraink-field-toggle__description" id={descriptionId}>
+        <span className="cifraink-visually-hidden" id={descriptionId}>
           {description}
-        </p>
+        </span>
       ) : null}
-      <input
-        aria-checked={checked}
-        aria-describedby={description ? descriptionId : undefined}
-        checked={checked}
-        className="cifraink-field-toggle__input"
-        disabled={disabled}
-        id={inputId}
-        onChange={(event) => onChange(event.currentTarget.checked)}
-        role="switch"
-        type="checkbox"
-      />
     </div>
   );
 }

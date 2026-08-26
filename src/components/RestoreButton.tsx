@@ -1,4 +1,4 @@
-import { ReloadIcon } from '@hugeicons/core-free-icons';
+import { RefreshCwIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 
 interface RestoreButtonProps {
@@ -17,7 +17,7 @@ export function RestoreButton({ onRestore, disabled = false }: RestoreButtonProp
       <HugeiconsIcon
         aria-hidden="true"
         className="cifraink-restore-button__icon"
-        icon={ReloadIcon}
+        icon={RefreshCwIcon}
         size={18}
         strokeWidth={2}
       />
