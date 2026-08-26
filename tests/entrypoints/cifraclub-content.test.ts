@@ -14,12 +14,11 @@ describe('registro do content script do Cifra Club', () => {
     expect(contentScript.main).toEqual(expect.any(Function));
   });
 
-  it('mantém somente a permissão storage no manifesto-fonte', () => {
+  it('não solicita permissões explícitas no manifesto-fonte', () => {
     expect(wxtConfig.manifest).toEqual({
       name: 'CifraInk',
       description: 'Edite e prepare cifras do Cifra Club para impressão.',
       version: '0.1.0',
-      permissions: ['storage'],
       web_accessible_resources: [
         {
           resources: ['icon/cifraink.svg'],
@@ -27,6 +26,7 @@ describe('registro do content script do Cifra Club', () => {
         },
       ],
     });
+    expect(wxtConfig).not.toHaveProperty('manifest.permissions');
     expect(wxtConfig).not.toHaveProperty('manifest.background');
   });
 });

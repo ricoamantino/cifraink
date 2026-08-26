@@ -39,7 +39,7 @@ O sucesso do MVP será medido pela confiabilidade desse fluxo, não pela quantid
 4. **Alterações reversíveis:** capturar o valor original antes da primeira alteração.
 5. **Falha segura:** a ausência de um elemento desabilita apenas o recurso relacionado.
 6. **Progressive enhancement:** a página continua utilizável mesmo que o CifraInk não inicialize.
-7. **Permissões mínimas:** solicitar apenas acesso ao domínio suportado e ao armazenamento.
+7. **Permissões mínimas:** limitar o acesso às páginas suportadas pelo match do content script.
 8. **Processamento local:** não enviar conteúdo, histórico ou dados de uso para servidores.
 
 ## 4. Escopo funcional
@@ -85,14 +85,6 @@ O sucesso do MVP será medido pela confiabilidade desse fluxo, não pela quantid
 - Controles com rótulos acessíveis e operação por teclado.
 - Botão único de **Restaurar página**.
 - Status de compatibilidade visível sem mensagens técnicas.
-
-#### Preferências
-
-- Salvar apenas preferências globais simples:
-  - painel aberto ou recolhido;
-  - modo compacto do cabeçalho;
-  - visibilidade padrão dos elementos suportados.
-- Não salvar o texto editado da música no primeiro lançamento.
 
 ### 4.2 Depois do MVP
 
@@ -153,8 +145,7 @@ Content script
      │
      ├── localiza a página via CifraClubPage
      ├── monta o painel React em Shadow DOM
-     ├── aplica alterações via domMutations
-     └── salva preferências via preferences
+     └── aplica alterações via domMutations
 ```
 
 Não haverá service worker, mensageria interna ou página separada de editor no MVP.
@@ -313,7 +304,7 @@ O estado do painel é dividido por origem e só entra quando possui uso real:
 - aberto/recolhido é estado visual local e independente;
 - mensagens, nomes, ícones e visibilidades da interface são derivados, não duplicados em estado;
 - valores dos controles funcionais são inicializados e reconsultados a partir do DOM;
-- preferências globais só serão incorporadas após a persistência da fase 7.
+- todo estado termina com a sessão da página e um novo carregamento começa a partir do DOM atual.
 
 Usar `useState` para os grupos locais independentes. Introduzir `useReducer` somente se transições
 compartilhadas futuras justificarem a complexidade. Não copiar capacidades para estado nem usar
@@ -385,9 +376,6 @@ src/
   dom/
     mutations.ts       # alterações e restauração
     snapshot.ts        # tipos e captura do estado original
-  preferences/
-    storage.ts         # leitura, escrita e valores padrão
-    types.ts
   components/
     ControlGroup.tsx
     ControlRow.tsx
@@ -422,9 +410,6 @@ Diretrizes:
 - **React** — painel interativo.
 - **Hugeicons Free** — ícones funcionais do painel, importados individualmente.
 - **CSS comum dentro do Shadow DOM** — estilos simples com custom properties.
-- **WXT Storage / `chrome.storage.local`** — preferências globais.
-
-O módulo de preferências deve aplicar valores padrão e validar manualmente o pequeno objeto salvo. Uma biblioteca de schema só se justifica quando esse formato crescer.
 
 Não usar no MVP:
 
@@ -443,7 +428,7 @@ Dependências adicionais só entram acompanhadas de um problema concreto que nã
 ### Desenvolvimento
 
 - **pnpm** — pacotes e scripts.
-- **Vitest + jsdom** — adaptador, preferências e mutações.
+- **Vitest + jsdom** — adaptador, estado da sessão e mutações.
 - **React Testing Library** — comportamento do painel.
 - **Playwright** — fluxo real com a extensão carregada no Chromium.
 - **Biome** — lint e formatação.
@@ -453,10 +438,8 @@ Usar versões estáveis atuais ao iniciar o projeto e fixá-las no lockfile. Nã
 
 ## 8. Manifesto e segurança
 
-Permissões previstas:
-
-- `storage`;
-- host permission limitada às URLs de impressão suportadas do Cifra Club.
+O manifesto não solicita permissões explícitas. O acesso ao Cifra Club fica limitado ao match estático
+das páginas de impressão suportadas.
 
 Evitar `tabs`, `activeTab` e `scripting`. O content script é declarado estaticamente e inicializa seu próprio fluxo.
 
@@ -464,7 +447,7 @@ Regras adicionais:
 
 - executar no mundo isolado padrão da extensão;
 - não usar `eval` nem código remoto;
-- não ler cookies, local storage ou dados de conta do site;
+- não ler cookies ou dados de conta do site;
 - não coletar o conteúdo das músicas;
 - não adicionar analytics no MVP;
 - não interceptar nem substituir o botão de impressão do site.
@@ -501,7 +484,6 @@ Não manter várias heurísticas obscuras para esconder incompatibilidade. Se a 
 - captura realizada apenas na primeira alteração;
 - restauração exata de texto, atributo e estilo;
 - chamadas repetidas de inicialização e restauração;
-- leitura de preferência ausente, válida e inválida.
 
 ### Fluxos E2E obrigatórios
 
@@ -530,7 +512,6 @@ O E2E pode ser executado separadamente no início por depender da página extern
 - **Restaurar página** devolve texto, atributos e estilos aos valores capturados.
 - Os controles nativos do Cifra Club continuam funcionando.
 - A impressão reflete as alterações visíveis.
-- Reabrir a página reaplica somente preferências globais seguras.
 - Typecheck, lint, testes e build passam.
 
 ## 12. Entregas
@@ -552,7 +533,6 @@ O E2E pode ser executado separadamente no início por depender da página extern
 
 ### Etapa 3 — Qualidade e distribuição
 
-- Persistir preferências globais.
 - Cobrir os testes obrigatórios.
 - Validar acessibilidade e impressão.
 - Revisar manifesto e permissões.
@@ -566,7 +546,7 @@ O E2E pode ser executado separadamente no início por depender da página extern
 4. Aceitar manutenção periódica do adaptador.
 5. Manter seletores fora da interface.
 6. Usar funções e `Map` para restauração, sem hierarquia de comandos.
-7. Persistir somente preferências globais no MVP.
+7. Manter todo estado limitado à sessão atual da página.
 8. Não duplicar controles que o Cifra Club já oferece.
 9. Não adicionar backend, service worker ou renderizador próprio.
 10. Priorizar o fluxo editar → revisar → imprimir.
@@ -575,5 +555,4 @@ O E2E pode ser executado separadamente no início por depender da página extern
 
 - [WXT — Content scripts e Shadow Root UI](https://wxt.dev/guide/essentials/content-scripts.html)
 - [Chrome — Content scripts](https://developer.chrome.com/docs/extensions/develop/concepts/content-scripts)
-- [Chrome — Storage API](https://developer.chrome.com/docs/extensions/reference/api/storage)
 - [Chrome — Manifest V3](https://developer.chrome.com/docs/extensions/mv3/manifest)

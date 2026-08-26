@@ -70,9 +70,9 @@ colunas e diagramas. Ainda assim, não há controles do CifraInk ativos nesta fa
 necessidade de observação contínua.
 
 Nenhum listener ou `MutationObserver` será adicionado agora. Depois das fases 5 e 6, os mesmos
-cenários devem ser repetidos com edições e preferências ativas. A implementação deve primeiro tentar
-reconsultas explícitas por `CifraClubPage` e reaplicar somente o estado perdido. Um observador só será
-aceito se essa estratégia não for suficiente.
+cenários devem ser repetidos com edições e controles do CifraInk ativos. A implementação deve
+primeiro tentar reconsultas explícitas por `CifraClubPage` e reaplicar somente o estado perdido. Um
+observador só será aceito se essa estratégia não for suficiente.
 
 ## Como atualizar esta baseline
 

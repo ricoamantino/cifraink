@@ -33,7 +33,6 @@ O CifraInk é uma extensão Chrome Manifest V3 que adiciona ferramentas de ediç
 - Centralize seletores do Cifra Club em `src/cifraclub/selectors.ts`.
 - Centralize consultas semânticas ao DOM em `src/cifraclub/page.ts`.
 - Centralize alterações reversíveis em `src/dom/mutations.ts`.
-- Centralize preferências em `src/preferences/`.
 - Monte a interface em Shadow DOM.
 - Mantenha o DOM do Cifra Club como fonte de verdade do documento.
 
@@ -53,14 +52,12 @@ O CifraInk é uma extensão Chrome Manifest V3 que adiciona ferramentas de ediç
 - Não adicione `MutationObserver` antes de demonstrar sua necessidade em teste real.
 - Se um observador for necessário, restrinja a raiz, aplique debounce, desconecte durante mutações próprias e teste contra ciclos.
 
-## Estado e persistência
+## Estado da sessão
 
-- O MVP salva somente preferências globais seguras.
-- Não persista letras, acordes ou conteúdo editado por música no MVP.
-- Valide manualmente o pequeno objeto salvo e aplique valores padrão para campos ausentes ou inválidos.
-- Versione o formato de preferências desde a primeira versão.
-- Não use local storage da página; use WXT Storage ou `chrome.storage.local`.
-- Não adicione Zustand, Redux, Immer, Zod ou IndexedDB sem decisão registrada.
+- Mantenha estado do painel, controles, letras, acordes e conteúdo editado somente na memória da sessão.
+- Inicialize cada carregamento a partir do DOM atual da página.
+- Não grave dados em mecanismos da página ou da extensão.
+- Não adicione Zustand, Redux, Immer ou Zod sem decisão registrada.
 
 ## Interface
 
@@ -74,10 +71,10 @@ O CifraInk é uma extensão Chrome Manifest V3 que adiciona ferramentas de ediç
 
 ## Segurança e privacidade
 
-- Solicite apenas `storage` e o host permission estritamente necessário.
+- Não solicite permissões explícitas; limite o acesso ao match estático da página suportada.
 - Não use `tabs`, `activeTab`, `scripting`, código remoto ou `eval` no MVP.
 - Execute no mundo isolado padrão do content script.
-- Não leia cookies, dados de conta, histórico ou armazenamento do Cifra Club.
+- Não leia cookies, dados de conta ou histórico do Cifra Club.
 - Não envie conteúdo, telemetria ou identificadores para servidores.
 - Não substitua nem intercepte o fluxo nativo de impressão.
 

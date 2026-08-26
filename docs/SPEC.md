@@ -170,7 +170,8 @@ limpeza observável e elementos desconectados; `pnpm check` e `pnpm build` concl
 - [x] Não solicitar `tabs`, `activeTab` ou `scripting`.
 
 Validação de 2026-08-25: contrato-fonte e manifesto MV3 gerado aprovados; content script estático,
-mundo isolado, match restrito e permissão exclusiva `storage`; `pnpm check` e `pnpm build` concluídos.
+mundo isolado, match restrito e ausência de permissões explícitas; `pnpm check` e `pnpm build`
+concluídos.
 
 ### 4.2 Inicialização
 
@@ -198,7 +199,7 @@ concluídos.
 Validação de 2026-08-25: baseline real registrada em `docs/DOM_REACTIVITY.md`; tamanho do texto,
 colunas, tom e posição dos diagramas exercitados e restaurados; raiz e cabeçalho permaneceram
 estáveis, enquanto páginas, acordes ou diagramas foram recriados conforme o controle. A integração
-reativa foi transferida para a fase 8, depois dos recursos do MVP.
+reativa foi transferida para a fase 7, depois dos recursos do MVP.
 
 ## 5. Painel do CifraInk
 
@@ -259,9 +260,9 @@ recarregamento da extensão no Chrome.
 
 Validação de 2026-08-25: compatibilidade derivada das propriedades, estado recolhido preservado em
 rerender, nova montagem aberta e restauração independente do estado visual cobertos por testes. A
-sincronização inicial dos controles permanece na fase 6, a persistência na fase 7 e a revalidação
-após ações nativas na fase 8. Foram aprovados os testes isolados do painel e ciclo de vida, 69 testes
-em `pnpm check`, `pnpm build` e `git diff --check`.
+sincronização inicial dos controles permanece na fase 6 e a revalidação após ações nativas na fase 7.
+Foram aprovados os testes isolados do painel e ciclo de vida, 69 testes em `pnpm check`, `pnpm build`
+e `git diff --check`.
 
 ### 5.4 Integração visual nativa
 
@@ -315,61 +316,41 @@ reversível de `display`, possui teste dedicado e aguarda revalidação após re
 Validação automatizada de 2026-08-25: múltiplos blocos, ausência de conteúdo, atributos anteriores,
 `plaintext-only`, captura estrutural única, restauração seletiva e integral, referências preservadas
 quando não há edição, elementos desconectados e integração do painel cobertos. Foram aprovados 101
-testes em `pnpm check`, `pnpm build`, manifesto MV3 com permissão exclusiva `storage` e
+testes em `pnpm check`, `pnpm build`, manifesto MV3 sem permissões explícitas e
 `git diff --check`. No smoke real de 2026-08-25, os quatro blocos receberam `plaintext-only` sem
 alterar fonte ou `white-space`; undo/redo nativo, desativação, reativação e restauração estrutural
 foram aprovados. O marcador temporário foi removido e a página terminou no estado original.
 
 ### 6.3 Diagramas
 
-- [ ] Listar diagramas encontrados pelo nome visível.
-- [ ] Mostrar ou ocultar cada diagrama.
-- [ ] Restaurar cada diagrama ao estado original.
-- [ ] Tratar nomes repetidos sem usar o texto como ID único.
-- [ ] Tratar ausência total de diagramas sem erro.
-- [ ] Não duplicar o controle nativo de visibilidade da seção.
-- [ ] Exibir a lista individual em seletor lateral rolável, com contagem de itens visíveis.
+- [x] Listar diagramas encontrados pelo nome visível.
+- [x] Mostrar ou ocultar cada diagrama.
+- [x] Restaurar cada diagrama ao estado original.
+- [x] Tratar nomes repetidos sem usar o texto como ID único.
+- [x] Tratar ausência total de diagramas sem erro.
+- [x] Não duplicar o controle nativo de visibilidade da seção.
+- [x] Exibir a lista individual em seletor lateral rolável, com contagem de itens visíveis.
+
+Validação automatizada de 2026-08-26: leitura semântica, fallback de nome, desambiguação de nomes
+repetidos, ações por índice, ocultação do item estrutural, ausência total, restauração exata e fluxo
+integrado pelo painel estão cobertos. A interface não oferece visibilidade da seção completa nem
+compactação e apresenta a contagem de itens visíveis em seletor lateral rolável.
 
 ### 6.4 Integração com impressão
 
-- [ ] Confirmar que o painel não aparece em `@media print`.
-- [ ] Confirmar que o botão nativo de impressão continua funcionando.
-- [ ] Confirmar que as alterações visíveis aparecem na impressão/PDF.
-- [ ] Confirmar no PDF que a edição de conteúdo não introduz indicadores visuais.
-- [ ] Confirmar que restaurar antes de imprimir devolve o resultado original.
-- [ ] Não interceptar, substituir ou disparar automaticamente a impressão.
+- [x] Confirmar que o painel não aparece em `@media print`.
+- [x] Confirmar que o botão nativo de impressão continua funcionando.
+- [x] Confirmar que as alterações visíveis aparecem na impressão/PDF.
+- [x] Confirmar no PDF que a edição de conteúdo não introduz indicadores visuais.
+- [x] Confirmar que restaurar antes de imprimir devolve o resultado original.
+- [x] Não interceptar, substituir ou disparar automaticamente a impressão.
 
-## 7. Preferências globais
+Validação manual informada pelo mantenedor em 2026-08-26: painel ausente na impressão, fluxo nativo
+preservado, alterações refletidas no PDF sem indicadores de edição e restauração anterior à impressão
+aprovados. A auditoria do código confirma que o CifraInk apenas oculta sua interface em `@media print`
+e não registra listeners de impressão nem chama `window.print()`.
 
-### 7.1 Modelo e armazenamento
-
-- [ ] Criar tipo versionado de preferências.
-- [ ] Definir valores padrão.
-- [ ] Implementar validação manual do objeto armazenado.
-- [ ] Ler preferências via WXT Storage.
-- [ ] Salvar painel aberto/recolhido.
-- [ ] Salvar preferência de cabeçalho compacto.
-- [ ] Salvar visibilidades padrão suportadas.
-- [ ] Ignorar campos desconhecidos ou inválidos com segurança.
-- [ ] Não armazenar conteúdo da música ou HTML da página.
-
-### 7.2 Aplicação
-
-- [ ] Aplicar preferências somente após inspeção compatível.
-- [ ] Não aplicar preferência de um recurso ausente.
-- [ ] Capturar o estado original antes de aplicar uma preferência.
-- [ ] Permitir restaurar a página sem apagar preferências globais.
-- [ ] Oferecer ação separada para restaurar preferências padrão, se necessária.
-
-### 7.3 Testes
-
-- [ ] Testar ausência de preferências salvas.
-- [ ] Testar preferências válidas.
-- [ ] Testar versão desconhecida.
-- [ ] Testar tipos e valores inválidos.
-- [ ] Testar que nenhum conteúdo musical é persistido.
-
-## 8. Robustez e compatibilidade
+## 7. Robustez e compatibilidade
 
 - [ ] Repetir a baseline nativa com edições e controles do CifraInk ativos.
 - [ ] Reconsultar alvos por `CifraClubPage` após mudanças nativas relevantes.
@@ -391,9 +372,9 @@ foram aprovados. O marcador temporário foi removido e a página terminou no est
 - [ ] Validar que nenhuma alteração permanece após desmontagem/restauração.
 - [ ] Documentar procedimento de atualização dos seletores.
 
-## 9. E2E e revisão visual
+## 8. E2E e revisão visual
 
-### 9.1 Automação
+### 8.1 Automação
 
 - [ ] Configurar Playwright para carregar a extensão no Chromium.
 - [ ] Criar fluxo E2E de inicialização e painel único.
@@ -402,7 +383,7 @@ foram aprovados. O marcador temporário foi removido e a página terminou no est
 - [ ] Criar fluxo E2E de restauração completa.
 - [ ] Criar fluxo E2E com controles nativos de texto e colunas.
 
-### 9.2 Verificação visual
+### 8.2 Verificação visual
 
 - [ ] Revisar painel aberto e recolhido em viewport comum.
 - [ ] Comparar lado a lado o painel do CifraInk e os controles nativos da página.
@@ -414,7 +395,7 @@ foram aprovados. O marcador temporário foi removido e a página terminou no est
 - [ ] Comparar screenshot antes, alterado e restaurado.
 - [ ] Confirmar ausência do painel e indicadores de edição no PDF.
 
-### 9.3 Acessibilidade
+### 8.3 Acessibilidade
 
 - [ ] Percorrer todo o painel somente com teclado.
 - [ ] Confirmar associação entre labels e controles.
@@ -422,7 +403,7 @@ foram aprovados. O marcador temporário foi removido e a página terminou no est
 - [ ] Confirmar nomes acessíveis para botões sem texto visível.
 - [ ] Confirmar contraste e foco visível.
 
-## 10. Segurança, privacidade e permissões
+## 9. Segurança, privacidade e permissões
 
 - [ ] Revisar manifesto final e justificar cada permissão.
 - [ ] Confirmar ausência de `tabs`, `activeTab` e `scripting`.
@@ -433,7 +414,7 @@ foram aprovados. O marcador temporário foi removido e a página terminou no est
 - [ ] Criar uma declaração curta de privacidade coerente com o comportamento real.
 - [ ] Revisar dependências e licenças antes da distribuição.
 
-## 11. Documentação e distribuição
+## 10. Documentação e distribuição
 
 - [ ] Criar `README.md` com objetivo, recursos e instalação para desenvolvimento.
 - [ ] Documentar comandos e fluxo de testes.
@@ -449,7 +430,7 @@ foram aprovados. O marcador temporário foi removido e a página terminou no est
 - [ ] Preparar textos e imagens para a Chrome Web Store.
 - [ ] Registrar procedimento de release e atualização rápida de compatibilidade.
 
-## 12. Gate de conclusão do MVP
+## 11. Gate de conclusão do MVP
 
 - [ ] Todos os critérios de aceite de `docs/SCOPE.md` estão comprovados.
 - [ ] `pnpm check` passa em ambiente limpo.
@@ -462,11 +443,10 @@ foram aprovados. O marcador temporário foi removido e a página terminou no est
 - [ ] `README.md`, `AGENTS.md`, `docs/SCOPE.md` e `docs/SPEC.md` refletem o produto entregue.
 - [ ] O pacote instalável foi testado em um perfil limpo.
 
-## 13. Backlog pós-MVP
+## 12. Backlog pós-MVP
 
 ### Funções preservadas do legado
 
-- [ ] Avaliar persistência de rascunhos por música.
 - [ ] Avaliar renomear acordes nos diagramas.
 - [ ] Avaliar anotações nos diagramas.
 - [ ] Avaliar mostrar ou ocultar posições internas do acorde.
