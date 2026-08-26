@@ -223,14 +223,15 @@ reativa foi transferida para a fase 7, depois dos recursos do MVP.
 - [x] Implementar estados coerentes de hover, foco, pressionado e desabilitado.
 - [x] Garantir foco visível e navegação por teclado sem divergir da linguagem visual adotada.
 - [x] Garantir contraste adequado dos controles.
-- [ ] Executar smoke visual da montagem inline e do fallback responsivo no Chrome.
+- [x] Executar smoke visual da montagem inline e do fallback responsivo no Chrome.
 - [x] Tornar o ícone do painel acessível ao content script no manifesto gerado.
 - [x] Preservar os cliques do painel nas montagens inline e flutuante.
 
 Validação automatizada de 2026-08-25: montagem inline no agrupador `aside > div`, fallback overlay,
 painel aberto e recolhido, marca oficial, estados de compatibilidade e atributos acessíveis cobertos;
 CSS isolado gerado sem entrada `css` no content script do manifesto; 67 testes, `pnpm check` e
-`pnpm build` aprovados. O smoke da nova montagem permanece pendente.
+`pnpm build` aprovados. Smoke concluído no Chrome em 2026-08-26: montagem inline em viewport comum e
+fallback flutuante iniciado diretamente em 360 px, sem overflow horizontal ou perda de interação.
 
 ### 5.2 Componentes pequenos
 
@@ -266,18 +267,35 @@ e `git diff --check`.
 
 ### 5.4 Integração visual nativa
 
-- [ ] Organizar os controles em dois blocos sem títulos visíveis, preservando regiões nomeadas.
-- [ ] Padronizar dimensões, densidade, separadores, labels, valores e switches conforme a gramática
+- [x] Organizar os controles em dois blocos sem títulos visíveis, preservando regiões nomeadas.
+- [x] Padronizar dimensões, densidade, separadores, labels, valores e switches conforme a gramática
   visual observada nos controles nativos.
-- [ ] Transformar título, artista e compositor em linhas compactas com editores laterais.
-- [ ] Transformar a lista individual de diagramas em seletor lateral rolável com contagem visível.
-- [ ] Usar Popover API e CSS Anchor Positioning com abertura exclusiva, light dismiss, Escape,
+- [x] Transformar título, artista e compositor em linhas compactas com editores laterais.
+- [x] Transformar a lista individual de diagramas em seletor lateral rolável com contagem visível.
+- [x] Usar Popover API e CSS Anchor Positioning com abertura exclusiva, light dismiss, Escape,
   gestão de foco e fallback responsivo.
-- [ ] Integrar o status ao cabeçalho, exibindo aviso textual somente para estados problemáticos.
-- [ ] Aplicar os Hugeicons semânticos aprovados, sem reutilizar o sprite remoto do site.
-- [ ] Fechar popovers durante restauração e recolhimento do painel.
-- [ ] Revalidar painel, ciclo de vida, restauração e ausência de regressões no manifesto.
-- [ ] Executar smoke no Chrome em montagem inline, viewport de 360 px e impressão.
+- [x] Integrar o status ao cabeçalho, exibindo aviso textual somente para estados problemáticos.
+- [x] Aplicar os Hugeicons semânticos aprovados, sem reutilizar o sprite remoto do site.
+- [x] Fechar popovers durante restauração e recolhimento do painel.
+- [x] Revalidar painel, ciclo de vida, restauração e ausência de regressões no manifesto.
+- [x] Executar smoke no Chrome em montagem inline, viewport de 360 px e impressão.
+
+Auditoria de 2026-08-26: estrutura semântica, composição em dois blocos, linhas compactas, editores,
+seletor rolável de diagramas, status, Hugeicons e fechamento dos popovers foram confirmados no código
+e nos testes. O smoke no Chrome confirmou montagem inline, abertura exclusiva, fechamento por Escape,
+foco inicial, scroll interno, recolhimento e restauração visual do painel. A auditoria identificou e
+corrigiu o retorno de foco ao acionador após Escape, com teste de regressão. Foram aprovados 118 testes,
+`pnpm check`, `pnpm build`, manifesto MV3 sem permissões explícitas e `git diff --check`.
+
+Smoke concluído no Chrome em 2026-08-26: na inicialização direta em 360 px, o host foi montado no
+`body`, o painel ocupou 336 px com margens laterais de 12 px e não criou overflow horizontal. Editores
+e diagramas permaneceram dentro da viewport; foco inicial, retorno por Escape, light dismiss, scroll
+interno, recolhimento e reabertura foram aprovados. Em viewport comum, a montagem inline voltou ao
+agrupador nativo. A impressão foi aprovada na 6.4.
+
+O redimensionamento de uma página já aberta ainda faz o Cifra Club recriar o agrupador responsivo e
+remover o host inline. A recuperação após essa recriação permanece corretamente atribuída à fase 7 e
+não altera a aprovação do fallback durante a inicialização.
 
 ## 6. Funcionalidades do MVP
 

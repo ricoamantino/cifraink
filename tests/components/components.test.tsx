@@ -65,6 +65,30 @@ describe('componentes do painel', () => {
     expect(screen.getByRole('textbox', { hidden: true, name: 'Título' })).toHaveFocus();
   });
 
+  it('devolve o foco ao acionador quando o popover fecha por Escape', () => {
+    render(
+      <ControlRow icon={Heading01Icon} label="Título" popoverTarget="editor" value="Original">
+        <SidePopover id="editor" label="Editar título">
+          <TextField focusOnPopoverOpen label="Título" onChange={() => {}} value="Original" />
+        </SidePopover>
+      </ControlRow>,
+    );
+
+    const trigger = screen.getByRole('button', { name: 'TítuloOriginal' });
+    const popover = document.getElementById('editor');
+    const input = screen.getByRole('textbox', { hidden: true, name: 'Título' });
+    input.focus();
+    fireEvent.keyDown(input, { key: 'Escape' });
+
+    const toggleEvent = new Event('toggle', { bubbles: true });
+    Object.defineProperty(toggleEvent, 'newState', { value: 'closed' });
+    if (popover) {
+      fireEvent(popover, toggleEvent);
+    }
+
+    expect(trigger).toHaveFocus();
+  });
+
   it('reinicia o scroll e foca a primeira opção de um seletor rolável', () => {
     render(
       <SidePopover id="diagramas" label="Diagramas" scrollable>

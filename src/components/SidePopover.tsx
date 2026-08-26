@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useRef } from 'react';
 
 interface SidePopoverProps {
   readonly id: string;
@@ -8,6 +8,8 @@ interface SidePopoverProps {
 }
 
 export function SidePopover({ id, label, children, scrollable = false }: SidePopoverProps) {
+  const restoreFocusOnClose = useRef(false);
+
   return (
     <div
       aria-label={label}
@@ -15,8 +17,22 @@ export function SidePopover({ id, label, children, scrollable = false }: SidePop
       data-scrollable={scrollable}
       data-variant={scrollable ? 'selection' : 'editor'}
       id={id}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          restoreFocusOnClose.current = true;
+        }
+      }}
       onToggle={(event) => {
         const toggleEvent = event.nativeEvent as ToggleEvent;
+
+        if (toggleEvent.newState === 'closed' && restoreFocusOnClose.current) {
+          restoreFocusOnClose.current = false;
+          const root = event.currentTarget.getRootNode() as Document | ShadowRoot;
+          const trigger = [...root.querySelectorAll<HTMLElement>('[popovertarget]')].find(
+            (element) => element.getAttribute('popovertarget') === id,
+          );
+          trigger?.focus({ preventScroll: true });
+        }
 
         if (toggleEvent.newState === 'open') {
           if (scrollable) {
