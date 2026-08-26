@@ -1,4 +1,4 @@
-# CifraInk
+# <img src="public/icon/cifraink.svg" alt="" width="42" height="42"> CifraInk
 
 O CifraInk é uma extensão para Chrome que acrescenta ferramentas de edição à página de impressão do
 Cifra Club. Ela permite preparar uma cifra para ensaios, aulas, apresentações, impressão ou PDF sem
@@ -15,6 +15,20 @@ O CifraInk é um projeto independente e não é afiliado, associado nem endossad
 - visibilidade individual dos diagramas;
 - restauração exata do estado encontrado ao carregar a página;
 - painel acessível, recolhível e oculto durante a impressão.
+
+## Interface
+
+O painel acompanha as ferramentas da página de impressão sem aparecer no documento impresso.
+
+![Painel do CifraInk integrado à página de impressão](store-assets/screenshot-01-panel.png)
+
+### Edição do cabeçalho
+
+![Editor de compositor do CifraInk](store-assets/screenshot-02-editor.png)
+
+### Controle dos diagramas
+
+![Seletor individual de diagramas do CifraInk](store-assets/screenshot-03-diagrams.png)
 
 ## Compatibilidade
 
