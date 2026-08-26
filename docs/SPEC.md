@@ -321,6 +321,10 @@ integral cobertos. No smoke real, edição, compactação e restauração exata 
 do site manteve compositor e marca visíveis apesar de `hidden`. A correção usa uma sobrescrita
 reversível de `display`, possui teste dedicado e aguarda revalidação após recarregar a extensão.
 
+Correção de 2026-08-26: a releitura do compositor passou a remover apenas o prefixo estrutural e seu
+separador, preservando espaços finais e consecutivos durante a digitação. O caso possui teste de
+regressão e foi aprovado com 119 testes em `pnpm check` e `pnpm build`.
+
 ### 6.2 Conteúdo musical
 
 - [x] Ativar edição do contêiner musical reconhecido.

@@ -119,8 +119,14 @@ function readVisibilityControl(element: HTMLElement | null): HeaderVisibilityCon
 }
 
 function readComposerValue(text: string): string {
-  const normalizedText = text.replace(/\s+/g, ' ').trim();
-  return normalizedText.slice(cifraClubText.composerPrefix.length).trimStart();
+  const prefixIndex = text.indexOf(cifraClubText.composerPrefix);
+
+  if (prefixIndex === -1) {
+    return text;
+  }
+
+  const value = text.slice(prefixIndex + cifraClubText.composerPrefix.length);
+  return /^\s/.test(value) ? value.slice(1) : value;
 }
 
 function formatText(field: HeaderTextField, value: string): string {

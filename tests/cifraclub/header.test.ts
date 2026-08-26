@@ -113,6 +113,29 @@ describe('controles do cabeçalho', () => {
     expect(state.composer?.value).toBe('');
   });
 
+  it('preserva espaços digitados no compositor ao reler o DOM', () => {
+    const page = new CifraClubPage(parseHtml(fullPageHtml));
+    let state = readHeaderControlState(page);
+
+    state = applyHeaderControlAction(page, state, {
+      type: 'set-text',
+      field: 'composer',
+      value: 'Pessoa ',
+    });
+
+    expect(page.getComposer()?.textContent).toBe('Composição de: Pessoa ');
+    expect(state.composer?.value).toBe('Pessoa ');
+
+    state = applyHeaderControlAction(page, state, {
+      type: 'set-text',
+      field: 'composer',
+      value: 'Pessoa  Autora',
+    });
+
+    expect(page.getComposer()?.textContent).toBe('Composição de: Pessoa  Autora');
+    expect(state.composer?.value).toBe('Pessoa  Autora');
+  });
+
   it('altera visibilidades individualmente e reconsulta alvos substituídos', () => {
     const document = parseHtml(fullPageHtml);
     const page = new CifraClubPage(document);
