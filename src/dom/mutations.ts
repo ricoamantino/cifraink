@@ -17,12 +17,22 @@ export function setText(element: Element, value: string): void {
 export function setVisible(element: HTMLElement, visible: boolean): void {
   const hidden = !visible;
 
-  if (element.hasAttribute('hidden') === hidden) {
-    return;
+  if (element.hasAttribute('hidden') !== hidden) {
+    snapshots.captureAttribute(element, 'hidden');
+    element.toggleAttribute('hidden', hidden);
   }
 
-  snapshots.captureAttribute(element, 'hidden');
-  element.toggleAttribute('hidden', hidden);
+  if (hidden) {
+    if (
+      element.style.getPropertyValue('display') !== 'none' ||
+      element.style.getPropertyPriority('display') !== 'important'
+    ) {
+      snapshots.captureStyle(element, 'display');
+      element.style.setProperty('display', 'none', 'important');
+    }
+  } else {
+    restoreStyles(element, ['display']);
+  }
 }
 
 export function captureChildNodes(element: Element): void {

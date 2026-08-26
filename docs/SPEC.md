@@ -109,11 +109,11 @@ atualização após mudança do DOM e isolamento da raiz; `pnpm check` e `pnpm b
 - [x] Adaptar a localização de páginas sem ampliar consultas para fora da raiz de impressão.
 - [x] Corrigir a localização da seção de diagramas para a hierarquia atual.
 - [x] Cobrir a hierarquia real e a ausência do wrapper sem usar classes geradas.
-- [ ] Revalidar `inspect()` na página real antes de iniciar os controles do painel.
+- [x] Revalidar `inspect()` na página real antes de iniciar os controles do painel.
 
-Validação automatizada de 2026-08-25: wrapper intermediário e hierarquia direta cobertos, páginas e
-diagramas limitados à raiz reconhecida e fixtures sanitizadas atualizadas. A revalidação real depende
-somente do recarregamento manual da extensão instalada no Chrome.
+Validação de 2026-08-25: wrapper intermediário e hierarquia direta cobertos, páginas e diagramas
+limitados à raiz reconhecida e fixtures sanitizadas atualizadas. No Chrome, `inspect()` reconheceu a
+página real como compatível, com quatro blocos musicais e o painel montado inline.
 
 ## 3. Alterações reversíveis do DOM
 
@@ -279,12 +279,13 @@ em `pnpm check`, `pnpm build` e `git diff --check`.
 - [x] Implementar cabeçalho compacto com estilos próprios mínimos.
 - [x] Restaurar textos, visibilidade e estilos do cabeçalho.
 - [x] Ocultar controles de campos ausentes.
-- [ ] Executar smoke na página real após concluir o drift estrutural da 2.5 e recarregar a extensão.
+- [x] Executar smoke na página real após concluir o drift estrutural da 2.5 e recarregar a extensão.
 
 Validação automatizada de 2026-08-25: valores iniciais lidos do DOM, edição imediata, prefixo do
 compositor, visibilidade individual, marca e campos ausentes, compactação seletiva e restauração
-integral cobertos. O wrapper intermediário foi corrigido na seção 2.5; o smoke real aguarda apenas o
-recarregamento manual da extensão instalada no Chrome.
+integral cobertos. No smoke real, edição, compactação e restauração exata foram aprovadas, mas o CSS
+do site manteve compositor e marca visíveis apesar de `hidden`. A correção usa uma sobrescrita
+reversível de `display`, possui teste dedicado e aguarda revalidação após recarregar a extensão.
 
 ### 6.2 Conteúdo musical
 
@@ -292,7 +293,7 @@ recarregamento manual da extensão instalada no Chrome.
 - [x] Desativar edição restaurando o atributo anterior.
 - [x] Preservar `white-space`, fonte e quebras de linha.
 - [x] Impedir que o painel ou controles laterais se tornem editáveis.
-- [ ] Confirmar funcionamento do undo/redo nativo enquanto o conteúdo está focado.
+- [x] Confirmar funcionamento do undo/redo nativo enquanto o conteúdo está focado.
 - [x] Restaurar o texto e a estrutura originais da sessão.
 - [x] Não adicionar indicadores visuais ou estilos próprios de edição.
 
@@ -300,7 +301,9 @@ Validação automatizada de 2026-08-25: múltiplos blocos, ausência de conteúd
 `plaintext-only`, captura estrutural única, restauração seletiva e integral, referências preservadas
 quando não há edição, elementos desconectados e integração do painel cobertos. Foram aprovados 101
 testes em `pnpm check`, `pnpm build`, manifesto MV3 com permissão exclusiva `storage` e
-`git diff --check`. Undo/redo e o fluxo real permanecem pendentes do smoke no Chrome.
+`git diff --check`. No smoke real de 2026-08-25, os quatro blocos receberam `plaintext-only` sem
+alterar fonte ou `white-space`; undo/redo nativo, desativação, reativação e restauração estrutural
+foram aprovados. O marcador temporário foi removido e a página terminou no estado original.
 
 ### 6.3 Diagramas
 

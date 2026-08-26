@@ -36,13 +36,39 @@ describe('mutações reversíveis do DOM', () => {
     setVisible(hiddenElement, true);
 
     expect(visibleElement.hasAttribute('hidden')).toBe(true);
+    expect(visibleElement.style.getPropertyValue('display')).toBe('none');
+    expect(visibleElement.style.getPropertyPriority('display')).toBe('important');
     expect(hiddenElement.hasAttribute('hidden')).toBe(false);
 
     restore(visibleElement);
     restore(hiddenElement);
 
     expect(visibleElement.hasAttribute('hidden')).toBe(false);
+    expect(visibleElement.hasAttribute('style')).toBe(false);
     expect(hiddenElement.getAttribute('hidden')).toBe('until-found');
+  });
+
+  it('oculta mesmo quando o CSS da página sobrescreve o atributo hidden', () => {
+    const style = document.createElement('style');
+    const element = document.createElement('small');
+    style.textContent = 'small[hidden] { display: block !important; }';
+    document.head.append(style);
+    document.body.append(element);
+    const originalDisplay = getComputedStyle(element).display;
+
+    setVisible(element, false);
+
+    expect(element.hidden).toBe(true);
+    expect(getComputedStyle(element).display).toBe('none');
+
+    setVisible(element, true);
+
+    expect(element.hidden).toBe(false);
+    expect(getComputedStyle(element).display).toBe(originalDisplay);
+    expect(element.hasAttribute('style')).toBe(false);
+
+    element.remove();
+    style.remove();
   });
 
   it('restaura o atributo contenteditable anterior', () => {

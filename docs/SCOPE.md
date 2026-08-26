@@ -206,8 +206,10 @@ restore(element);
 restoreAll();
 ```
 
-`setVisible` usa o atributo `hidden`, preservando seu valor anterior sem presumir o `display` do
-elemento. `setStyles` recebe nomes de propriedades CSS, altera somente as propriedades declaradas e
+`setVisible` usa o atributo `hidden` e uma sobrescrita inline reversível de `display: none !important`,
+pois o CSS atual do site redefine a apresentação de alguns elementos marcados como ocultos. O valor
+anterior de `hidden`, a propriedade `display` e sua prioridade são preservados sem presumir o estilo
+original. `setStyles` recebe nomes de propriedades CSS, altera somente as propriedades declaradas e
 aceita `null` para removê-las.
 
 `restoreAttribute` e `restoreStyles` restauram somente os campos indicados e mantêm no snapshot os
