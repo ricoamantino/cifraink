@@ -34,9 +34,9 @@ A estrutura real possui atualmente um wrapper intermediário:
     section[data-size]
 ```
 
-As fixtures e o adaptador atuais esperam as páginas como filhas diretas da raiz. Por isso, a versão
-atual de `CifraClubPage` não encontra páginas nessa página real. A correção foi registrada na seção
-2.5 da SPEC e deve preservar o isolamento das consultas à raiz de impressão.
+As fixtures e o adaptador representam essa hierarquia desde a correção da seção 2.5. O adaptador
+aceita o wrapper intermediário observado e também mantém compatibilidade com páginas diretamente
+sob a raiz, sempre limitando as consultas à área de impressão reconhecida.
 
 ## Resultados
 

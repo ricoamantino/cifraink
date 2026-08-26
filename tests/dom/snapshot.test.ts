@@ -24,6 +24,29 @@ describe('SnapshotRegistry', () => {
     expect(snapshot.attributes).toEqual(new Map());
     expect(snapshot.styles).toEqual(new Map());
     expect(snapshot).not.toHaveProperty('hadStyleAttribute');
+    expect(snapshot).not.toHaveProperty('childNodes');
+  });
+
+  it('captura os nós filhos somente na primeira solicitação', () => {
+    const element = document.createElement('pre');
+    const chord = document.createElement('b');
+    const registry = new SnapshotRegistry();
+    chord.dataset.chordName = 'C7';
+    chord.textContent = 'C7';
+    element.append('Linha ', chord);
+
+    registry.captureChildNodes(element);
+    chord.textContent = 'Dm7';
+    element.append(' alterada');
+    registry.captureChildNodes(element);
+
+    const childNodes = requireSnapshot(registry, element).childNodes ?? [];
+    expect(childNodes).toHaveLength(2);
+    expect(childNodes[0]?.textContent).toBe('Linha ');
+    expect(childNodes[1]).not.toBe(chord);
+    expect(childNodes[1]?.isEqualNode(chord)).toBe(false);
+    expect((childNodes[1] as HTMLElement).dataset.chordName).toBe('C7');
+    expect(childNodes[1]?.textContent).toBe('C7');
   });
 
   it('distingue atributos existentes, vazios e ausentes', () => {
@@ -79,12 +102,14 @@ describe('SnapshotRegistry', () => {
     element.style.setProperty('display', 'block');
 
     registry.captureText(element);
+    registry.captureChildNodes(element);
     registry.captureAttribute(element, 'contenteditable');
     registry.captureStyle(element, 'display');
 
     expect(registry.size).toBe(1);
     expect(requireSnapshot(registry, element)).toMatchObject({
       textContent: 'Texto',
+      childNodes: expect.any(Array),
       hadStyleAttribute: true,
       attributes: new Map([['contenteditable', 'false']]),
       styles: new Map([['display', { existed: true, value: 'block', priority: '' }]]),

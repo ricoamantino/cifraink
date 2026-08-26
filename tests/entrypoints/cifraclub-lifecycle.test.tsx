@@ -339,6 +339,55 @@ describe('inicialização do CifraInk', () => {
     expect(getPanelControl<HTMLInputElement>('Cabeçalho compacto')).not.toBeChecked();
   });
 
+  it('ativa, desativa e restaura a edição estrutural do conteúdo pela interface', async () => {
+    loadHtml(fullPageHtml);
+    const { context } = createContext();
+
+    await act(async () => {
+      await initializeCifraInk(context);
+    });
+
+    const blocks = Array.from(document.querySelectorAll<HTMLElement>('pre'));
+    const firstBlock = blocks[0];
+
+    if (!firstBlock) {
+      throw new Error('Fixture sem conteúdo musical');
+    }
+
+    const original = firstBlock.cloneNode(true);
+    const editToggle = getPanelControl<HTMLInputElement>('Editar conteúdo');
+
+    await act(async () => {
+      editToggle.click();
+    });
+
+    expect(
+      blocks.every((block) => block.getAttribute('contenteditable') === 'plaintext-only'),
+    ).toBe(true);
+    expect(document.querySelector('aside pre')).toBeNull();
+
+    firstBlock.querySelector('span')?.remove();
+    firstBlock.append(document.createElement('span'));
+
+    await act(async () => {
+      getPanelControl<HTMLInputElement>('Editar conteúdo').click();
+    });
+
+    expect(blocks.every((block) => !block.hasAttribute('contenteditable'))).toBe(true);
+    expect(firstBlock.isEqualNode(original)).toBe(false);
+
+    await act(async () => {
+      getPanelControl<HTMLInputElement>('Editar conteúdo').click();
+      getPanelHost()
+        .shadowRoot?.querySelector<HTMLButtonElement>('.cifraink-restore-button')
+        ?.click();
+    });
+
+    expect(firstBlock.isEqualNode(original)).toBe(true);
+    expect(firstBlock.hasAttribute('contenteditable')).toBe(false);
+    expect(getPanelControl<HTMLInputElement>('Editar conteúdo')).not.toBeChecked();
+  });
+
   it('omite apenas o controle do compositor quando ele não existe', async () => {
     loadHtml(missingComposerHtml);
     const { context } = createContext();

@@ -9,7 +9,8 @@ Elas não são cópias da página, não preservam aparência visual e não cont�
   [Ah, Jesus / Coração Igual Ao Teu](https://www.cifraclub.com.br/julliany-souza/ah-jesus-coracao-igual-ao-teu-2-2/imprimir.html)
 - Última observação estrutural: 2026-08-25.
 
-A estrutura preservada inclui páginas em `section`, cabeçalho semântico, marca em
+A estrutura preservada inclui o wrapper intermediário direto da raiz de impressão, páginas em
+`section`, cabeçalho semântico, marca em
 `header > span > i`, conteúdo em `pre`, acordes em `b[data-chord-name]`, diagramas com
 `data-chord-mode` e controles nativos agrupados estruturalmente em `aside > div`.
 

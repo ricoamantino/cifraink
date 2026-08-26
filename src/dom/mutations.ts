@@ -1,6 +1,7 @@
 import { type Snapshot, SnapshotRegistry, type StyleSnapshot } from './snapshot';
 
 export type StyleChanges = Readonly<Record<string, string | null>>;
+export type EditableValue = boolean | 'plaintext-only';
 
 const snapshots = new SnapshotRegistry();
 
@@ -24,8 +25,12 @@ export function setVisible(element: HTMLElement, visible: boolean): void {
   element.toggleAttribute('hidden', hidden);
 }
 
-export function setEditable(element: HTMLElement, editable: boolean): void {
-  const value = String(editable);
+export function captureChildNodes(element: Element): void {
+  snapshots.captureChildNodes(element);
+}
+
+export function setEditable(element: HTMLElement, editable: EditableValue): void {
+  const value = typeof editable === 'boolean' ? String(editable) : editable;
 
   if (element.getAttribute('contenteditable') === value) {
     return;
@@ -33,6 +38,25 @@ export function setEditable(element: HTMLElement, editable: boolean): void {
 
   snapshots.captureAttribute(element, 'contenteditable');
   element.setAttribute('contenteditable', value);
+}
+
+export function restoreAttribute(element: Element, name: string): boolean {
+  const snapshot = snapshots.get(element);
+  const value = snapshot?.attributes.get(name);
+
+  if (!snapshot?.attributes.has(name)) {
+    return false;
+  }
+
+  if (value === null) {
+    element.removeAttribute(name);
+  } else {
+    element.setAttribute(name, value ?? '');
+  }
+
+  snapshot.attributes.delete(name);
+  deleteSnapshotIfEmpty(element, snapshot);
+  return true;
 }
 
 export function setStyles(element: HTMLElement, styles: StyleChanges): void {
@@ -69,7 +93,7 @@ export function restore(element: Element): void {
     return;
   }
 
-  restoreText(element, snapshot);
+  restoreContent(element, snapshot);
   restoreAttributes(element, snapshot);
   restoreCapturedStyles(element as HTMLElement, snapshot);
   snapshots.delete(element);
@@ -95,13 +119,7 @@ export function restoreStyles(element: HTMLElement, properties: readonly string[
 
   removeEmptyStyleAttribute(element, snapshot);
 
-  if (
-    !('textContent' in snapshot) &&
-    snapshot.attributes.size === 0 &&
-    snapshot.styles.size === 0
-  ) {
-    snapshots.delete(element);
-  }
+  deleteSnapshotIfEmpty(element, snapshot);
 }
 
 export function restoreAll(): void {
@@ -112,9 +130,33 @@ export function restoreAll(): void {
   snapshots.clear();
 }
 
-function restoreText(element: Element, snapshot: Snapshot): void {
+function restoreContent(element: Element, snapshot: Snapshot): void {
+  if ('childNodes' in snapshot) {
+    const originalChildNodes = snapshot.childNodes ?? [];
+    const currentChildNodes = Array.from(element.childNodes);
+    const unchanged =
+      currentChildNodes.length === originalChildNodes.length &&
+      currentChildNodes.every((node, index) => node.isEqualNode(originalChildNodes[index] ?? null));
+
+    if (!unchanged) {
+      element.replaceChildren(...originalChildNodes.map((node) => node.cloneNode(true)));
+    }
+    return;
+  }
+
   if ('textContent' in snapshot) {
     element.textContent = snapshot.textContent ?? null;
+  }
+}
+
+function deleteSnapshotIfEmpty(element: Element, snapshot: Snapshot): void {
+  if (
+    !('textContent' in snapshot) &&
+    !('childNodes' in snapshot) &&
+    snapshot.attributes.size === 0 &&
+    snapshot.styles.size === 0
+  ) {
+    snapshots.delete(element);
   }
 }
 

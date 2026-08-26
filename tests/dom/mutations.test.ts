@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import {
+  captureChildNodes,
   restore,
   restoreAll,
+  restoreAttribute,
   restoreStyles,
   setEditable,
   setStyles,
@@ -59,6 +61,72 @@ describe('mutações reversíveis do DOM', () => {
 
     expect(plainElement.hasAttribute('contenteditable')).toBe(false);
     expect(editableElement.getAttribute('contenteditable')).toBe('plaintext-only');
+  });
+
+  it('aplica plaintext-only e restaura somente contenteditable quando solicitado', () => {
+    const element = document.createElement('pre');
+    element.setAttribute('data-state', 'original');
+
+    captureChildNodes(element);
+    setEditable(element, 'plaintext-only');
+    element.setAttribute('data-state', 'external');
+
+    expect(element.getAttribute('contenteditable')).toBe('plaintext-only');
+    expect(restoreAttribute(element, 'contenteditable')).toBe(true);
+    expect(restoreAttribute(element, 'contenteditable')).toBe(false);
+    expect(element.hasAttribute('contenteditable')).toBe(false);
+    expect(element.getAttribute('data-state')).toBe('external');
+  });
+
+  it('restaura a estrutura dos filhos sem serializar o elemento raiz', () => {
+    const element = document.createElement('pre');
+    const chord = document.createElement('b');
+    const line = document.createElement('span');
+    chord.dataset.chordName = 'C7';
+    chord.textContent = 'C7';
+    line.dataset.line = 'verse';
+    line.append('Linha ', chord);
+    element.append(line);
+    const rootReference = element;
+
+    captureChildNodes(element);
+    line.remove();
+    const changed = document.createElement('span');
+    changed.dataset.line = 'changed';
+    changed.textContent = 'Conteúdo alterado';
+    element.append(changed);
+    restore(element);
+
+    expect(element).toBe(rootReference);
+    expect(element.querySelector('span')).toHaveAttribute('data-line', 'verse');
+    expect(element.querySelector('b')).toHaveAttribute('data-chord-name', 'C7');
+    expect(element.textContent).toBe('Linha C7');
+  });
+
+  it('preserva referências dos descendentes quando o conteúdo não mudou', () => {
+    const element = document.createElement('pre');
+    const chord = document.createElement('b');
+    chord.textContent = 'C7';
+    element.append(chord);
+
+    captureChildNodes(element);
+    restore(element);
+
+    expect(element.firstChild).toBe(chord);
+  });
+
+  it('restaura filhos de elemento desconectado e consome a captura', () => {
+    const element = document.createElement('pre');
+    element.append('Original');
+    captureChildNodes(element);
+    element.replaceChildren('Alterado');
+
+    restoreAll();
+    element.replaceChildren('Mudança posterior');
+    restoreAll();
+
+    expect(element.isConnected).toBe(false);
+    expect(element.textContent).toBe('Mudança posterior');
   });
 
   it('restaura somente os estilos alterados e suas prioridades', () => {

@@ -3,14 +3,18 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { useState } from 'react';
 import { browser } from 'wxt/browser';
 import type { PageCapabilities } from '../../src/cifraclub/capabilities';
+import type { ContentControlAction, ContentControlState } from '../../src/cifraclub/content';
 import type { HeaderControlAction, HeaderControlState } from '../../src/cifraclub/header';
 import { RestoreButton } from '../../src/components/RestoreButton';
 import { Status } from '../../src/components/Status';
+import { ContentSection } from './ContentSection';
 import { HeaderSection } from './HeaderSection';
 
 interface PanelProps {
   readonly capabilities: PageCapabilities;
+  readonly initialContent: ContentControlState;
   readonly initialHeader: HeaderControlState;
+  readonly onContentAction: (action: ContentControlAction) => ContentControlState;
   readonly onHeaderAction: (
     current: HeaderControlState,
     action: HeaderControlAction,
@@ -22,8 +26,16 @@ const panelContentId = 'cifraink-panel-content';
 const panelActionsId = 'cifraink-panel-actions';
 const iconUrl = browser.runtime.getURL('/icon/cifraink.svg');
 
-export function Panel({ capabilities, initialHeader, onHeaderAction, onRestore }: PanelProps) {
+export function Panel({
+  capabilities,
+  initialContent,
+  initialHeader,
+  onContentAction,
+  onHeaderAction,
+  onRestore,
+}: PanelProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const [content, setContent] = useState(initialContent);
   const [header, setHeader] = useState(initialHeader);
   const toggleLabel = collapsed ? 'Abrir painel' : 'Recolher painel';
 
@@ -33,6 +45,7 @@ export function Panel({ capabilities, initialHeader, onHeaderAction, onRestore }
 
   function handleRestore(): void {
     onRestore();
+    setContent(initialContent);
     setHeader(initialHeader);
   }
 
@@ -70,6 +83,10 @@ export function Panel({ capabilities, initialHeader, onHeaderAction, onRestore }
         <div className="cifraink-panel__content" hidden={collapsed} id={panelContentId}>
           <Status status={capabilities.status} />
           <HeaderSection onAction={handleHeaderAction} state={header} />
+          <ContentSection
+            onAction={(action) => setContent(onContentAction(action))}
+            state={content}
+          />
         </div>
       </div>
 

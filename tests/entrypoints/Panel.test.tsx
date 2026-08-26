@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { Panel } from '../../entrypoints/cifraclub.content/Panel';
 import type { PageCapabilities, PageCompatibility } from '../../src/cifraclub/capabilities';
+import type { ContentControlAction, ContentControlState } from '../../src/cifraclub/content';
 import type { HeaderControlAction, HeaderControlState } from '../../src/cifraclub/header';
 
 const compatibilityMessages = {
@@ -28,6 +29,16 @@ const emptyHeader = {
   compact: false,
   compactAvailable: false,
 } satisfies HeaderControlState;
+
+const availableContent = {
+  available: true,
+  editable: false,
+} satisfies ContentControlState;
+
+const unavailableContent = {
+  available: false,
+  editable: false,
+} satisfies ContentControlState;
 
 function createCapabilities(status: PageCompatibility): PageCapabilities {
   const available = status === 'compatible';
@@ -71,11 +82,18 @@ function panel(
     current: HeaderControlState,
     action: HeaderControlAction,
   ) => HeaderControlState = updateHeaderState,
+  initialContent: ContentControlState = availableContent,
+  onContentAction: (action: ContentControlAction) => ContentControlState = (action) => ({
+    available: true,
+    editable: action.editable,
+  }),
 ): ReactElement {
   return (
     <Panel
       capabilities={createCapabilities(status)}
+      initialContent={initialContent}
       initialHeader={initialHeader}
+      onContentAction={onContentAction}
       onHeaderAction={onHeaderAction}
       onRestore={onRestore}
     />
@@ -104,7 +122,8 @@ describe('painel do CifraInk', () => {
       'chrome-extension://test-extension-id/icon/cifraink.svg',
     );
     expect(screen.getByRole('region', { name: 'Cabeçalho' })).toBeVisible();
-    expect(screen.queryByRole('region', { name: /Conteúdo|Diagramas/ })).toBeNull();
+    expect(screen.getByRole('region', { name: 'Conteúdo' })).toBeVisible();
+    expect(screen.queryByRole('region', { name: 'Diagramas' })).toBeNull();
 
     const restoreButton = screen.getByRole('button', { name: 'Restaurar página' });
     expect(restoreButton).toBeEnabled();
@@ -176,6 +195,40 @@ describe('painel do CifraInk', () => {
     expect(screen.queryByRole('region', { name: 'Cabeçalho' })).toBeNull();
   });
 
+  it('controla a edição do conteúdo com explicação acessível', () => {
+    const onContentAction = vi.fn((action: ContentControlAction) => ({
+      available: true,
+      editable: action.editable,
+    }));
+    render(
+      panel(
+        'compatible',
+        completeHeader,
+        () => {},
+        updateHeaderState,
+        availableContent,
+        onContentAction,
+      ),
+    );
+
+    const toggle = screen.getByRole('switch', { name: 'Editar conteúdo' });
+    expect(toggle).not.toBeChecked();
+    expect(toggle).toHaveAccessibleDescription(
+      'Permite alterar letra e acordes diretamente na cifra.',
+    );
+
+    fireEvent.click(toggle);
+
+    expect(onContentAction).toHaveBeenCalledWith({ type: 'set-editable', editable: true });
+    expect(toggle).toBeChecked();
+  });
+
+  it('omite a seção Conteúdo quando não há blocos musicais', () => {
+    render(panel('incompatible', emptyHeader, () => {}, updateHeaderState, unavailableContent));
+
+    expect(screen.queryByRole('region', { name: 'Conteúdo' })).toBeNull();
+  });
+
   it('deriva a compatibilidade das propriedades sem perder o estado visual local', () => {
     const { rerender } = render(panel());
 
@@ -228,11 +281,13 @@ describe('painel do CifraInk', () => {
       target: { value: 'Alterado' },
     });
     fireEvent.click(screen.getByRole('switch', { name: 'Mostrar marca' }));
+    fireEvent.click(screen.getByRole('switch', { name: 'Editar conteúdo' }));
     fireEvent.click(screen.getByRole('button', { name: 'Restaurar página' }));
 
     expect(onRestore).toHaveBeenCalledOnce();
     expect(screen.getByRole('textbox', { name: 'Título' })).toHaveValue('Título original');
     expect(screen.getByRole('switch', { name: 'Mostrar marca' })).toBeChecked();
+    expect(screen.getByRole('switch', { name: 'Editar conteúdo' })).not.toBeChecked();
     expect(screen.getByRole('region', { name: 'CifraInk' })).toHaveAttribute(
       'data-collapsed',
       'false',

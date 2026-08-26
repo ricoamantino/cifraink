@@ -50,23 +50,20 @@ export class CifraClubPage {
   }
 
   getChordDiagramSection(): HTMLElement | null {
-    const printRoot = this.getPrintRoot();
     const firstDiagram = this.getChordDiagrams()[0];
 
-    if (!printRoot || !firstDiagram) {
+    if (!firstDiagram) {
       return null;
     }
 
     const section = firstDiagram.closest<HTMLElement>(cifraClubSelectors.page);
-    return section?.parentElement === printRoot ? section : null;
+    return section && this.getPages().includes(section) ? section : null;
   }
 
   getChordDiagrams(): HTMLElement[] {
-    const printRoot = this.getPrintRoot();
-
-    return printRoot
-      ? Array.from(printRoot.querySelectorAll<HTMLElement>(cifraClubSelectors.chordDiagram))
-      : [];
+    return this.getPages().flatMap((page) =>
+      Array.from(page.querySelectorAll<HTMLElement>(cifraClubSelectors.chordDiagram)),
+    );
   }
 
   getBrand(): HTMLElement | null {
@@ -105,8 +102,22 @@ export class CifraClubPage {
       return [];
     }
 
-    return Array.from(printRoot.children).filter((child): child is HTMLElement =>
-      child.matches(cifraClubSelectors.page),
+    const directChildren = Array.from(printRoot.children);
+    const directPages = directChildren.filter(
+      (child): child is HTMLElement =>
+        child instanceof HTMLElement && child.matches(cifraClubSelectors.page),
     );
+
+    if (directPages.length > 0) {
+      return directPages;
+    }
+
+    const wrapper = directChildren.length === 1 ? directChildren[0] : undefined;
+    return wrapper
+      ? Array.from(wrapper.children).filter(
+          (page): page is HTMLElement =>
+            page instanceof HTMLElement && page.matches(cifraClubSelectors.page),
+        )
+      : [];
   }
 }

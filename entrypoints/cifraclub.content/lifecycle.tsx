@@ -5,6 +5,11 @@ import {
   type ShadowRootContentScriptUi,
 } from 'wxt/utils/content-script-ui/shadow-root';
 import {
+  applyContentControlAction,
+  type ContentControlAction,
+  readContentControlState,
+} from '../../src/cifraclub/content';
+import {
   applyHeaderControlAction,
   type HeaderControlAction,
   type HeaderControlState,
@@ -39,6 +44,7 @@ async function mountPanel(ctx: ContentScriptContext): Promise<void> {
   try {
     const page = new CifraClubPage(document);
     const capabilities = page.inspect();
+    const initialContent = readContentControlState(page);
     const initialHeader = readHeaderControlState(page);
     const nativeControls = page.getNativeControls();
     const placement = nativeControls ? 'inline' : 'overlay';
@@ -53,7 +59,11 @@ async function mountPanel(ctx: ContentScriptContext): Promise<void> {
         reactRoot.render(
           <Panel
             capabilities={capabilities}
+            initialContent={initialContent}
             initialHeader={initialHeader}
+            onContentAction={(action: ContentControlAction) =>
+              applyContentControlAction(page, action)
+            }
             onHeaderAction={(current: HeaderControlState, action: HeaderControlAction) =>
               applyHeaderControlAction(page, current, action)
             }

@@ -105,11 +105,15 @@ atualização após mudança do DOM e isolamento da raiz; `pnpm check` e `pnpm b
 
 ### 2.5 Drift do wrapper de impressão
 
-- [ ] Atualizar as fixtures sanitizadas com o wrapper intermediário observado na página real.
-- [ ] Adaptar a localização de páginas sem ampliar consultas para fora da raiz de impressão.
-- [ ] Corrigir a localização da seção de diagramas para a hierarquia atual.
-- [ ] Cobrir a hierarquia real e a ausência do wrapper sem usar classes geradas.
+- [x] Atualizar as fixtures sanitizadas com o wrapper intermediário observado na página real.
+- [x] Adaptar a localização de páginas sem ampliar consultas para fora da raiz de impressão.
+- [x] Corrigir a localização da seção de diagramas para a hierarquia atual.
+- [x] Cobrir a hierarquia real e a ausência do wrapper sem usar classes geradas.
 - [ ] Revalidar `inspect()` na página real antes de iniciar os controles do painel.
+
+Validação automatizada de 2026-08-25: wrapper intermediário e hierarquia direta cobertos, páginas e
+diagramas limitados à raiz reconhecida e fixtures sanitizadas atualizadas. A revalidação real depende
+somente do recarregamento manual da extensão instalada no Chrome.
 
 ## 3. Alterações reversíveis do DOM
 
@@ -279,19 +283,24 @@ em `pnpm check`, `pnpm build` e `git diff --check`.
 
 Validação automatizada de 2026-08-25: valores iniciais lidos do DOM, edição imediata, prefixo do
 compositor, visibilidade individual, marca e campos ausentes, compactação seletiva e restauração
-integral cobertos. Foram aprovados 85 testes em `pnpm check`, `pnpm build`, manifesto MV3 com
-permissão exclusiva `storage` e `git diff --check`. O smoke real permanece bloqueado pelo wrapper
-intermediário já registrado na seção 2.5.
+integral cobertos. O wrapper intermediário foi corrigido na seção 2.5; o smoke real aguarda apenas o
+recarregamento manual da extensão instalada no Chrome.
 
 ### 6.2 Conteúdo musical
 
-- [ ] Ativar edição do contêiner musical reconhecido.
-- [ ] Desativar edição restaurando o atributo anterior.
-- [ ] Preservar `white-space`, fonte e quebras de linha.
-- [ ] Impedir que o painel ou controles laterais se tornem editáveis.
+- [x] Ativar edição do contêiner musical reconhecido.
+- [x] Desativar edição restaurando o atributo anterior.
+- [x] Preservar `white-space`, fonte e quebras de linha.
+- [x] Impedir que o painel ou controles laterais se tornem editáveis.
 - [ ] Confirmar funcionamento do undo/redo nativo enquanto o conteúdo está focado.
-- [ ] Restaurar o texto original da sessão.
-- [ ] Confirmar que imprimir não inclui indicadores visuais de edição.
+- [x] Restaurar o texto e a estrutura originais da sessão.
+- [x] Não adicionar indicadores visuais ou estilos próprios de edição.
+
+Validação automatizada de 2026-08-25: múltiplos blocos, ausência de conteúdo, atributos anteriores,
+`plaintext-only`, captura estrutural única, restauração seletiva e integral, referências preservadas
+quando não há edição, elementos desconectados e integração do painel cobertos. Foram aprovados 101
+testes em `pnpm check`, `pnpm build`, manifesto MV3 com permissão exclusiva `storage` e
+`git diff --check`. Undo/redo e o fluxo real permanecem pendentes do smoke no Chrome.
 
 ### 6.3 Diagramas
 
@@ -308,6 +317,7 @@ intermediário já registrado na seção 2.5.
 - [ ] Confirmar que o painel não aparece em `@media print`.
 - [ ] Confirmar que o botão nativo de impressão continua funcionando.
 - [ ] Confirmar que as alterações visíveis aparecem na impressão/PDF.
+- [ ] Confirmar no PDF que a edição de conteúdo não introduz indicadores visuais.
 - [ ] Confirmar que restaurar antes de imprimir devolve o resultado original.
 - [ ] Não interceptar, substituir ou disparar automaticamente a impressão.
 

@@ -63,7 +63,7 @@ O sucesso do MVP será medido pela confiabilidade desse fluxo, não pela quantid
 
 #### Conteúdo
 
-- Ativar e desativar edição do conteúdo principal com `contenteditable`.
+- Ativar e desativar edição do conteúdo principal com `contenteditable="plaintext-only"`.
 - Preservar espaços, quebras de linha e alinhamento entre acordes e letra.
 - Manter a edição restrita ao conteúdo musical identificado.
 - Restaurar o conteúdo original da sessão.
@@ -198,7 +198,9 @@ Um módulo funcional pequeno aplica e restaura alterações:
 setText(element, value);
 setVisible(element, visible);
 setEditable(element, editable);
+captureChildNodes(element);
 setStyles(element, styles);
+restoreAttribute(element, name);
 restoreStyles(element, properties);
 restore(element);
 restoreAll();
@@ -208,11 +210,15 @@ restoreAll();
 elemento. `setStyles` recebe nomes de propriedades CSS, altera somente as propriedades declaradas e
 aceita `null` para removê-las.
 
-`restoreStyles` restaura apenas as propriedades indicadas e mantém no snapshot textos, atributos e
-outros estilos ainda pendentes. Isso permite desligar modos visuais sem perder edições da mesma
-sessão.
+`restoreAttribute` e `restoreStyles` restauram somente os campos indicados e mantêm no snapshot os
+demais textos, atributos, filhos e outros estilos ainda pendentes. Isso permite desligar modos
+visuais sem perder edições da mesma sessão.
 
-O estado original é capturado em um `Map<Element, Snapshot>` na primeira alteração. O `Map` permite que `restoreAll()` percorra todos os alvos; ele deve ser limpo após a restauração ou desmontagem da extensão. Isso evita classes de comando, IDs artificiais e cópias completas do HTML.
+O estado original é capturado em um `Map<Element, Snapshot>` na primeira alteração. O `Map` permite
+que `restoreAll()` percorra todos os alvos; ele deve ser limpo após a restauração ou desmontagem da
+extensão. Texto, atributos e estilos guardam somente os valores alterados. Ao ativar a edição
+musical, os nós filhos de cada bloco reconhecido são clonados uma única vez, sem serialização, para
+restaurar marcações de acordes que o navegador possa modificar durante a edição.
 
 Regras:
 
@@ -254,12 +260,12 @@ O estado do painel é dividido por origem e só entra quando possui uso real:
 - capacidades são inspecionadas pelo `CifraClubPage` e recebidas como propriedades imutáveis;
 - aberto/recolhido é estado visual local e independente;
 - mensagens, nomes, ícones e visibilidades da interface são derivados, não duplicados em estado;
-- valores dos controles funcionais serão consultados do DOM na fase 6;
+- valores dos controles funcionais são inicializados e reconsultados a partir do DOM;
 - preferências globais só serão incorporadas após a persistência da fase 7.
 
-Enquanto aberto/recolhido for a única transição local, usar `useState`. Introduzir `useReducer` somente
-se transições compartilhadas futuras justificarem a complexidade. Não copiar propriedades para estado
-nem usar efeitos apenas para mantê-las sincronizadas.
+Usar `useState` para os grupos locais independentes. Introduzir `useReducer` somente se transições
+compartilhadas futuras justificarem a complexidade. Não copiar capacidades para estado nem usar
+efeitos apenas para mantê-las sincronizadas.
 
 Os controles do cabeçalho leem seu estado inicial pelo adaptador e aplicam cada ação em um alvo
 reconsultado. O compositor é apresentado sem o prefixo `Composição de:`, mas o prefixo permanece no
@@ -269,6 +275,13 @@ ocultado e recursos ausentes não geram controles.
 O modo compacto altera somente `gap` e `margin-bottom` do cabeçalho, `font-size` e `line-height` de
 título e artista, e `margin-top` do compositor. Desativá-lo restaura essas propriedades capturadas,
 sem presumir os estilos do site e sem restaurar antecipadamente texto ou visibilidade.
+
+O controle de conteúdo reconsulta todos os blocos musicais a cada ação. A edição é considerada
+ativa somente quando todos estiverem editáveis e usa `contenteditable="plaintext-only"`, sem aplicar
+fonte, `white-space`, quebra de linha, classe ou indicador visual próprio. Desativar restaura apenas
+o atributo `contenteditable` original e mantém o texto editado. **Restaurar página** recompõe os nós
+filhos originais somente quando houver diferença estrutural; o próprio `<pre>` e descendentes não
+alterados preservam sua identidade.
 
 ### 5.4 Atualizações do site
 
@@ -290,11 +303,13 @@ entrypoints/
     index.tsx          # inicialização e ciclo de vida
     Panel.tsx          # composição do painel
     HeaderSection.tsx  # controles funcionais do cabeçalho
+    ContentSection.tsx # ativação da edição do conteúdo musical
     panel.css          # estilos isolados pelo Shadow DOM
 
 src/
   cifraclub/
     page.ts            # consultas semânticas ao DOM
+    content.ts         # estado e ações do conteúdo musical
     header.ts          # estado e ações do cabeçalho
     selectors.ts       # seletores do site
     capabilities.ts    # inspeção e diagnóstico

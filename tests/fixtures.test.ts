@@ -49,12 +49,15 @@ describe.each(fixtures)('$name', ({ diagramCount, hasComposer, html, pageCount }
   it('preserva somente o contrato estrutural esperado', () => {
     const document = parseFixture(html);
     const printRoot = document.querySelector('[data-print-scroll="true"]');
-    const pages = Array.from(printRoot?.children ?? []).filter(
+    const wrapper = printRoot?.firstElementChild;
+    const pages = Array.from(wrapper?.children ?? []).filter(
       (element) => element.tagName === 'SECTION',
     );
     const musicPages = pages.filter((page) => page.querySelector('pre'));
 
     expect(printRoot).not.toBeNull();
+    expect(printRoot?.children).toHaveLength(1);
+    expect(wrapper?.tagName).toBe('DIV');
     expect(pages).toHaveLength(pageCount);
     expect(musicPages).toHaveLength(2);
     expect(document.querySelectorAll('header')).toHaveLength(1);

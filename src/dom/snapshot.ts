@@ -6,6 +6,7 @@ export interface StyleSnapshot {
 
 export interface Snapshot {
   textContent?: string | null;
+  childNodes?: readonly Node[];
   hadStyleAttribute?: boolean;
   readonly attributes: Map<string, string | null>;
   readonly styles: Map<string, StyleSnapshot>;
@@ -31,6 +32,14 @@ export class SnapshotRegistry {
 
     if (!snapshot.attributes.has(name)) {
       snapshot.attributes.set(name, element.getAttribute(name));
+    }
+  }
+
+  captureChildNodes(element: Element): void {
+    const snapshot = this.getOrCreate(element);
+
+    if (!('childNodes' in snapshot)) {
+      snapshot.childNodes = Array.from(element.childNodes, (node) => node.cloneNode(true));
     }
   }
 

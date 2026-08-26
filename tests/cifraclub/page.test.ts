@@ -93,6 +93,43 @@ describe('CifraClubPage', () => {
     expect(contentBlocks).toHaveLength(2);
   });
 
+  it('mantém compatibilidade com páginas diretamente sob a raiz de impressão', () => {
+    const document = parseHtml(fullPageHtml);
+    const printRoot = document.querySelector('[data-print-scroll="true"]');
+    const wrapper = printRoot?.firstElementChild;
+
+    if (!printRoot || !wrapper) {
+      throw new Error('Estrutura de impressão ausente na fixture');
+    }
+
+    printRoot.replaceChildren(...Array.from(wrapper.children));
+    const page = new CifraClubPage(document);
+
+    expect(page.getContentBlocks()).toHaveLength(2);
+    expect(page.getChordDiagrams()).toHaveLength(2);
+    expect(page.getChordDiagramSection()?.tagName).toBe('SECTION');
+    expect(page.inspect()).toEqual(completeCapabilities);
+  });
+
+  it('ignora diagramas fora das páginas reconhecidas', () => {
+    const document = parseHtml(fullPageHtml);
+    const printRoot = document.querySelector('[data-print-scroll="true"]');
+    const unrelatedWrapper = document.createElement('div');
+    const unrelatedPage = document.createElement('section');
+    const unrelatedDiagram = document.createElement('div');
+    unrelatedPage.dataset.size = 'a4';
+    unrelatedDiagram.dataset.chordMode = 'guitar';
+    unrelatedPage.append(unrelatedDiagram);
+    unrelatedWrapper.append(unrelatedPage);
+    printRoot?.append(unrelatedWrapper);
+
+    const page = new CifraClubPage(document);
+
+    expect(page.getChordDiagrams()).toEqual([]);
+    expect(page.getChordDiagrams()).not.toContain(unrelatedDiagram);
+    expect(page.inspect()).toMatchObject({ status: 'incompatible', content: false });
+  });
+
   it('retorna null quando o agrupador de controles nativos está ausente', () => {
     const document = parseHtml(fullPageHtml);
     document.querySelector('aside')?.remove();
