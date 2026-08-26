@@ -144,6 +144,8 @@ describe('painel do CifraInk', () => {
       'aria-controls',
       'cifraink-panel-content cifraink-panel-actions',
     );
+    expect(toggle.closest('.cifraink-panel__header')).not.toBeNull();
+    expect(toggle).toContainElement(screen.getByText('CifraInk'));
     expect(toggle.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
     expect(screen.getByRole('status')).toBeVisible();
     expect(screen.getByText('CifraInk')).toBeVisible();
@@ -206,6 +208,7 @@ describe('painel do CifraInk', () => {
     const hidePopover = vi.fn();
 
     expect(popover).not.toBeNull();
+    expect(popover?.querySelector('hr')).toHaveClass('cifraink-side-popover__divider');
     Object.defineProperty(popover, 'hidePopover', { configurable: true, value: hidePopover });
     vi.spyOn(popover as HTMLElement, 'matches').mockImplementation(
       (selector) => selector === ':popover-open',
@@ -317,6 +320,7 @@ describe('painel do CifraInk', () => {
     expect(popover).toHaveAttribute('id', popoverId);
     expect(popover).toHaveAttribute('popover', 'auto');
     expect(popover).toHaveAttribute('data-scrollable', 'true');
+    expect(popover).toHaveAttribute('data-variant', 'selection');
 
     const firstDiagram = screen.getByRole('switch', { hidden: true, name: 'A' });
     fireEvent.click(firstDiagram);

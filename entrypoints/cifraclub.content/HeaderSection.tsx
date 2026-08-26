@@ -1,9 +1,9 @@
 import {
-  Heading01Icon,
   Image02Icon,
   LayoutAlignTopIcon,
-  UserIcon,
-  UserPenIcon,
+  MusicNote01Icon,
+  Pen01Icon,
+  StarIcon,
 } from '@hugeicons/core-free-icons';
 import {
   type HeaderControlAction,
@@ -28,7 +28,7 @@ export function HeaderSection({ state, onAction }: HeaderSectionProps) {
     <ControlGroup title="Cabeçalho">
       {state.title ? (
         <HeaderTextControl
-          icon={Heading01Icon}
+          icon={MusicNote01Icon}
           label="Título"
           onTextChange={(value) => onAction({ type: 'set-text', field: 'title', value })}
           onVisibilityChange={(visible) =>
@@ -41,7 +41,7 @@ export function HeaderSection({ state, onAction }: HeaderSectionProps) {
 
       {state.artist ? (
         <HeaderTextControl
-          icon={UserIcon}
+          icon={StarIcon}
           label="Artista"
           onTextChange={(value) => onAction({ type: 'set-text', field: 'artist', value })}
           onVisibilityChange={(visible) =>
@@ -54,7 +54,7 @@ export function HeaderSection({ state, onAction }: HeaderSectionProps) {
 
       {state.composer ? (
         <HeaderTextControl
-          icon={UserPenIcon}
+          icon={Pen01Icon}
           label="Compositor"
           onTextChange={(value) => onAction({ type: 'set-text', field: 'composer', value })}
           onVisibilityChange={(visible) =>

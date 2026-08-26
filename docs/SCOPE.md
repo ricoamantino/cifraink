@@ -258,12 +258,34 @@ px e superfície neutra.
 
 Cada opção ocupa uma linha externa de 54 px com área interativa mínima de 48 px, padding de 8 px por
 12 px e separadores internos de 1 px. Labels usam 14 px regulares; valores secundários usam 12 px e
-são truncados; switches medem aproximadamente 32 px por 20 px. Hover e estado ativo usam superfícies
-neutras e o foco permanece visível.
+são truncados. O switch reproduz a geometria observada: trilho de 32,5 px por 20 px, padding de 4 px,
+thumb de 12 px e deslocamento de 12 px. Desligado, usa superfície preta a 4% e thumb `#5e5e5e`;
+ligado, usa `#ee6600` e thumb branco. A transição dura 100 ms com `ease-in`. Hover e estado ativo usam
+superfícies neutras e o CifraInk preserva foco visível mesmo que o controle nativo observado não o
+apresente de forma perceptível.
 
 Título, artista e compositor aparecem como linhas compactas e abrem um popover lateral para edição
-imediata e visibilidade. Diagramas usam o mesmo padrão, mostrando a contagem visível e uma lista
-rolável de opções individuais limitada a aproximadamente 320 px. Os popovers usam a API nativa com
+imediata e visibilidade. Esses editores seguem o agrupamento observado no seletor nativo de cores:
+largura de 272 px, superfície com padding de 4 px e faixa de controle com padding de 10 px. O nome do
+campo não é repetido visualmente dentro do dropdown, mas seu `<label>` permanece disponível para
+tecnologias assistivas. Entre o input e a visibilidade, um `<hr>` de 1 px ocupa toda a largura interna
+e mantém 8 px de respiro vertical em cada lado, repetindo a divisão entre os grupos “No fim” e
+“Canhoto” do seletor nativo de diagramas. O input mantém 36 px de altura para preservar legibilidade e
+uma área de edição adequada. A linha de visibilidade tem 40 px e compartilha o recuo efetivo de 14 px
+da faixa de controle.
+
+Diagramas usam o mesmo padrão lateral, mostrando a contagem visível e uma lista rolável de opções
+individuais baseada no dropdown nativo de capotraste: largura de 206 px, altura
+máxima de 222 px, padding de 4 px, opções de 40 px com padding de 10 px, raio de 12 px, texto de 14 px
+com linha de 18 px e sem separadores. A lista mantém scroll interno nativo do Chrome; cada opção
+reserva uma caixa de 20 px para um anel circular visível de 16 px, cinza `#ababab` quando desligado e
+laranja `#ee6600` quando ligado. O preenchimento central selecionado mede 8 px.
+Como no controle observado, a lista ocupa 202 px, reserva 12 px para a barra e deixa 190 px para cada
+opção. Cada superfície de hover reserva 8 px adicionais à direita, mantendo 12 px até a borda externa
+do dropdown e evitando contato visual com o scroll. Padding, trilho e thumb ficam sob a renderização
+nativa do mesmo Chrome. Ao abrir, a lista volta ao início e posiciona o foco no primeiro controle sem
+deslocar a página.
+Os popovers usam a API nativa com
 `popover="auto"`, vínculo `popovertarget`, light dismiss, fechamento por Escape, foco inicial no
 controle principal e retorno do foco ao acionador. CSS Anchor Positioning abre o conteúdo à esquerda;
 em viewport estreita ou sem espaço suficiente, o fallback abre abaixo e limita a largura à viewport.
@@ -272,10 +294,18 @@ Recolher o painel ou restaurar a página fecha os popovers abertos.
 O status de compatibilidade fica ao lado do nome CifraInk: indicador verde, âmbar ou vermelho, com a
 mensagem completa acessível. Apenas os estados parcial e incompatível exibem também aviso textual.
 Os ícones nativos dependem de um sprite CSS privado do site e não são reutilizáveis com segurança no
-Shadow DOM. O CifraInk usa Hugeicons Free com 24 px e traço consistente: `Heading01Icon`, `UserIcon`,
-`UserPenIcon`, `Image02Icon`, `LayoutAlignTopIcon`, `FilePenIcon`, `GuitarIcon` e `RefreshCwIcon`.
-Imports são nomeados e nenhum asset remoto é carregado. O logotipo oficial permanece um SVG próprio
-e não faz parte dessa biblioteca.
+Shadow DOM. Nas linhas funcionais, o CifraInk reproduz a leitura visual do sprite com uma moldura
+quadrada arredondada própria de 19 px, raio de 7,25 px, borda de 1,88 px e símbolo interno reduzido
+com traço reforçado de 3 px. Durante hover, apenas a linha recebe fundo preto a 6% e o ícone permanece
+`#1b1b1b`. Quando um seletor lateral está aberto, sua moldura fica preta e o símbolo branco,
+reproduzindo a inversão do acionador nativo selecionado. Switches diretos não invertem o ícone. O
+chevron do cabeçalho e a ação de restaurar continuam sem moldura, acompanhando os equivalentes
+observados. O cabeçalho inteiro funciona como a linha acionadora de abrir ou recolher: hover e estado
+ativo cobrem toda a linha com as mesmas superfícies neutras dos demais controles, sem efeito isolado
+no chevron. O CifraInk usa Hugeicons Free com
+traço consistente: `MusicNote01Icon`, `StarIcon`, `Pen01Icon`, `Image02Icon`, `LayoutAlignTopIcon`,
+`FilePenIcon`, `Grid3X3Icon` e `RefreshCwIcon`. Imports são nomeados e nenhum asset remoto é carregado.
+O logotipo oficial permanece um SVG próprio e não faz parte dessa biblioteca.
 
 O estado do painel é dividido por origem e só entra quando possui uso real:
 
@@ -312,8 +342,10 @@ como identificador. Nomes repetidos recebem sufixos de ocorrência, como `A (1)`
 ausentes usam `Diagrama N`.
 
 A lista individual fica em um popover lateral nativo aberto pela linha **Diagramas individuais**. A
-linha mostra a quantidade visível em relação ao total e o popover limita sua altura com scroll
-interno. O painel não oferece visibilidade da seção completa nem compactação: o primeiro recurso já
+linha mostra a quantidade visível em relação ao total e o popover segue dimensões, opções e scroll do
+dropdown nativo de capotraste. Como diagramas aceitam múltiplas escolhas, os controles preservam
+semântica de switch apesar do indicador circular inspirado no seletor nativo. O painel não oferece
+visibilidade da seção completa nem compactação: o primeiro recurso já
 existe nos controles nativos e o segundo foi retirado por não acrescentar valor suficiente ao MVP.
 
 ### 5.4 Atualizações do site

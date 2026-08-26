@@ -6,6 +6,7 @@ interface TextFieldProps {
   readonly onChange: (value: string) => void;
   readonly disabled?: boolean;
   readonly focusOnPopoverOpen?: boolean;
+  readonly visuallyHideLabel?: boolean;
 }
 
 export function TextField({
@@ -14,12 +15,16 @@ export function TextField({
   onChange,
   disabled = false,
   focusOnPopoverOpen = false,
+  visuallyHideLabel = false,
 }: TextFieldProps) {
   const inputId = useId();
 
   return (
     <div className="cifraink-text-field">
-      <label className="cifraink-text-field__label" htmlFor={inputId}>
+      <label
+        className={`cifraink-text-field__label${visuallyHideLabel ? ' cifraink-visually-hidden' : ''}`}
+        htmlFor={inputId}
+      >
         {label}
       </label>
       <input

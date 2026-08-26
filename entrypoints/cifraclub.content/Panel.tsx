@@ -68,11 +68,6 @@ export function Panel({
     >
       <div className="cifraink-panel">
         <header className="cifraink-panel__header">
-          <span className="cifraink-panel__brand">
-            <img alt="" className="cifraink-panel__logo" height="32" src={iconUrl} width="32" />
-            <strong className="cifraink-panel__name">CifraInk</strong>
-            <Status status={capabilities.status} />
-          </span>
           <button
             aria-controls={`${panelContentId} ${panelActionsId}`}
             aria-expanded={!collapsed}
@@ -87,6 +82,11 @@ export function Panel({
             }}
             type="button"
           >
+            <span className="cifraink-panel__brand">
+              <img alt="" className="cifraink-panel__logo" height="32" src={iconUrl} width="32" />
+              <strong className="cifraink-panel__name">CifraInk</strong>
+              <Status status={capabilities.status} />
+            </span>
             <HugeiconsIcon
               aria-hidden="true"
               className="cifraink-panel__toggle-icon"

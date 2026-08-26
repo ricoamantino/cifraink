@@ -78,12 +78,8 @@
 }
 
 .cifraink-panel__header {
-  display: flex;
-  gap: var(--cifraink-space-3);
-  align-items: center;
-  justify-content: space-between;
   min-height: 54px;
-  padding: var(--cifraink-space-2) var(--cifraink-space-3);
+  padding: 3px;
   background: var(--cifraink-surface);
 }
 
@@ -152,27 +148,27 @@
 }
 
 .cifraink-panel__toggle {
-  display: grid;
-  flex: 0 0 auto;
-  width: 32px;
-  height: 32px;
-  padding: 0;
+  display: flex;
+  gap: var(--cifraink-space-3);
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 48px;
+  padding: var(--cifraink-space-2) var(--cifraink-space-3);
   color: var(--cifraink-text);
+  font: inherit;
   cursor: pointer;
   background: transparent;
-  border: 1px solid transparent;
+  border: 0;
   border-radius: var(--cifraink-radius-control);
-  place-items: center;
 }
 
 .cifraink-panel__toggle:hover {
-  background: var(--cifraink-accent-soft);
-  border-color: var(--cifraink-border);
+  background: var(--cifraink-control-hover);
 }
 
 .cifraink-panel__toggle:active {
-  color: var(--cifraink-focus);
-  background: var(--cifraink-accent-soft);
+  background: var(--cifraink-control-active);
 }
 
 .cifraink-panel__toggle:focus-visible,
@@ -186,6 +182,7 @@
 
 .cifraink-panel__toggle-icon {
   display: block;
+  flex: 0 0 auto;
 }
 
 .cifraink-panel__content {
@@ -260,8 +257,19 @@
 .cifraink-field-toggle__icon {
   display: block;
   flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
+  width: 19px;
+  height: 19px;
+  padding: 2px;
+  color: var(--cifraink-text);
+  border: 1.88px solid currentcolor;
+  border-radius: 7.25px;
+  justify-self: center;
+}
+
+.cifraink-control-item:has(.cifraink-side-popover:popover-open) .cifraink-control-row__icon {
+  color: var(--cifraink-surface);
+  background: var(--cifraink-text);
+  border-color: var(--cifraink-text);
 }
 
 .cifraink-control-row__label,
@@ -297,33 +305,37 @@
 
 .cifraink-field-toggle__input {
   position: relative;
-  width: 32px;
+  display: block;
+  width: 32.5px;
   height: 20px;
   margin: 0;
+  padding: 4px;
   appearance: none;
   cursor: pointer;
-  background: var(--cifraink-border);
+  background: rgb(0 0 0 / 4%);
   border: 0;
   border-radius: 999px;
+  transition: background 100ms ease-in;
 }
 
-.cifraink-field-toggle__input::before {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 14px;
-  height: 14px;
+.cifraink-field-toggle__input::after {
+  display: block;
+  width: 12px;
+  height: 12px;
   content: "";
-  background: var(--cifraink-surface);
-  border-radius: 999px;
-  box-shadow: 0 1px 3px rgb(38 38 38 / 24%);
+  background: #5e5e5e;
+  border-radius: 50%;
+  transition:
+    transform 100ms ease-in,
+    background 100ms ease-in;
 }
 
 .cifraink-field-toggle__input:checked {
   background: var(--cifraink-accent);
 }
 
-.cifraink-field-toggle__input:checked::before {
+.cifraink-field-toggle__input:checked::after {
+  background: var(--cifraink-surface);
   transform: translateX(12px);
 }
 
@@ -335,7 +347,7 @@
   position: fixed;
   position-area: left span-bottom;
   position-try-fallbacks: flip-inline, flip-block;
-  width: min(288px, calc(100vw - 16px));
+  width: min(272px, calc(100vw - 16px));
   max-height: min(320px, calc(100vh - 16px));
   margin: 0 var(--cifraink-space-1) 0 0;
   padding: var(--cifraink-space-1);
@@ -348,8 +360,10 @@
   box-shadow: var(--cifraink-shadow-popover);
 }
 
-.cifraink-side-popover[data-scrollable="true"] {
-  overflow-y: auto;
+.cifraink-side-popover[data-variant="selection"] {
+  width: min(206px, calc(100vw - 16px));
+  max-height: min(222px, calc(100vh - 16px));
+  overflow: hidden;
   overscroll-behavior: contain;
 }
 
@@ -371,22 +385,116 @@
   top: 0;
 }
 
+.cifraink-side-popover[data-variant="editor"] .cifraink-control-item {
+  min-height: 40px;
+}
+
+.cifraink-side-popover__divider {
+  width: 100%;
+  height: 1px;
+  margin: var(--cifraink-space-2) 0;
+  background: var(--cifraink-separator);
+  border: 0;
+}
+
+.cifraink-side-popover[data-variant="editor"] .cifraink-field-toggle {
+  min-height: 40px;
+  padding: 10px;
+}
+
+.cifraink-diagram-options {
+  max-height: min(222px, calc(100vh - 16px));
+  padding: 4px 0;
+  margin: -4px -4px -4px 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: auto;
+}
+
+.cifraink-diagram-options .cifraink-control-item {
+  min-height: 40px;
+  margin-right: 8px;
+}
+
+.cifraink-diagram-options .cifraink-control-item + .cifraink-control-item::before {
+  display: none;
+}
+
+.cifraink-diagram-options .cifraink-field-toggle {
+  min-height: 40px;
+  padding: 10px;
+  gap: 6px;
+  line-height: 18px;
+}
+
+.cifraink-diagram-options .cifraink-field-toggle__input {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+}
+
+.cifraink-diagram-options .cifraink-field-toggle__input::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  content: "";
+  border: 2px solid #ababab;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: border-color 100ms ease-in;
+}
+
+.cifraink-diagram-options .cifraink-field-toggle__input::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  transition: background 100ms ease-in;
+}
+
+.cifraink-diagram-options .cifraink-field-toggle__input:checked {
+  background: transparent;
+}
+
+.cifraink-diagram-options .cifraink-field-toggle__input:checked::before {
+  border-color: var(--cifraink-accent);
+}
+
+.cifraink-diagram-options .cifraink-field-toggle__input:checked::after {
+  background: var(--cifraink-accent);
+  transform: translate(-50%, -50%);
+}
+
 .cifraink-text-field {
-  display: grid;
-  gap: var(--cifraink-space-1);
-  padding: var(--cifraink-space-2);
+  display: flex;
+  flex-direction: column;
   color: var(--cifraink-text);
 }
 
 .cifraink-text-field__label {
-  font-size: 12px;
+  min-height: 28px;
+  padding: var(--cifraink-space-2) var(--cifraink-space-2) 0;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 16px;
+  line-height: 20px;
+}
+
+.cifraink-text-field__label.cifraink-visually-hidden {
+  min-height: 0;
 }
 
 .cifraink-text-field__input {
-  width: 100%;
+  width: calc(100% - 20px);
   height: 36px;
+  margin: var(--cifraink-space-2) 10px var(--cifraink-space-1);
   padding: 0 10px;
   color: var(--cifraink-text);
   font: inherit;

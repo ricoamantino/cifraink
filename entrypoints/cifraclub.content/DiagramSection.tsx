@@ -1,4 +1,4 @@
-import { GuitarIcon } from '@hugeicons/core-free-icons';
+import { Grid3X3Icon as Grid3x3Icon } from '@hugeicons/core-free-icons';
 import { useId } from 'react';
 import type { DiagramControlAction, DiagramControlState } from '../../src/cifraclub/diagrams';
 import { ControlRow } from '../../src/components/ControlRow';
@@ -21,7 +21,7 @@ export function DiagramSection({ state, onAction }: DiagramSectionProps) {
 
   return (
     <ControlRow
-      icon={GuitarIcon}
+      icon={Grid3x3Icon}
       label="Diagramas individuais"
       popoverTarget={popoverId}
       value={`${visibleCount} de ${state.items.length}`}

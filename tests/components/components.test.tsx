@@ -45,6 +45,7 @@ describe('componentes do painel', () => {
     expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
     expect(trigger.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
     expect(popover).toHaveAttribute('popover', 'auto');
+    expect(popover).toHaveAttribute('data-variant', 'editor');
   });
 
   it('foca o controle principal quando o popover é aberto', () => {
@@ -62,6 +63,32 @@ describe('componentes do painel', () => {
     }
 
     expect(screen.getByRole('textbox', { hidden: true, name: 'Título' })).toHaveFocus();
+  });
+
+  it('reinicia o scroll e foca a primeira opção de um seletor rolável', () => {
+    render(
+      <SidePopover id="diagramas" label="Diagramas" scrollable>
+        <div className="cifraink-diagram-options">
+          <FieldToggle checked label="A" onChange={() => {}} />
+          <FieldToggle checked={false} label="Bm" onChange={() => {}} />
+        </div>
+      </SidePopover>,
+    );
+
+    const popover = document.getElementById('diagramas');
+    const scrollContainer = popover?.querySelector<HTMLElement>('.cifraink-diagram-options');
+    const toggleEvent = new Event('toggle', { bubbles: true });
+    Object.defineProperty(toggleEvent, 'newState', { value: 'open' });
+    if (scrollContainer) {
+      scrollContainer.scrollTop = 80;
+    }
+    if (popover) {
+      fireEvent(popover, toggleEvent);
+    }
+
+    expect(popover).toHaveAttribute('data-variant', 'selection');
+    expect(scrollContainer?.scrollTop).toBe(0);
+    expect(screen.getByRole('switch', { hidden: true, name: 'A' })).toHaveFocus();
   });
 
   it('expõe um controle de visibilidade associado ao label e à descrição', () => {
@@ -107,6 +134,18 @@ describe('componentes do painel', () => {
 
     rerender(<TextField disabled label="Título" onChange={onChange} value="Novo título" />);
     expect(screen.getByRole('textbox', { name: 'Título' })).toBeDisabled();
+  });
+
+  it('oculta somente a apresentação do label quando solicitado', () => {
+    render(
+      <TextField label="Artista" onChange={() => {}} value="Nome original" visuallyHideLabel />,
+    );
+
+    const input = screen.getByRole('textbox', { name: 'Artista' });
+    const label = document.querySelector(`label[for="${input.id}"]`);
+
+    expect(label).toHaveClass('cifraink-visually-hidden');
+    expect(input).toHaveAccessibleName('Artista');
   });
 
   it.each([

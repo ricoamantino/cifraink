@@ -27,7 +27,14 @@ export function HeaderTextControl({
   return (
     <ControlRow icon={icon} label={label} popoverTarget={popoverId} value={value || 'Sem texto'}>
       <SidePopover id={popoverId} label={`Editar ${label.toLocaleLowerCase('pt-BR')}`}>
-        <TextField focusOnPopoverOpen label={label} onChange={onTextChange} value={value} />
+        <TextField
+          focusOnPopoverOpen
+          label={label}
+          onChange={onTextChange}
+          value={value}
+          visuallyHideLabel
+        />
+        <hr className="cifraink-side-popover__divider" />
         <FieldToggle
           checked={visible}
           label={`Mostrar ${label.toLocaleLowerCase('pt-BR')}`}

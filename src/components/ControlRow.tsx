@@ -31,8 +31,8 @@ export function ControlRow({
           aria-hidden="true"
           className="cifraink-control-row__icon"
           icon={icon}
-          size={24}
-          strokeWidth={2}
+          size={19}
+          strokeWidth={3}
         />
         <span className="cifraink-control-row__label">{label}</span>
         {value ? <span className="cifraink-control-row__value">{value}</span> : null}

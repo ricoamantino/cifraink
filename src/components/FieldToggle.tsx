@@ -29,8 +29,8 @@ export function FieldToggle({
             aria-hidden="true"
             className="cifraink-field-toggle__icon"
             icon={icon}
-            size={24}
-            strokeWidth={2}
+            size={19}
+            strokeWidth={3}
           />
         ) : null}
         <span className="cifraink-field-toggle__label">{label}</span>
