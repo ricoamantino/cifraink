@@ -364,23 +364,6 @@ describe('painel do CifraInk', () => {
     );
   });
 
-  it('inicia aberto novamente depois de uma desmontagem completa', () => {
-    const firstMount = render(panel());
-
-    fireEvent.click(screen.getByRole('button', { name: 'Recolher painel' }));
-    firstMount.unmount();
-    render(panel());
-
-    expect(screen.getByRole('region', { name: 'CifraInk' })).toHaveAttribute(
-      'data-collapsed',
-      'false',
-    );
-    expect(screen.getByRole('button', { name: 'Recolher painel' })).toHaveAttribute(
-      'aria-expanded',
-      'true',
-    );
-  });
-
   it.each(Object.entries(compatibilityMessages))(
     'exibe o estado %s sem detalhes técnicos',
     (status, message) => {

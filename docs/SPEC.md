@@ -454,19 +454,27 @@ cinco dependências distribuídas são MIT e seus avisos foram incluídos no art
 
 ## 10. Documentação e distribuição
 
-- [ ] Criar `README.md` com objetivo, recursos e instalação para desenvolvimento.
-- [ ] Documentar comandos e fluxo de testes.
-- [ ] Documentar como carregar a extensão descompactada no Chrome.
-- [ ] Documentar limitações conhecidas e página suportada.
+- [x] Criar `README.md` com objetivo, recursos e instalação para desenvolvimento.
+- [x] Documentar comandos e fluxo de testes.
+- [x] Documentar como carregar a extensão descompactada no Chrome.
+- [x] Documentar limitações conhecidas e página suportada.
 - [x] Integrar o ícone oficial e seus arquivos derivados.
-- [ ] Definir a identidade visual complementar para painel e materiais de publicação.
-- [ ] Revisar nome, descrição, versão e URLs do manifesto.
-- [ ] Gerar build de produção limpo.
-- [ ] Gerar pacote `.zip` reprodutível.
+- [x] Definir a identidade visual complementar para painel e materiais de publicação.
+- [x] Revisar nome, descrição, versão e URLs do manifesto.
+- [x] Gerar build de produção limpo.
+- [x] Gerar pacote `.zip` reprodutível.
 - [ ] Instalar o pacote final em um perfil limpo do Chrome.
 - [ ] Executar checklist manual completo no pacote final.
-- [ ] Preparar textos e imagens para a Chrome Web Store.
-- [ ] Registrar procedimento de release e atualização rápida de compatibilidade.
+- [x] Preparar textos e imagens para a Chrome Web Store.
+- [x] Registrar procedimento de release e atualização rápida de compatibilidade.
+
+Validação parcial de 2026-08-26: documentação pública, manifesto com Chrome 129 e homepage, ícone de
+128 px, três screenshots reais sanitizados e materiais promocionais aprovados. Instalação imutável,
+auditoria sem vulnerabilidades, 116 testes em `pnpm check`, build limpo e integridade dos PNGs foram
+aprovados. Duas gerações do ZIP produziram o mesmo SHA-256
+`54df7f1ed9e442eef22c8d5c6f764d678834a633516c3d51a3cafcebaabb2fa2`; o pacote contém somente os
+dez arquivos autorizados e foi extraído para teste. Permanecem pendentes a instalação dessa cópia em
+perfil limpo e o checklist manual correspondente.
 
 ## 11. Gate de estabilização pós-lançamento
 

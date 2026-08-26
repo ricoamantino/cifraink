@@ -25,7 +25,7 @@ O MVP deve permitir que o usuário:
 2. Ative um painel discreto do CifraInk.
 3. Edite título, artista, compositor e conteúdo da cifra.
 4. Oculte elementos desnecessários.
-5. Compacte cabeçalho e diagramas.
+5. Compacte o cabeçalho.
 6. Restaure a página ao estado encontrado pela extensão.
 7. Use normalmente os controles e a impressão do Cifra Club.
 
@@ -445,6 +445,12 @@ O contrato público de tratamento de dados está em [`../PRIVACY.md`](../PRIVACY
 reproduzível do manifesto, bundle e dependências está em
 [`SECURITY_REVIEW.md`](SECURITY_REVIEW.md). O conteúdo visível da página é processado localmente como
 website content, sem persistência ou transmissão, exclusivamente para as ações solicitadas no painel.
+
+A política pública usada na distribuição é
+`https://github.com/ricoamantino/cifraink/blob/main/PRIVACY.md`. A listagem deve declarar o acesso
+local a website content, não afiliação com o Cifra Club e a finalidade única de preparar a página
+antes da impressão. Homepage, suporte, textos da loja e procedimento de release ficam registrados em
+[`STORE_LISTING.md`](STORE_LISTING.md) e [`RELEASE.md`](RELEASE.md).
 
 Evitar `tabs`, `activeTab` e `scripting`. O content script é declarado estaticamente e inicializa seu próprio fluxo.
 

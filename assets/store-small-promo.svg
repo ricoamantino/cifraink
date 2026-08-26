@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 280" role="img" aria-labelledby="title description">
+  <title id="title">Material promocional pequeno do CifraInk</title>
+  <desc id="description">Marca CifraInk sobre composição abstrata de folha, linhas musicais e tinta.</desc>
+  <defs>
+    <linearGradient id="small-bg" x1="32" y1="18" x2="408" y2="268" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff7ec"/>
+      <stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+    <linearGradient id="small-orange" x1="145" y1="72" x2="294" y2="222" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffb21a"/>
+      <stop offset=".5" stop-color="#ff8614"/>
+      <stop offset="1" stop-color="#f45a12"/>
+    </linearGradient>
+    <filter id="small-shadow" x="112" y="36" width="216" height="220" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#7a2400" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect width="440" height="280" fill="url(#small-bg)"/>
+  <path d="M0 224C76 185 127 262 210 224S347 157 440 202V280H0Z" fill="#f46a12" opacity=".08"/>
+  <g fill="none" stroke="#262626" stroke-linecap="round" opacity=".1">
+    <path d="M30 62H142M24 92H116M324 58H412M348 88H424" stroke-width="5"/>
+    <path d="M24 121H98M360 118H420M30 150H122M334 148H414" stroke-width="3"/>
+  </g>
+  <g filter="url(#small-shadow)">
+    <rect x="130" y="50" width="180" height="180" rx="43" fill="url(#small-orange)"/>
+    <path fill="#fff" d="M174 82C174 75.37 179.37 70 186 70H234L268 104V190C268 196.63 262.63 202 256 202H186C179.37 202 174 196.63 174 190Z"/>
+    <path fill="#ffe0b2" d="M234 70 268 104H243C238.03 104 234 99.97 234 95Z"/>
+    <g fill="none" stroke="#262626" stroke-width="6" stroke-linecap="round">
+      <path d="M194 122H248M194 143H248M194 164H234"/>
+    </g>
+    <circle cx="207" cy="122" r="7" fill="#f46a12"/>
+    <circle cx="232" cy="143" r="7" fill="#f46a12"/>
+    <path fill="#262626" d="M249 157S229 180.1 229 192.4C229 203.83 237.95 213 249 213S269 203.83 269 192.4C269 180.1 249 157 249 157Z"/>
+  </g>
+  <circle cx="88" cy="211" r="8" fill="#f46a12"/>
+  <circle cx="362" cy="184" r="5" fill="#262626"/>
+</svg>

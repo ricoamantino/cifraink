@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 560" role="img" aria-labelledby="title description">
+  <title id="title">Marquee promocional do CifraInk</title>
+  <desc id="description">Ícone, nome CifraInk e motivo musical próprio sobre fundo quente.</desc>
+  <defs>
+    <linearGradient id="marquee-bg" x1="76" y1="20" x2="1310" y2="560" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff7ec"/>
+      <stop offset=".52" stop-color="#fff"/>
+      <stop offset="1" stop-color="#ffe9d1"/>
+    </linearGradient>
+    <linearGradient id="marquee-orange" x1="162" y1="94" x2="518" y2="462" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffb21a"/>
+      <stop offset=".52" stop-color="#ff8614"/>
+      <stop offset="1" stop-color="#f45a12"/>
+    </linearGradient>
+    <filter id="marquee-shadow" x="80" y="32" width="520" height="510" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="24" stdDeviation="24" flood-color="#7a2400" flood-opacity=".2"/>
+    </filter>
+  </defs>
+  <rect width="1400" height="560" fill="url(#marquee-bg)"/>
+  <path d="M788 0C968 115 1050 53 1400 165V560H760C892 440 873 206 788 0Z" fill="#f46a12" opacity=".07"/>
+  <g fill="none" stroke="#262626" stroke-linecap="round" opacity=".1">
+    <path d="M930 112H1314M866 174H1236M944 236H1344M890 298H1260M958 360H1322" stroke-width="10"/>
+  </g>
+  <g filter="url(#marquee-shadow)">
+    <rect x="126" y="70" width="420" height="420" rx="100" fill="url(#marquee-orange)"/>
+    <path fill="#fff" d="M230 145C230 129.54 242.54 117 258 117H370L450 197V397C450 412.46 437.46 425 422 425H258C242.54 425 230 412.46 230 397Z"/>
+    <path fill="#ffe0b2" d="M370 117 450 197H391C379.4 197 370 187.6 370 176Z"/>
+    <g fill="none" stroke="#262626" stroke-width="14" stroke-linecap="round">
+      <path d="M276 238H402M276 286H402M276 334H372"/>
+    </g>
+    <circle cx="306" cy="238" r="16" fill="#f46a12"/>
+    <circle cx="366" cy="286" r="16" fill="#f46a12"/>
+    <path fill="#262626" d="M402 318S355 372.29 355 401.2C355 428.05 376.03 450 402 450S449 428.05 449 401.2C449 372.29 402 318 402 318Z"/>
+  </g>
+  <g fill="#262626" font-family="Arial, Helvetica, sans-serif">
+    <text x="640" y="254" font-size="112" font-weight="700" letter-spacing="-5">CifraInk</text>
+    <text x="646" y="326" font-size="34" font-weight="400">Sua cifra, pronta para imprimir.</text>
+  </g>
+  <circle cx="1198" cy="426" r="18" fill="#f46a12"/>
+  <circle cx="1264" cy="426" r="11" fill="#262626"/>
+</svg>

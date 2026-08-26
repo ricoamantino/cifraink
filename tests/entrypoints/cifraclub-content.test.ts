@@ -19,6 +19,8 @@ describe('registro do content script do Cifra Club', () => {
       name: 'CifraInk',
       description: 'Edite e prepare cifras do Cifra Club para impressão.',
       version: '0.1.0',
+      homepage_url: 'https://github.com/ricoamantino/cifraink',
+      minimum_chrome_version: '129',
       web_accessible_resources: [
         {
           resources: ['icon/cifraink.svg'],
@@ -33,5 +35,8 @@ describe('registro do content script do Cifra Club', () => {
     expect(wxtConfig).not.toHaveProperty('manifest.action');
     expect(wxtConfig).not.toHaveProperty('manifest.externally_connectable');
     expect(wxtConfig).not.toHaveProperty('manifest.content_security_policy');
+    expect(wxtConfig).not.toHaveProperty('manifest.update_url');
+    expect(wxtConfig).not.toHaveProperty('manifest.key');
+    expect(wxtConfig).not.toHaveProperty('manifest.default_locale');
   });
 });

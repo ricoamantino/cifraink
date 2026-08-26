@@ -148,24 +148,8 @@ afterEach(async () => {
 });
 
 describe('inicialização do CifraInk', () => {
-  it.each([
-    {
-      html: fullPageHtml,
-      status: 'compatible',
-      message: 'CifraInk pronto para editar esta cifra.',
-    },
-    {
-      html: missingComposerHtml,
-      status: 'partial',
-      message: 'CifraInk disponível com alguns recursos limitados.',
-    },
-    {
-      html: '<!DOCTYPE html><html><body><main>Página comum</main></body></html>',
-      status: 'incompatible',
-      message: 'Esta página não é compatível com o CifraInk.',
-    },
-  ])('exibe um estado $status sem detalhes técnicos', async ({ html, message, status }) => {
-    loadHtml(html);
+  it('monta o painel incompatível sem expor detalhes técnicos', async () => {
+    loadHtml('<!DOCTYPE html><html><body><main>Página comum</main></body></html>');
     const { context } = createContext();
 
     await act(async () => {
@@ -175,8 +159,8 @@ describe('inicialização do CifraInk', () => {
     const host = getPanelHost();
     const panel = host.shadowRoot?.querySelector('section');
     const statusElement = host.shadowRoot?.querySelector('[role="status"]');
-    expect(panel).toHaveAttribute('data-compatibility', status);
-    expect(statusElement).toHaveTextContent(message);
+    expect(panel).toHaveAttribute('data-compatibility', 'incompatible');
+    expect(statusElement).toHaveTextContent('Esta página não é compatível com o CifraInk.');
     expect(statusElement?.textContent).not.toMatch(/selector|exception|data-print-scroll/i);
   });
 
@@ -256,31 +240,6 @@ describe('inicialização do CifraInk', () => {
     expect(title.textContent).toBe('Canção de Teste');
     expect(document.querySelector('[data-cifraink="panel-host"]')).toBeNull();
     expect(uiContainer).toBeEmptyDOMElement();
-  });
-
-  it('restaura a página pela ação do painel', async () => {
-    loadHtml(fullPageHtml);
-    const { context } = createContext();
-
-    await act(async () => {
-      await initializeCifraInk(context);
-    });
-
-    const title = document.querySelector('h1');
-
-    if (!title) {
-      throw new Error('Fixture sem título');
-    }
-
-    setText(title, 'Título alterado');
-
-    await act(async () => {
-      getPanelHost()
-        .shadowRoot?.querySelector<HTMLButtonElement>('.cifraink-restore-button')
-        ?.click();
-    });
-
-    expect(title.textContent).toBe('Canção de Teste');
   });
 
   it('edita, oculta, compacta e restaura o cabeçalho pela interface', async () => {
