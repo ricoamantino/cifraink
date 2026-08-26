@@ -441,6 +441,11 @@ Usar versões estáveis atuais ao iniciar o projeto e fixá-las no lockfile. Nã
 O manifesto não solicita permissões explícitas. O acesso ao Cifra Club fica limitado ao match estático
 das páginas de impressão suportadas.
 
+O contrato público de tratamento de dados está em [`../PRIVACY.md`](../PRIVACY.md) e a auditoria
+reproduzível do manifesto, bundle e dependências está em
+[`SECURITY_REVIEW.md`](SECURITY_REVIEW.md). O conteúdo visível da página é processado localmente como
+website content, sem persistência ou transmissão, exclusivamente para as ações solicitadas no painel.
+
 Evitar `tabs`, `activeTab` e `scripting`. O content script é declarado estaticamente e inicializa seu próprio fluxo.
 
 Regras adicionais:

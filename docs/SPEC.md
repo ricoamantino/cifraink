@@ -372,7 +372,10 @@ preservado, alterações refletidas no PDF sem indicadores de edição e restaur
 aprovados. A auditoria do código confirma que o CifraInk apenas oculta sua interface em `@media print`
 e não registra listeners de impressão nem chama `window.print()`.
 
-## 7. Robustez e compatibilidade
+## 7. Robustez e compatibilidade — pós-lançamento
+
+Decisão de 2026-08-26: esta seção foi adiada sem ter suas tarefas removidas ou concluídas. Ela não
+bloqueia a primeira submissão à Chrome Web Store e permanece como backlog de estabilização.
 
 - [ ] Repetir a baseline nativa com edições e controles do CifraInk ativos.
 - [ ] Reconsultar alvos por `CifraClubPage` após mudanças nativas relevantes.
@@ -394,7 +397,11 @@ e não registra listeners de impressão nem chama `window.print()`.
 - [ ] Validar que nenhuma alteração permanece após desmontagem/restauração.
 - [ ] Documentar procedimento de atualização dos seletores.
 
-## 8. E2E e revisão visual
+## 8. E2E e revisão visual — pós-lançamento
+
+Decisão de 2026-08-26: automação E2E, revisão visual ampliada e auditoria completa de acessibilidade
+foram adiadas para depois da primeira publicação. As validações manuais já registradas nas fases 5 e
+6 permanecem válidas, mas não concluem antecipadamente os itens abaixo.
 
 ### 8.1 Automação
 
@@ -427,14 +434,23 @@ e não registra listeners de impressão nem chama `window.print()`.
 
 ## 9. Segurança, privacidade e permissões
 
-- [ ] Revisar manifesto final e justificar cada permissão.
-- [ ] Confirmar ausência de `tabs`, `activeTab` e `scripting`.
-- [ ] Confirmar ausência de código remoto, `eval` e `innerHTML` editável.
-- [ ] Confirmar que a extensão não lê cookies ou dados de conta.
-- [ ] Confirmar que nenhum conteúdo ou identificador é enviado pela rede.
-- [ ] Confirmar ausência de analytics no MVP.
-- [ ] Criar uma declaração curta de privacidade coerente com o comportamento real.
-- [ ] Revisar dependências e licenças antes da distribuição.
+- [x] Revisar manifesto final e justificar cada permissão.
+- [x] Confirmar ausência de `tabs`, `activeTab` e `scripting`.
+- [x] Confirmar ausência de código remoto, `eval` e `innerHTML` editável.
+- [x] Confirmar que a extensão não lê cookies ou dados de conta.
+- [x] Confirmar que nenhum conteúdo ou identificador é enviado pela rede.
+- [x] Confirmar ausência de analytics no MVP.
+- [x] Criar uma declaração curta de privacidade coerente com o comportamento real.
+- [x] Revisar dependências e licenças antes da distribuição.
+
+Validação de 2026-08-26: manifesto-fonte e build MV3 aprovados sem permissões explícitas, superfícies
+privilegiadas ou código remoto; match e recursos acessíveis permanecem restritos ao Cifra Club. A
+auditoria do código e do bundle confirmou ausência de transmissão, armazenamento, cookies, analytics
+e execução dinâmica, com as ocorrências internas de WXT e React justificadas em
+`docs/SECURITY_REVIEW.md`. `pnpm audit` e `pnpm audit --prod` não encontraram vulnerabilidades; as
+cinco dependências distribuídas são MIT e seus avisos foram incluídos no artefato. Foram aprovados
+119 testes em `pnpm check`, `pnpm build`, instalação imutável, auditoria de licenças e
+`git diff --check`.
 
 ## 10. Documentação e distribuição
 
@@ -452,7 +468,10 @@ e não registra listeners de impressão nem chama `window.print()`.
 - [ ] Preparar textos e imagens para a Chrome Web Store.
 - [ ] Registrar procedimento de release e atualização rápida de compatibilidade.
 
-## 11. Gate de conclusão do MVP
+## 11. Gate de estabilização pós-lançamento
+
+Este gate permanece como objetivo para declarar o MVP estabilizado após a primeira publicação. Os
+itens pendentes das fases 7 e 8 não bloqueiam a submissão inicial definida na fase 10.
 
 - [ ] Todos os critérios de aceite de `docs/SCOPE.md` estão comprovados.
 - [ ] `pnpm check` passa em ambiente limpo.

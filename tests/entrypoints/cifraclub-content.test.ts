@@ -27,6 +27,11 @@ describe('registro do content script do Cifra Club', () => {
       ],
     });
     expect(wxtConfig).not.toHaveProperty('manifest.permissions');
+    expect(wxtConfig).not.toHaveProperty('manifest.optional_permissions');
+    expect(wxtConfig).not.toHaveProperty('manifest.host_permissions');
     expect(wxtConfig).not.toHaveProperty('manifest.background');
+    expect(wxtConfig).not.toHaveProperty('manifest.action');
+    expect(wxtConfig).not.toHaveProperty('manifest.externally_connectable');
+    expect(wxtConfig).not.toHaveProperty('manifest.content_security_policy');
   });
 });
