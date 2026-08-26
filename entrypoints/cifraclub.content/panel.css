@@ -270,6 +270,65 @@
   opacity: 0.55;
 }
 
+.cifraink-diagram-list {
+  border-top: 1px solid var(--cifraink-border);
+}
+
+.cifraink-diagram-list__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: var(--cifraink-space-1) var(--cifraink-space-3);
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.cifraink-diagram-list__summary::-webkit-details-marker {
+  display: none;
+}
+
+.cifraink-diagram-list__summary:focus-visible {
+  outline: 2px solid var(--cifraink-focus);
+  outline-offset: -2px;
+}
+
+.cifraink-diagram-list__toggle {
+  display: grid;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  color: var(--cifraink-text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--cifraink-radius-control);
+  place-items: center;
+}
+
+.cifraink-diagram-list__summary:hover .cifraink-diagram-list__toggle {
+  background: var(--cifraink-accent-soft);
+  border-color: var(--cifraink-border);
+}
+
+.cifraink-diagram-list__summary:active .cifraink-diagram-list__toggle {
+  color: var(--cifraink-focus);
+  background: var(--cifraink-accent-soft);
+}
+
+.cifraink-diagram-list__toggle-icon {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.cifraink-diagram-list[open] .cifraink-diagram-list__toggle-icon {
+  transform: rotate(180deg);
+}
+
+.cifraink-diagram-list__items {
+  border-top: 1px solid var(--cifraink-border);
+}
+
 .cifraink-text-field {
   display: grid;
   gap: var(--cifraink-space-1);

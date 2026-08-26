@@ -388,6 +388,49 @@ describe('inicialização do CifraInk', () => {
     expect(getPanelControl<HTMLInputElement>('Editar conteúdo')).not.toBeChecked();
   });
 
+  it('oculta e restaura diagramas individuais pela interface', async () => {
+    loadHtml(fullPageHtml);
+    const { context } = createContext();
+
+    await act(async () => {
+      await initializeCifraInk(context);
+    });
+
+    const section = document
+      .querySelector<HTMLElement>('[data-chord-mode]')
+      ?.closest<HTMLElement>('section');
+    const items = Array.from(section?.querySelectorAll<HTMLElement>('li') ?? []);
+    const originalFirstItem = items[0]?.cloneNode(true);
+
+    if (!section || items.length === 0) {
+      throw new Error('Fixture sem diagramas completos');
+    }
+
+    const summary = getPanelHost().shadowRoot?.querySelector<HTMLElement>(
+      '.cifraink-diagram-list__summary',
+    );
+
+    expect(getPanelHost().shadowRoot?.textContent).not.toContain('Mostrar diagramas');
+    expect(getPanelHost().shadowRoot?.textContent).not.toContain('Diagramas compactos');
+
+    await act(async () => {
+      summary?.click();
+      getPanelControl<HTMLInputElement>('A').click();
+    });
+
+    expect(items[0]?.hidden).toBe(true);
+    expect(items[1]?.hidden).toBe(false);
+
+    await act(async () => {
+      getPanelHost()
+        .shadowRoot?.querySelector<HTMLButtonElement>('.cifraink-restore-button')
+        ?.click();
+    });
+
+    expect(items[0]?.isEqualNode(originalFirstItem ?? null)).toBe(true);
+    expect(getPanelControl<HTMLInputElement>('A')).toBeChecked();
+  });
+
   it('omite apenas o controle do compositor quando ele não existe', async () => {
     loadHtml(missingComposerHtml);
     const { context } = createContext();

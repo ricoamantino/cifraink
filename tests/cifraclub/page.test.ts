@@ -32,6 +32,10 @@ describe('CifraClubPage', () => {
     expect(page.getContentBlocks()).toHaveLength(2);
     expect(page.getChordDiagramSection()?.textContent).toContain('Bm7');
     expect(page.getChordDiagrams()).toHaveLength(2);
+    expect(page.getChordDiagramEntries().map((entry) => entry.name)).toEqual(['A', 'Bm7']);
+    expect(
+      page.getChordDiagramEntries().every((entry) => entry.visibilityTarget.tagName === 'LI'),
+    ).toBe(true);
     expect(page.getBrand()).not.toBeNull();
     expect(page.getHeader()?.tagName).toBe('HEADER');
     expect(page.getNativeControls()?.textContent).toContain('Imprimir');
@@ -55,6 +59,7 @@ describe('CifraClubPage', () => {
 
     expect(page.getChordDiagramSection()).toBeNull();
     expect(page.getChordDiagrams()).toEqual([]);
+    expect(page.getChordDiagramEntries()).toEqual([]);
     expect(page.inspect()).toEqual({
       ...completeCapabilities,
       status: 'partial',
@@ -130,6 +135,25 @@ describe('CifraClubPage', () => {
     expect(page.inspect()).toMatchObject({ status: 'incompatible', content: false });
   });
 
+  it('usa o próprio diagrama como alvo quando o item estrutural está ausente', () => {
+    const document = parseHtml(fullPageHtml);
+    const page = new CifraClubPage(document);
+    const diagram = page.getChordDiagrams()[0];
+    const section = page.getChordDiagramSection();
+
+    if (!diagram || !section) {
+      throw new Error('Fixture sem diagrama completo');
+    }
+
+    section.prepend(diagram);
+
+    expect(page.getChordDiagramEntries()[0]).toMatchObject({
+      diagram,
+      name: 'A',
+      visibilityTarget: diagram,
+    });
+  });
+
   it('retorna null quando o agrupador de controles nativos está ausente', () => {
     const document = parseHtml(fullPageHtml);
     document.querySelector('aside')?.remove();
@@ -177,6 +201,7 @@ describe('CifraClubPage', () => {
     page.getContentBlocks();
     page.getChordDiagramSection();
     page.getChordDiagrams();
+    page.getChordDiagramEntries();
     page.getBrand();
     page.getHeader();
     page.getNativeControls();

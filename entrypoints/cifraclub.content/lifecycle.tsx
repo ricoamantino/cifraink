@@ -10,6 +10,11 @@ import {
   readContentControlState,
 } from '../../src/cifraclub/content';
 import {
+  applyDiagramControlAction,
+  type DiagramControlAction,
+  readDiagramControlState,
+} from '../../src/cifraclub/diagrams';
+import {
   applyHeaderControlAction,
   type HeaderControlAction,
   type HeaderControlState,
@@ -45,6 +50,7 @@ async function mountPanel(ctx: ContentScriptContext): Promise<void> {
     const page = new CifraClubPage(document);
     const capabilities = page.inspect();
     const initialContent = readContentControlState(page);
+    const initialDiagrams = readDiagramControlState(page);
     const initialHeader = readHeaderControlState(page);
     const nativeControls = page.getNativeControls();
     const placement = nativeControls ? 'inline' : 'overlay';
@@ -60,9 +66,13 @@ async function mountPanel(ctx: ContentScriptContext): Promise<void> {
           <Panel
             capabilities={capabilities}
             initialContent={initialContent}
+            initialDiagrams={initialDiagrams}
             initialHeader={initialHeader}
             onContentAction={(action: ContentControlAction) =>
               applyContentControlAction(page, action)
+            }
+            onDiagramAction={(action: DiagramControlAction) =>
+              applyDiagramControlAction(page, action)
             }
             onHeaderAction={(current: HeaderControlState, action: HeaderControlAction) =>
               applyHeaderControlAction(page, current, action)

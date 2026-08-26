@@ -307,13 +307,13 @@ foram aprovados. O marcador temporário foi removido e a página terminou no est
 
 ### 6.3 Diagramas
 
-- [ ] Mostrar ou ocultar a seção completa.
 - [ ] Listar diagramas encontrados pelo nome visível.
 - [ ] Mostrar ou ocultar cada diagrama.
-- [ ] Implementar espaçamento compacto sem sobrescrever estilos não relacionados.
-- [ ] Restaurar a seção e cada diagrama.
+- [ ] Restaurar cada diagrama ao estado original.
 - [ ] Tratar nomes repetidos sem usar o texto como ID único.
 - [ ] Tratar ausência total de diagramas sem erro.
+- [ ] Não duplicar o controle nativo de visibilidade da seção.
+- [ ] Usar no grupo recolhível o padrão de seta do cabeçalho do CifraInk.
 
 ### 6.4 Integração com impressão
 
@@ -334,7 +334,6 @@ foram aprovados. O marcador temporário foi removido e a página terminou no est
 - [ ] Ler preferências via WXT Storage.
 - [ ] Salvar painel aberto/recolhido.
 - [ ] Salvar preferência de cabeçalho compacto.
-- [ ] Salvar preferência de diagramas compactos.
 - [ ] Salvar visibilidades padrão suportadas.
 - [ ] Ignorar campos desconhecidos ou inválidos com segurança.
 - [ ] Não armazenar conteúdo da música ou HTML da página.
@@ -384,7 +383,7 @@ foram aprovados. O marcador temporário foi removido e a página terminou no est
 - [ ] Configurar Playwright para carregar a extensão no Chromium.
 - [ ] Criar fluxo E2E de inicialização e painel único.
 - [ ] Criar fluxo E2E de edição do cabeçalho e conteúdo.
-- [ ] Criar fluxo E2E de ocultação e compactação dos diagramas.
+- [ ] Criar fluxo E2E de ocultação individual dos diagramas.
 - [ ] Criar fluxo E2E de restauração completa.
 - [ ] Criar fluxo E2E com controles nativos de texto e colunas.
 

@@ -4,17 +4,21 @@ import { useState } from 'react';
 import { browser } from 'wxt/browser';
 import type { PageCapabilities } from '../../src/cifraclub/capabilities';
 import type { ContentControlAction, ContentControlState } from '../../src/cifraclub/content';
+import type { DiagramControlAction, DiagramControlState } from '../../src/cifraclub/diagrams';
 import type { HeaderControlAction, HeaderControlState } from '../../src/cifraclub/header';
 import { RestoreButton } from '../../src/components/RestoreButton';
 import { Status } from '../../src/components/Status';
 import { ContentSection } from './ContentSection';
+import { DiagramSection } from './DiagramSection';
 import { HeaderSection } from './HeaderSection';
 
 interface PanelProps {
   readonly capabilities: PageCapabilities;
   readonly initialContent: ContentControlState;
+  readonly initialDiagrams: DiagramControlState;
   readonly initialHeader: HeaderControlState;
   readonly onContentAction: (action: ContentControlAction) => ContentControlState;
+  readonly onDiagramAction: (action: DiagramControlAction) => DiagramControlState;
   readonly onHeaderAction: (
     current: HeaderControlState,
     action: HeaderControlAction,
@@ -29,23 +33,27 @@ const iconUrl = browser.runtime.getURL('/icon/cifraink.svg');
 export function Panel({
   capabilities,
   initialContent,
+  initialDiagrams,
   initialHeader,
   onContentAction,
+  onDiagramAction,
   onHeaderAction,
   onRestore,
 }: PanelProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [content, setContent] = useState(initialContent);
+  const [diagrams, setDiagrams] = useState(initialDiagrams);
   const [header, setHeader] = useState(initialHeader);
   const toggleLabel = collapsed ? 'Abrir painel' : 'Recolher painel';
 
   function handleHeaderAction(action: HeaderControlAction): void {
-    setHeader(onHeaderAction(header, action));
+    setHeader((current) => onHeaderAction(current, action));
   }
 
   function handleRestore(): void {
     onRestore();
     setContent(initialContent);
+    setDiagrams(initialDiagrams);
     setHeader(initialHeader);
   }
 
@@ -86,6 +94,10 @@ export function Panel({
           <ContentSection
             onAction={(action) => setContent(onContentAction(action))}
             state={content}
+          />
+          <DiagramSection
+            onAction={(action) => setDiagrams(onDiagramAction(action))}
+            state={diagrams}
           />
         </div>
       </div>

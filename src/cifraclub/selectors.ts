@@ -12,6 +12,8 @@ export const cifraClubSelectors = {
   content: ':scope > pre',
   chord: 'b[data-chord-name][data-chord-original-text]',
   chordDiagram: '[data-chord-mode][data-mount][data-tuning]',
+  chordDiagramName: ':scope strong',
+  chordDiagramItem: 'li',
   // O agrupador dos controles é o filho estrutural do aside irmão da área de impressão.
   nativeControls: ':scope > aside > div',
   // A marca é vazia e estilizada por sprite; não possui nome acessível ou atributo estável.

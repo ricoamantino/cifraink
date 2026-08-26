@@ -43,7 +43,11 @@ describe('seletores do Cifra Club', () => {
     expect(header.querySelector(cifraClubSelectors.brand)).not.toBeNull();
     expect(contentBlocks).toHaveLength(2);
     expect(chords).toHaveLength(6);
-    expect(printRoot.querySelectorAll(cifraClubSelectors.chordDiagram)).toHaveLength(2);
+    const diagrams = Array.from(printRoot.querySelectorAll(cifraClubSelectors.chordDiagram));
+
+    expect(diagrams).toHaveLength(2);
+    expect(diagrams[0]?.querySelector(cifraClubSelectors.chordDiagramName)?.textContent).toBe('A');
+    expect(diagrams[0]?.closest(cifraClubSelectors.chordDiagramItem)?.tagName).toBe('LI');
   });
 
   it('não confunde controles nativos com o conteúdo musical', () => {

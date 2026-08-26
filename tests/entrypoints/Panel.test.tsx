@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { Panel } from '../../entrypoints/cifraclub.content/Panel';
 import type { PageCapabilities, PageCompatibility } from '../../src/cifraclub/capabilities';
 import type { ContentControlAction, ContentControlState } from '../../src/cifraclub/content';
+import type { DiagramControlAction, DiagramControlState } from '../../src/cifraclub/diagrams';
 import type { HeaderControlAction, HeaderControlState } from '../../src/cifraclub/header';
 
 const compatibilityMessages = {
@@ -40,6 +41,19 @@ const unavailableContent = {
   editable: false,
 } satisfies ContentControlState;
 
+const availableDiagrams = {
+  available: true,
+  items: [
+    { index: 0, label: 'A', visible: true },
+    { index: 1, label: 'Bm7', visible: true },
+  ],
+} satisfies DiagramControlState;
+
+const unavailableDiagrams = {
+  available: false,
+  items: [],
+} satisfies DiagramControlState;
+
 function createCapabilities(status: PageCompatibility): PageCapabilities {
   const available = status === 'compatible';
 
@@ -74,6 +88,18 @@ function updateHeaderState(
     : current;
 }
 
+function updateDiagramState(
+  current: DiagramControlState,
+  action: DiagramControlAction,
+): DiagramControlState {
+  return {
+    ...current,
+    items: current.items.map((item) =>
+      item.index === action.index ? { ...item, visible: action.visible } : item,
+    ),
+  };
+}
+
 function panel(
   status: PageCompatibility = 'compatible',
   initialHeader: HeaderControlState = completeHeader,
@@ -87,13 +113,18 @@ function panel(
     available: true,
     editable: action.editable,
   }),
+  initialDiagrams: DiagramControlState = availableDiagrams,
+  onDiagramAction: (action: DiagramControlAction) => DiagramControlState = (action) =>
+    updateDiagramState(availableDiagrams, action),
 ): ReactElement {
   return (
     <Panel
       capabilities={createCapabilities(status)}
       initialContent={initialContent}
+      initialDiagrams={initialDiagrams}
       initialHeader={initialHeader}
       onContentAction={onContentAction}
+      onDiagramAction={onDiagramAction}
       onHeaderAction={onHeaderAction}
       onRestore={onRestore}
     />
@@ -123,7 +154,7 @@ describe('painel do CifraInk', () => {
     );
     expect(screen.getByRole('region', { name: 'Cabeçalho' })).toBeVisible();
     expect(screen.getByRole('region', { name: 'Conteúdo' })).toBeVisible();
-    expect(screen.queryByRole('region', { name: 'Diagramas' })).toBeNull();
+    expect(screen.getByRole('region', { name: 'Diagramas' })).toBeVisible();
 
     const restoreButton = screen.getByRole('button', { name: 'Restaurar página' });
     expect(restoreButton).toBeEnabled();
@@ -229,6 +260,64 @@ describe('painel do CifraInk', () => {
     expect(screen.queryByRole('region', { name: 'Conteúdo' })).toBeNull();
   });
 
+  it('mantém a lista individual recolhida e controla diagramas por índice', () => {
+    const onDiagramAction = vi.fn((action: DiagramControlAction) =>
+      updateDiagramState(availableDiagrams, action),
+    );
+    render(
+      panel(
+        'compatible',
+        completeHeader,
+        () => {},
+        updateHeaderState,
+        availableContent,
+        (action) => ({ available: true, editable: action.editable }),
+        availableDiagrams,
+        onDiagramAction,
+      ),
+    );
+
+    const summary = screen.getByText('Diagramas individuais (2)').closest('summary');
+    const details = summary?.closest('details');
+    expect(summary).not.toBeNull();
+    expect(summary?.querySelector('.cifraink-diagram-list__toggle-icon')).not.toBeNull();
+    expect(details).not.toHaveAttribute('open');
+
+    summary?.focus();
+    expect(summary).toHaveFocus();
+    if (summary) {
+      fireEvent.click(summary);
+    }
+
+    const firstDiagram = screen.getByRole('switch', { name: 'A' });
+    fireEvent.click(firstDiagram);
+
+    expect(details).toHaveAttribute('open');
+    expect(onDiagramAction).toHaveBeenCalledWith({
+      type: 'set-diagram-visible',
+      index: 0,
+      visible: false,
+    });
+    expect(firstDiagram).not.toBeChecked();
+    expect(screen.getByRole('switch', { name: 'Bm7' })).toBeChecked();
+  });
+
+  it('omite a seção Diagramas quando nenhum diagrama está disponível', () => {
+    render(
+      panel(
+        'partial',
+        completeHeader,
+        () => {},
+        updateHeaderState,
+        availableContent,
+        (action) => ({ available: true, editable: action.editable }),
+        unavailableDiagrams,
+      ),
+    );
+
+    expect(screen.queryByRole('region', { name: 'Diagramas' })).toBeNull();
+  });
+
   it('deriva a compatibilidade das propriedades sem perder o estado visual local', () => {
     const { rerender } = render(panel());
 
@@ -282,12 +371,15 @@ describe('painel do CifraInk', () => {
     });
     fireEvent.click(screen.getByRole('switch', { name: 'Mostrar marca' }));
     fireEvent.click(screen.getByRole('switch', { name: 'Editar conteúdo' }));
+    fireEvent.click(screen.getByText('Diagramas individuais (2)'));
+    fireEvent.click(screen.getByRole('switch', { name: 'A' }));
     fireEvent.click(screen.getByRole('button', { name: 'Restaurar página' }));
 
     expect(onRestore).toHaveBeenCalledOnce();
     expect(screen.getByRole('textbox', { name: 'Título' })).toHaveValue('Título original');
     expect(screen.getByRole('switch', { name: 'Mostrar marca' })).toBeChecked();
     expect(screen.getByRole('switch', { name: 'Editar conteúdo' })).not.toBeChecked();
+    expect(screen.getByRole('switch', { name: 'A' })).toBeChecked();
     expect(screen.getByRole('region', { name: 'CifraInk' })).toHaveAttribute(
       'data-collapsed',
       'false',

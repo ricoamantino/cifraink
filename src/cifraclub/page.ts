@@ -1,6 +1,12 @@
 import { assessPageCapabilities, type PageCapabilities } from './capabilities';
 import { cifraClubSelectors, cifraClubText } from './selectors';
 
+export interface ChordDiagramEntry {
+  readonly diagram: HTMLElement;
+  readonly name: string | null;
+  readonly visibilityTarget: HTMLElement;
+}
+
 export class CifraClubPage {
   constructor(private readonly document: Document) {}
 
@@ -64,6 +70,28 @@ export class CifraClubPage {
     return this.getPages().flatMap((page) =>
       Array.from(page.querySelectorAll<HTMLElement>(cifraClubSelectors.chordDiagram)),
     );
+  }
+
+  getChordDiagramEntries(): ChordDiagramEntry[] {
+    const section = this.getChordDiagramSection();
+
+    if (!section) {
+      return [];
+    }
+
+    return this.getChordDiagrams().map((diagram) => {
+      const item = diagram.closest<HTMLElement>(cifraClubSelectors.chordDiagramItem);
+      const normalizedName = diagram
+        .querySelector<HTMLElement>(cifraClubSelectors.chordDiagramName)
+        ?.textContent?.replace(/\s+/g, ' ')
+        .trim();
+
+      return {
+        diagram,
+        name: normalizedName || null,
+        visibilityTarget: item && section.contains(item) ? item : diagram,
+      };
+    });
   }
 
   getBrand(): HTMLElement | null {

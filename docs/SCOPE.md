@@ -70,10 +70,9 @@ O sucesso do MVP será medido pela confiabilidade desse fluxo, não pela quantid
 
 #### Diagramas
 
-- Mostrar ou ocultar a seção de diagramas.
 - Mostrar ou ocultar diagramas individualmente.
-- Alternar entre espaçamento original e compacto.
-- Restaurar visibilidade e estilos originais.
+- Restaurar a visibilidade original de cada item.
+- Não duplicar a visibilidade da seção completa, já oferecida pelo controle nativo.
 
 #### Interface
 
@@ -91,7 +90,6 @@ O sucesso do MVP será medido pela confiabilidade desse fluxo, não pela quantid
 - Salvar apenas preferências globais simples:
   - painel aberto ou recolhido;
   - modo compacto do cabeçalho;
-  - modo compacto dos diagramas;
   - visibilidade padrão dos elementos suportados.
 - Não salvar o texto editado da música no primeiro lançamento.
 
@@ -132,9 +130,9 @@ Esta matriz registra todas as funções observadas no projeto legado. “Depois�
 | Mostrar ou ocultar logotipo | Manter como controle de elemento de marca quando for localizado com segurança | MVP |
 | Editar título, artista e compositor | Manter com edição direta e restauração | MVP |
 | Editar letra e acordes com `contenteditable` | Manter restrito ao contêiner musical reconhecido | MVP |
-| Mostrar ou ocultar todos os diagramas | Manter | MVP |
+| Mostrar ou ocultar todos os diagramas | Usar o controle nativo; não duplicar no painel | Nativo |
 | Mostrar ou ocultar cada diagrama | Manter | MVP |
-| Compactar espaçamento dos diagramas | Manter sem substituir estilos não relacionados | MVP |
+| Compactar espaçamento dos diagramas | Não manter; não acrescenta valor suficiente ao MVP | Fora |
 | Renomear um acorde no diagrama | Preservar como evolução após validar identidade estável dos acordes | Depois |
 | Mostrar ou ocultar marcações de posição do acorde | Preservar como controle individual do diagrama | Depois |
 | Adicionar descrição ao diagrama | Preservar como anotação opcional | Depois |
@@ -173,6 +171,7 @@ interface CifraClubPage {
   getComposer(): HTMLElement | null;
   getContentBlocks(): HTMLElement[];
   getChordDiagrams(): HTMLElement[];
+  getChordDiagramEntries(): ChordDiagramEntry[];
   getChordDiagramSection(): HTMLElement | null;
   getBrand(): HTMLElement | null;
   getNativeControls(): HTMLElement | null;
@@ -285,6 +284,18 @@ o atributo `contenteditable` original e mantém o texto editado. **Restaurar pá
 filhos originais somente quando houver diferença estrutural; o próprio `<pre>` e descendentes não
 alterados preservam sua identidade.
 
+Os controles de diagramas também reconsultam o DOM a cada ação. Cada entrada reúne o elemento
+visual, o nome normalizado e o alvo de visibilidade: o `<li>` ancestral quando ele pertence à seção,
+ou o próprio diagrama como fallback. Ações individuais usam o índice atual, nunca o texto do acorde
+como identificador. Nomes repetidos recebem sufixos de ocorrência, como `A (1)` e `A (2)`, e nomes
+ausentes usam `Diagrama N`.
+
+A lista individual fica em um `<details>` nativo fechado por padrão. Quando a seção completa está
+fechada, não cria estado React adicional. Seu indicador usa o mesmo ícone, dimensões e estados
+visuais do recolhimento principal do CifraInk. O painel não oferece visibilidade da seção completa
+nem compactação: o primeiro recurso já existe nos controles nativos e o segundo foi retirado por
+não acrescentar valor suficiente ao MVP.
+
 ### 5.4 Atualizações do site
 
 Não adicionar `MutationObserver` por antecipação.
@@ -306,12 +317,14 @@ entrypoints/
     Panel.tsx          # composição do painel
     HeaderSection.tsx  # controles funcionais do cabeçalho
     ContentSection.tsx # ativação da edição do conteúdo musical
+    DiagramSection.tsx # visibilidade individual dos diagramas
     panel.css          # estilos isolados pelo Shadow DOM
 
 src/
   cifraclub/
     page.ts            # consultas semânticas ao DOM
     content.ts         # estado e ações do conteúdo musical
+    diagrams.ts        # estado e ações dos diagramas
     header.ts          # estado e ações do cabeçalho
     selectors.ts       # seletores do site
     capabilities.ts    # inspeção e diagnóstico
@@ -436,7 +449,7 @@ Não manter várias heurísticas obscuras para esconder incompatibilidade. Se a 
 
 ### Fluxos E2E obrigatórios
 
-1. Abrir a cifra de referência, montar o painel, editar título e conteúdo, compactar diagramas e restaurar.
+1. Abrir a cifra de referência, montar o painel, editar título e conteúdo, ocultar um diagrama e restaurar.
 2. Usar os controles nativos de colunas e tamanho do texto e confirmar que o painel continua funcional.
 
 ### Gates do CI
@@ -456,7 +469,7 @@ O E2E pode ser executado separadamente no início por depender da página extern
 - A ausência de compositor ou diagramas não impede os demais recursos.
 - Título, artista, compositor e conteúdo podem ser editados quando presentes.
 - O alinhamento da cifra é preservado durante a edição.
-- Cabeçalho e diagramas podem ser compactados.
+- O cabeçalho pode ser compactado.
 - Elementos suportados podem ser ocultados individualmente.
 - **Restaurar página** devolve texto, atributos e estilos aos valores capturados.
 - Os controles nativos do Cifra Club continuam funcionando.
@@ -479,7 +492,7 @@ O E2E pode ser executado separadamente no início por depender da página extern
 - Montar o painel em Shadow DOM.
 - Implementar `domMutations` e `restoreAll()`.
 - Entregar edição e visibilidade do cabeçalho e conteúdo.
-- Entregar visibilidade e compactação dos diagramas.
+- Entregar visibilidade individual dos diagramas.
 
 ### Etapa 3 — Qualidade e distribuição
 
