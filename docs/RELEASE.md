@@ -1,7 +1,8 @@
 # Procedimento de release
 
-Este documento descreve a publicação manual do CifraInk na Chrome Web Store. A versão candidata
-atual é `0.1.1`, pública, gratuita, global e em português do Brasil.
+Este documento descreve a publicação manual do CifraInk na Chrome Web Store. A versão pública atual
+é `0.1.0`; a candidata `0.1.1` será uma atualização pública, gratuita, global e em português do
+Brasil.
 
 ## 1. Preparação
 
@@ -44,7 +45,7 @@ arquivo depois dessa aprovação.
 Checksum aprovado para o pacote candidato `0.1.1` em 2026-08-27:
 
 ```text
-83d8c1840e31a2392770acca5a42dd1cf69a67e7733221d84358495bea964acf
+0173cbc59b9d5f1bf9e06bac4543cbc73b096862b377a488d81eff5e4f9c4f6c
 ```
 
 ## 4. Teste do pacote final
@@ -55,19 +56,23 @@ Checksum aprovado para o pacote candidato `0.1.1` em 2026-08-27:
    **Carregar sem compactação**.
 4. Não carregar `.output/chrome-mv3`; o objetivo é validar exatamente o conteúdo do ZIP.
 5. Abrir a URL de referência indicada em `docs/STORE_LISTING.md` e verificar:
-   - inicialização e painel único;
+   - inicialização sem recarregar a página e painel único;
    - edição do título e do compositor, incluindo espaços consecutivos;
+   - visibilidade de tom, afinação e marca, além do modo compacto;
    - edição do conteúdo musical e undo/redo nativo;
-   - visibilidade de um diagrama individual;
+   - edição do nome de um diagrama;
+   - controles preto e laranja, preservando o estado das marcações ao reexibir o diagrama;
    - restauração integral;
    - fallback sem overflow em viewport de 360 px;
    - impressão ou PDF sem o painel CifraInk.
+6. Repetir nome, marcações, visibilidade e restauração em páginas com diagramas de viola caipira,
+   ukulele e cavaco.
 
 Registrar navegador, sistema, commit, checksum e resultado. Restaurar a página antes de encerrar.
 
 ## 5. Chrome Web Store
 
-1. Se a versão anterior ainda estiver em análise, cancelar essa análise antes de enviar a correção.
+1. Manter a versão pública `0.1.0` disponível durante a revisão da atualização.
 2. Usar os campos definitivos de `docs/STORE_LISTING.md`.
 3. Enviar o ZIP aprovado da versão `0.1.1` e os PNGs de `store-assets/`.
 4. Preencher **Privacy practices** de acordo com `docs/SECURITY_REVIEW.md`.

@@ -9,10 +9,12 @@ O CifraInk é um projeto independente e não é afiliado, associado nem endossad
 ## Recursos
 
 - edição de título, artista e compositor;
-- visibilidade individual dos itens do cabeçalho e da marca;
+- visibilidade individual dos itens do cabeçalho, tom, afinação e marca;
 - modo de cabeçalho compacto;
 - edição direta de letra e acordes nos blocos reconhecidos;
-- visibilidade individual dos diagramas;
+- visibilidade individual dos diagramas de violão, viola caipira, ukulele e cavaco;
+- edição do nome impresso dos diagramas;
+- controle conjunto de posições, pestanas, estados das cordas e casa inicial;
 - restauração exata do estado encontrado ao carregar a página;
 - painel acessível, recolhível e oculto durante a impressão.
 
@@ -35,6 +37,7 @@ O painel acompanha as ferramentas da página de impressão sem aparecer no docum
 - Google Chrome 129 ou mais recente;
 - páginas HTTPS do Cifra Club com endereço no formato
   `https://www.cifraclub.com.br/<cifra>/imprimir.html`;
+- diagramas de violão, viola caipira, ukulele e cavaco quando presentes;
 - interface em português do Brasil.
 
 A extensão depende da estrutura atual da página de impressão. Se o site mudar, um recurso opcional

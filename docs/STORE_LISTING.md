@@ -1,6 +1,6 @@
 # Chrome Web Store — listagem 0.1.1
 
-Campos definitivos para a primeira submissão pública do CifraInk.
+Campos definitivos para a atualização pública `0.1.1` do CifraInk.
 
 ## Informações do produto
 
@@ -28,9 +28,11 @@ Club.
 Com o CifraInk, você pode:
 
 - editar título, artista e compositor;
-- ocultar itens do cabeçalho e usar um modo compacto;
+- ocultar itens do cabeçalho, tom, afinação e marca, além de usar um modo compacto;
 - editar letra e acordes preservando espaços e quebras de linha;
-- mostrar ou ocultar diagramas individualmente;
+- mostrar ou ocultar diagramas de violão, viola caipira, ukulele e cavaco individualmente;
+- editar o nome impresso de cada diagrama;
+- ocultar posições, pestanas, estados das cordas e casa inicial sem remover a grade;
 - restaurar a página ao estado original da sessão.
 
 Tudo acontece localmente no navegador. O CifraInk não cria conta, não coleta dados, não possui
@@ -57,12 +59,21 @@ Não são necessárias credenciais.
 3. Confirme o painel CifraInk no início da coluna de controles.
 4. Abra os editores de título, artista ou compositor e digite um valor de teste.
 5. Ative **Editar conteúdo** e altere um trecho temporário da cifra.
-6. Abra **Diagramas individuais** e alterne um item.
-7. Use **Restaurar página** e confirme a volta do conteúdo e da visibilidade originais.
-8. Abra a impressão e confirme que o painel CifraInk não aparece.
+6. Alterne **Mostrar tom** ou **Mostrar afinação**.
+7. Abra **Diagramas individuais**, edite um nome e alterne os controles preto e laranja.
+8. Use **Restaurar página** e confirme a volta dos textos, marcações e visibilidades originais.
+9. Abra a impressão e confirme que o painel CifraInk não aparece.
 
 Os dados visíveis da página são acessados e modificados somente no dispositivo para entregar essas
 ações. Nada é coletado, retido ou transmitido.
+
+## Novidades da versão 0.1.1
+
+- inicialização mais confiável após o carregamento da página;
+- controles para tom e afinação impressos;
+- diagramas de violão, viola caipira, ukulele e cavaco;
+- edição do nome impresso e controle das marcações internas de cada diagrama;
+- refinamentos visuais e de espaçamento alinhados aos controles nativos.
 
 ## Materiais
 
