@@ -426,9 +426,9 @@ e não registra listeners de impressão nem chama `window.print()`.
 
 Validação automatizada de 2026-08-27: fixtures sanitizadas, seletores estruturais, isolamento da raiz,
 ausência independente, visibilidade reversível, preservação do valor nativo e restauração integrada
-ao painel cobertos. No smoke manual, as linhas foram ocultadas independentemente, os controles
-nativos permaneceram funcionais e a restauração devolveu o estado inicial. A repetição visual no
-resultado impresso permanece pendente.
+ao painel cobertos. No smoke do bundle instalado, as linhas foram ocultadas independentemente,
+compactação e marca foram exercitadas e a restauração devolveu o estado inicial. A confirmação
+visual no resultado impresso permanece pendente.
 
 Correção de 2026-08-27: a inspeção combinada identificou 20 px residuais no wrapper externo da
 configuração de acordes. O adaptador passou a reconhecer esse alvo estrutural e a visibilidade
@@ -457,7 +457,10 @@ rótulo, quatro instrumentos, estruturas opcionais, isolamento de grade e botão
 índice, nomes vazios e repetidos, dois switches acessíveis, edição por Enter, blur e Escape, estado
 preservado ao reexibir o diagrama e restauração integrada cobertos. Foram aprovados 135 testes em
 `pnpm check`, `pnpm build` e `git diff --check`, sem mudanças em manifesto, permissões, versão ou
-dependências. O smoke real permanece pendente do recarregamento da extensão no Chrome.
+dependências. No smoke do bundle instalado em 2026-08-27, violão, viola caipira, ukulele e cavaco
+apresentaram um painel, nove diagramas e controles funcionais. Renomeação, ocultação de marcações,
+ocultação do item, preservação do estado ao reexibir e restauração foram aprovadas nos quatro
+instrumentos. A confirmação visual na impressão permanece pendente.
 
 ## 7. Robustez e compatibilidade — pós-lançamento
 
@@ -565,8 +568,11 @@ perfil limpo e o checklist manual correspondente.
 
 Atualização de correção preparada em 2026-08-27 como `0.1.1`: build e ZIP limpos preservaram os dez
 arquivos autorizados. Duas gerações produziram o mesmo SHA-256
-`83d8c1840e31a2392770acca5a42dd1cf69a67e7733221d84358495bea964acf`. A instalação do pacote final
-em perfil limpo e o checklist manual permanecem pendentes antes do novo envio à loja.
+`0173cbc59b9d5f1bf9e06bac4543cbc73b096862b377a488d81eff5e4f9c4f6c`. O smoke da extensão instalada
+aprovou inicialização sem recarregar, host único, edição com espaços, tom, afinação, marca,
+compactação, edição com undo/redo, diagramas nos quatro instrumentos, restauração e viewport de
+360 px. Não houve erro React `#418` nem aviso do CifraInk. Permanecem pendentes a instalação do ZIP
+extraído em perfil limpo e a confirmação visual da impressão/PDF.
 
 ## 11. Gate de estabilização pós-lançamento
 

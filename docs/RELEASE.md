@@ -70,6 +70,21 @@ Checksum aprovado para o pacote candidato `0.1.1` em 2026-08-27:
 
 Registrar navegador, sistema, commit, checksum e resultado. Restaurar a página antes de encerrar.
 
+### Registro do candidato 0.1.1
+
+Smoke parcial executado em 2026-08-27 no Chrome `151.0.7922.174`, macOS `26.6.2` e commit
+`2d39b3e`, usando o bundle instalado da versão `0.1.1`. Foram aprovados: inicialização sem recarregar
+e host único após 3,5 s;
+edição de título e compositor com espaços; tom, afinação, marca e modo compacto; conteúdo com
+undo/redo; nome, marcações, visibilidade e restauração dos diagramas de violão, viola caipira,
+ukulele e cavaco; restauração integral; e viewport de 360 px sem overflow. Não houve erro React
+`#418` nem aviso do CifraInk.
+
+A validação não substitui os dois gates restantes: carregar a cópia extraída do ZIP em perfil limpo
+e confirmar visualmente a ausência do painel na impressão/PDF. O macOS bloqueou a captura da prévia
+de impressão por permissão de gravação de tela, portanto esse resultado não foi inferido nem marcado
+como concluído.
+
 ## 5. Chrome Web Store
 
 1. Manter a versão pública `0.1.0` disponível durante a revisão da atualização.
