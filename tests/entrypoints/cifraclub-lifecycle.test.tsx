@@ -376,7 +376,7 @@ describe('inicialização do CifraInk', () => {
     expect(uiContainer).toBeEmptyDOMElement();
   });
 
-  it('edita, oculta, compacta e restaura o cabeçalho pela interface', async () => {
+  it('edita, oculta, compacta e restaura o cabeçalho e seus metadados pela interface', async () => {
     loadHtml(fullPageHtml);
     const { context } = createContext();
 
@@ -388,9 +388,16 @@ describe('inicialização do CifraInk', () => {
     const artist = document.querySelector<HTMLElement>('h2');
     const composer = document.querySelector<HTMLElement>('header > small');
     const header = document.querySelector<HTMLElement>('header');
+    const tone = document.querySelector<HTMLElement>(
+      'button[data-anchor="--chord-tone"]',
+    )?.parentElement;
+    const tuning = document.querySelector<HTMLElement>(
+      'button[data-anchor="--chord-tuning"]',
+    )?.parentElement;
+    const chordConfig = tone?.parentElement;
     const titleLink = title?.parentElement;
 
-    if (!title || !artist || !composer || !header) {
+    if (!title || !artist || !composer || !header || !tone || !tuning || !chordConfig) {
       throw new Error('Fixture sem cabeçalho completo');
     }
 
@@ -398,11 +405,15 @@ describe('inicialização do CifraInk', () => {
     const composerInput = getPanelControl<HTMLInputElement>('Compositor');
     const artistVisibility = getPanelControl<HTMLInputElement>('Mostrar artista');
     const compact = getPanelControl<HTMLInputElement>('Cabeçalho compacto');
+    const toneVisibility = getPanelControl<HTMLInputElement>('Mostrar tom');
+    const tuningVisibility = getPanelControl<HTMLInputElement>('Mostrar afinação');
 
     await act(async () => {
       fireEvent.change(titleInput, { target: { value: 'Título pela interface' } });
       fireEvent.change(composerInput, { target: { value: '' } });
       artistVisibility.click();
+      toneVisibility.click();
+      tuningVisibility.click();
       compact.click();
     });
 
@@ -410,10 +421,15 @@ describe('inicialização do CifraInk', () => {
     expect(title.parentElement).toBe(titleLink);
     expect(composer.textContent).toBe('Composição de:');
     expect(artist.hidden).toBe(true);
+    expect(tone.hidden).toBe(true);
+    expect(tuning.hidden).toBe(true);
+    expect(chordConfig.hidden).toBe(true);
     expect(header.style.getPropertyValue('gap')).toBe('0px');
     expect(title.style.getPropertyValue('font-size')).toBe('16px');
     expect(getPanelControl<HTMLInputElement>('Título')).toHaveValue('Título pela interface');
     expect(getPanelControl<HTMLInputElement>('Mostrar artista')).not.toBeChecked();
+    expect(getPanelControl<HTMLInputElement>('Mostrar tom')).not.toBeChecked();
+    expect(getPanelControl<HTMLInputElement>('Mostrar afinação')).not.toBeChecked();
     expect(getPanelControl<HTMLInputElement>('Cabeçalho compacto')).toBeChecked();
 
     await act(async () => {
@@ -425,10 +441,15 @@ describe('inicialização do CifraInk', () => {
     expect(title.textContent).toBe('Canção de Teste');
     expect(composer.textContent).toBe('Composição de: Pessoa Autora');
     expect(artist.hidden).toBe(false);
+    expect(tone.hidden).toBe(false);
+    expect(tuning.hidden).toBe(false);
+    expect(chordConfig.hidden).toBe(false);
     expect(header.style.getPropertyValue('gap')).toBe('');
     expect(title.style.getPropertyValue('font-size')).toBe('');
     expect(getPanelControl<HTMLInputElement>('Título')).toHaveValue('Canção de Teste');
     expect(getPanelControl<HTMLInputElement>('Mostrar artista')).toBeChecked();
+    expect(getPanelControl<HTMLInputElement>('Mostrar tom')).toBeChecked();
+    expect(getPanelControl<HTMLInputElement>('Mostrar afinação')).toBeChecked();
     expect(getPanelControl<HTMLInputElement>('Cabeçalho compacto')).not.toBeChecked();
   });
 

@@ -24,7 +24,7 @@ O MVP deve permitir que o usuário:
 1. Abra uma URL de impressão do Cifra Club.
 2. Ative um painel discreto do CifraInk.
 3. Edite título, artista, compositor e conteúdo da cifra.
-4. Oculte elementos desnecessários.
+4. Oculte elementos desnecessários, incluindo os metadados impressos de tom e afinação.
 5. Compacte o cabeçalho.
 6. Restaure a página ao estado encontrado pela extensão.
 7. Use normalmente os controles e a impressão do Cifra Club.
@@ -58,6 +58,7 @@ O sucesso do MVP será medido pela confiabilidade desse fluxo, não pela quantid
 
 - Editar título, artista e compositor.
 - Mostrar ou ocultar cada item disponível.
+- Mostrar ou ocultar as linhas impressas de tom e afinação, sem duplicar sua edição nativa.
 - Ativar um modo de cabeçalho compacto.
 - Restaurar textos, visibilidade e estilos originais.
 
@@ -169,6 +170,8 @@ interface CifraClubPage {
   getTitle(): HTMLElement | null;
   getArtist(): HTMLElement | null;
   getComposer(): HTMLElement | null;
+  getToneRow(): HTMLElement | null;
+  getTuningRow(): HTMLElement | null;
   getContentBlocks(): HTMLElement[];
   getChordDiagrams(): HTMLElement[];
   getChordDiagramEntries(): ChordDiagramEntry[];
@@ -302,8 +305,9 @@ chevron do cabeçalho e a ação de restaurar continuam sem moldura, acompanhand
 observados. O cabeçalho inteiro funciona como a linha acionadora de abrir ou recolher: hover e estado
 ativo cobrem toda a linha com as mesmas superfícies neutras dos demais controles, sem efeito isolado
 no chevron. O CifraInk usa Hugeicons Free com
-traço consistente: `MusicNote01Icon`, `StarIcon`, `Pen01Icon`, `Image02Icon`, `LayoutAlignTopIcon`,
-`FilePenIcon`, `Grid3X3Icon` e `RefreshCwIcon`. Imports são nomeados e nenhum asset remoto é carregado.
+traço consistente: `MusicNote01Icon`, `MusicNote03Icon`, `StarIcon`, `Pen01Icon`, `Settings02Icon`,
+`Image02Icon`, `LayoutAlignTopIcon`, `FilePenIcon`, `Grid3X3Icon` e `RefreshCwIcon`. Imports são
+nomeados e nenhum asset remoto é carregado.
 O logotipo oficial permanece um SVG próprio e não faz parte dessa biblioteca.
 
 O estado do painel é dividido por origem e só entra quando possui uso real:
@@ -322,6 +326,14 @@ Os controles do cabeçalho leem seu estado inicial pelo adaptador e aplicam cada
 reconsultado. O compositor é apresentado sem o prefixo `Composição de:`, mas o prefixo permanece no
 DOM mesmo quando seu valor editável estiver vazio. Inputs continuam disponíveis quando o elemento é
 ocultado e recursos ausentes não geram controles.
+
+Tom e afinação são metadados opcionais da primeira página impressa e aparecem no mesmo grupo
+funcional do cabeçalho. O adaptador localiza suas linhas pelos atributos semânticos dos botões e
+altera somente a visibilidade do contêiner direto. Os controles nativos responsáveis pelos valores
+permanecem fora do alcance dessas mutações. Restaurar a página não desfaz uma transposição ou mudança
+de afinação realizada pelo site; apenas devolve a visibilidade capturada pelo CifraInk. Quando ambos
+os metadados ficam ocultos, seu agrupador vazio também é ocultado para não preservar margem residual;
+mostrar qualquer uma das linhas torna o agrupador visível novamente.
 
 O modo compacto altera somente `gap` e `margin-bottom` do cabeçalho, `font-size` e `line-height` de
 título e artista, e `margin-top` do compositor. Desativá-lo restaura essas propriedades capturadas,

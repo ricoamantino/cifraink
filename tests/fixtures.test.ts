@@ -64,6 +64,16 @@ describe.each(fixtures)('$name', ({ diagramCount, hasComposer, html, pageCount }
     expect(document.querySelector('h1')?.textContent).toBe('Canção de Teste');
     expect(document.querySelector('h2')?.textContent).toBe('Artista de Teste');
     expect(containsComposer(document)).toBe(hasComposer);
+    const chordConfig = document.querySelector(
+      '[data-chord-config="true"][data-chord-select="true"]',
+    );
+    expect(chordConfig?.children).toHaveLength(2);
+    expect(
+      chordConfig?.querySelector('button[data-anchor="--chord-tone"]')?.parentElement?.tagName,
+    ).toBe('DIV');
+    expect(
+      chordConfig?.querySelector('button[data-anchor="--chord-tuning"]')?.parentElement?.tagName,
+    ).toBe('DIV');
     expect(document.querySelectorAll('[data-chord-mode="guitar"]')).toHaveLength(diagramCount);
     expect(document.querySelector('aside')).not.toBeNull();
     expect(document.querySelector('aside > div')).not.toBeNull();

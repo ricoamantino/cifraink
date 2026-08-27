@@ -49,6 +49,14 @@ export class CifraClubPage {
     );
   }
 
+  getToneRow(): HTMLElement | null {
+    return this.getChordConfigRow(cifraClubSelectors.toneValue);
+  }
+
+  getTuningRow(): HTMLElement | null {
+    return this.getChordConfigRow(cifraClubSelectors.tuningValue);
+  }
+
   getContentBlocks(): HTMLElement[] {
     return this.getPages().flatMap((page) =>
       Array.from(page.querySelectorAll<HTMLElement>(cifraClubSelectors.content)),
@@ -121,6 +129,20 @@ export class CifraClubPage {
 
   private getPrintRoot(): HTMLElement | null {
     return this.document.querySelector<HTMLElement>(cifraClubSelectors.printRoot);
+  }
+
+  private getChordConfigRow(valueSelector: string): HTMLElement | null {
+    for (const page of this.getPages()) {
+      const config = page.querySelector<HTMLElement>(cifraClubSelectors.chordConfig);
+      const value = config?.querySelector<HTMLElement>(valueSelector);
+      const row = value?.parentElement;
+
+      if (config && row?.parentElement === config) {
+        return row;
+      }
+    }
+
+    return null;
   }
 
   private getPages(): HTMLElement[] {

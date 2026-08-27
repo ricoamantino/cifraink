@@ -25,6 +25,8 @@ describe('controles do cabeçalho', () => {
       title: { value: 'Canção de Teste', visible: true },
       artist: { value: 'Artista de Teste', visible: true },
       composer: { value: 'Pessoa Autora', visible: true },
+      tone: { visible: true },
+      tuning: { visible: true },
       brand: { visible: true },
       compact: false,
       compactAvailable: true,
@@ -54,20 +56,99 @@ describe('controles do cabeçalho', () => {
     expect(state.compactAvailable).toBe(true);
   });
 
-  it('não oferece controles quando o cabeçalho está ausente', () => {
+  it('não oferece controles quando cabeçalho e metadados estão ausentes', () => {
     const document = parseHtml(fullPageHtml);
     document.querySelector('header')?.remove();
+    document.querySelector('[data-chord-config]')?.remove();
     const state = readHeaderControlState(new CifraClubPage(document));
 
     expect(state).toEqual({
       title: null,
       artist: null,
       composer: null,
+      tone: null,
+      tuning: null,
       brand: null,
       compact: false,
       compactAvailable: false,
     });
     expect(hasHeaderControls(state)).toBe(false);
+  });
+
+  it('controla tom e afinação independentemente e restaura somente sua visibilidade', () => {
+    const page = new CifraClubPage(parseHtml(fullPageHtml));
+    const tone = page.getToneRow();
+    const tuning = page.getTuningRow();
+    let state = readHeaderControlState(page);
+
+    if (!tone || !tuning) {
+      throw new Error('Fixture sem tom ou afinação');
+    }
+
+    state = applyHeaderControlAction(page, state, {
+      type: 'set-visibility',
+      target: 'tone',
+      visible: false,
+    });
+
+    expect(tone.hidden).toBe(true);
+    expect(tone.style.getPropertyValue('display')).toBe('none');
+    expect(tuning.hidden).toBe(false);
+    expect(state.tone?.visible).toBe(false);
+    expect(state.tuning?.visible).toBe(true);
+
+    page.getToneRow()?.querySelector('button')?.replaceChildren('C');
+    restoreAll();
+
+    expect(tone.hidden).toBe(false);
+    expect(tone.style.getPropertyValue('display')).toBe('');
+    expect(tone.querySelector('button')?.textContent).toBe('C');
+  });
+
+  it('remove o espaço do agrupador somente quando os dois metadados estão ocultos', () => {
+    const page = new CifraClubPage(parseHtml(fullPageHtml));
+    const config = page.getToneRow()?.parentElement;
+    let state = readHeaderControlState(page);
+
+    if (!config) {
+      throw new Error('Fixture sem agrupador de tom e afinação');
+    }
+
+    state = applyHeaderControlAction(page, state, {
+      type: 'set-visibility',
+      target: 'tone',
+      visible: false,
+    });
+    expect(config.hidden).toBe(false);
+
+    state = applyHeaderControlAction(page, state, {
+      type: 'set-visibility',
+      target: 'tuning',
+      visible: false,
+    });
+    expect(config.hidden).toBe(true);
+
+    state = applyHeaderControlAction(page, state, {
+      type: 'set-visibility',
+      target: 'tone',
+      visible: true,
+    });
+    expect(config.hidden).toBe(false);
+    expect(state.tone?.visible).toBe(true);
+    expect(state.tuning?.visible).toBe(false);
+
+    restoreAll();
+    expect(config.hidden).toBe(false);
+  });
+
+  it('omite apenas o metadado ausente', () => {
+    const document = parseHtml(fullPageHtml);
+    document.querySelector('button[data-anchor="--chord-tuning"]')?.parentElement?.remove();
+    const state = readHeaderControlState(new CifraClubPage(document));
+
+    expect(state.tone).toEqual({ visible: true });
+    expect(state.tuning).toBeNull();
+    expect(state.title).not.toBeNull();
   });
 
   it('edita os três textos sem substituir seus links ancestrais', () => {

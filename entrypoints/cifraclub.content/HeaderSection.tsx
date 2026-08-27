@@ -2,7 +2,9 @@ import {
   Image02Icon,
   LayoutAlignTopIcon,
   MusicNote01Icon,
+  MusicNote03Icon,
   Pen01Icon,
+  Settings02Icon,
   StarIcon,
 } from '@hugeicons/core-free-icons';
 import {
@@ -62,6 +64,24 @@ export function HeaderSection({ state, onAction }: HeaderSectionProps) {
           }
           value={state.composer.value}
           visible={state.composer.visible}
+        />
+      ) : null}
+
+      {state.tone ? (
+        <FieldToggle
+          checked={state.tone.visible}
+          icon={MusicNote03Icon}
+          label="Mostrar tom"
+          onChange={(visible) => onAction({ type: 'set-visibility', target: 'tone', visible })}
+        />
+      ) : null}
+
+      {state.tuning ? (
+        <FieldToggle
+          checked={state.tuning.visible}
+          icon={Settings02Icon}
+          label="Mostrar afinação"
+          onChange={(visible) => onAction({ type: 'set-visibility', target: 'tuning', visible })}
         />
       ) : null}
 

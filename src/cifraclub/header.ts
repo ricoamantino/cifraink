@@ -3,7 +3,7 @@ import type { CifraClubPage } from './page';
 import { cifraClubText } from './selectors';
 
 export type HeaderTextField = 'title' | 'artist' | 'composer';
-export type HeaderVisibilityTarget = HeaderTextField | 'brand';
+export type HeaderVisibilityTarget = HeaderTextField | 'tone' | 'tuning' | 'brand';
 
 export interface HeaderTextControlState {
   readonly value: string;
@@ -18,6 +18,8 @@ export interface HeaderControlState {
   readonly title: HeaderTextControlState | null;
   readonly artist: HeaderTextControlState | null;
   readonly composer: HeaderTextControlState | null;
+  readonly tone: HeaderVisibilityControlState | null;
+  readonly tuning: HeaderVisibilityControlState | null;
   readonly brand: HeaderVisibilityControlState | null;
   readonly compact: boolean;
   readonly compactAvailable: boolean;
@@ -53,6 +55,8 @@ export function readHeaderControlState(page: CifraClubPage, compact = false): He
     title: readTextControl(page.getTitle()),
     artist: readTextControl(page.getArtist()),
     composer: readTextControl(page.getComposer(), true),
+    tone: readVisibilityControl(page.getToneRow()),
+    tuning: readVisibilityControl(page.getTuningRow()),
     brand: readVisibilityControl(page.getBrand()),
     compact: header ? compact : false,
     compactAvailable: header !== null,
@@ -79,6 +83,10 @@ export function applyHeaderControlAction(
 
     if (element) {
       setVisible(element, action.visible);
+
+      if (action.target === 'tone' || action.target === 'tuning') {
+        syncChordConfigVisibility(page);
+      }
     }
 
     return readHeaderControlState(page, current.compact);
@@ -88,12 +96,24 @@ export function applyHeaderControlAction(
   return readHeaderControlState(page, action.compact);
 }
 
+function syncChordConfigVisibility(page: CifraClubPage): void {
+  const tone = page.getToneRow();
+  const tuning = page.getTuningRow();
+  const config = tone?.parentElement ?? tuning?.parentElement;
+
+  if (config) {
+    setVisible(config, Boolean((tone && !tone.hidden) || (tuning && !tuning.hidden)));
+  }
+}
+
 export function hasHeaderControls(state: HeaderControlState): boolean {
   return (
     state.compactAvailable ||
     state.title !== null ||
     state.artist !== null ||
     state.composer !== null ||
+    state.tone !== null ||
+    state.tuning !== null ||
     state.brand !== null
   );
 }
@@ -152,7 +172,16 @@ function getVisibilityElement(
   page: CifraClubPage,
   target: HeaderVisibilityTarget,
 ): HTMLElement | null {
-  return target === 'brand' ? page.getBrand() : getTextElement(page, target);
+  switch (target) {
+    case 'tone':
+      return page.getToneRow();
+    case 'tuning':
+      return page.getTuningRow();
+    case 'brand':
+      return page.getBrand();
+    default:
+      return getTextElement(page, target);
+  }
 }
 
 function setCompact(page: CifraClubPage, compact: boolean): void {

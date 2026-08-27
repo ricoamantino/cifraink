@@ -41,6 +41,11 @@ describe('seletores do Cifra Club', () => {
       ),
     ).toBe(true);
     expect(header.querySelector(cifraClubSelectors.brand)).not.toBeNull();
+    const chordConfig = pages[0]?.querySelector(cifraClubSelectors.chordConfig);
+    expect(chordConfig?.querySelector(cifraClubSelectors.toneValue)?.textContent).toBe('A');
+    expect(chordConfig?.querySelector(cifraClubSelectors.tuningValue)?.textContent).toBe(
+      'E A D G B E',
+    );
     expect(contentBlocks).toHaveLength(2);
     expect(chords).toHaveLength(6);
     const diagrams = Array.from(printRoot.querySelectorAll(cifraClubSelectors.chordDiagram));

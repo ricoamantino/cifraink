@@ -29,6 +29,10 @@ describe('CifraClubPage', () => {
     expect(page.getTitle()?.textContent).toBe('Canção de Teste');
     expect(page.getArtist()?.textContent).toBe('Artista de Teste');
     expect(page.getComposer()?.textContent).toBe('Composição de: Pessoa Autora');
+    expect(page.getToneRow()?.querySelector('b')?.textContent).toBe('Tom:');
+    expect(page.getToneRow()?.querySelector('button')?.textContent).toBe('A');
+    expect(page.getTuningRow()?.querySelector('b')?.textContent).toBe('Afinação:');
+    expect(page.getTuningRow()?.querySelector('button')?.textContent).toBe('E A D G B E');
     expect(page.getContentBlocks()).toHaveLength(2);
     expect(page.getChordDiagramSection()?.textContent).toContain('Bm7');
     expect(page.getChordDiagrams()).toHaveLength(2);
@@ -96,6 +100,28 @@ describe('CifraClubPage', () => {
 
     expect(contentBlocks).not.toContain(externalContent);
     expect(contentBlocks).toHaveLength(2);
+  });
+
+  it('limita tom e afinação às linhas estruturais das páginas reconhecidas', () => {
+    const document = parseHtml(fullPageHtml);
+    const page = new CifraClubPage(document);
+    const externalConfig = document.createElement('div');
+    const externalRow = document.createElement('div');
+    const externalTone = document.createElement('button');
+    externalConfig.dataset.chordConfig = 'true';
+    externalConfig.dataset.chordSelect = 'true';
+    externalTone.dataset.anchor = '--chord-tone';
+    externalRow.append(externalTone);
+    externalConfig.append(externalRow);
+    document.body.prepend(externalConfig);
+
+    expect(page.getToneRow()).not.toBe(externalRow);
+    expect(page.getToneRow()?.querySelector('b')?.textContent).toBe('Tom:');
+
+    page.getTuningRow()?.remove();
+
+    expect(page.getTuningRow()).toBeNull();
+    expect(page.getToneRow()).not.toBeNull();
   });
 
   it('mantém compatibilidade com páginas diretamente sob a raiz de impressão', () => {
@@ -198,6 +224,8 @@ describe('CifraClubPage', () => {
     page.getTitle();
     page.getArtist();
     page.getComposer();
+    page.getToneRow();
+    page.getTuningRow();
     page.getContentBlocks();
     page.getChordDiagramSection();
     page.getChordDiagrams();

@@ -17,6 +17,8 @@ const completeHeader = {
   title: { value: 'Título original', visible: true },
   artist: { value: 'Artista original', visible: true },
   composer: { value: 'Pessoa autora', visible: true },
+  tone: { visible: true },
+  tuning: { visible: true },
   brand: { visible: true },
   compact: false,
   compactAvailable: true,
@@ -26,6 +28,8 @@ const emptyHeader = {
   title: null,
   artist: null,
   composer: null,
+  tone: null,
+  tuning: null,
   brand: null,
   compact: false,
   compactAvailable: false,
@@ -230,6 +234,7 @@ describe('painel do CifraInk', () => {
       target: { value: 'Novo título' },
     });
     fireEvent.click(screen.getByRole('switch', { hidden: true, name: 'Mostrar título' }));
+    fireEvent.click(screen.getByRole('switch', { name: 'Mostrar tom' }));
     fireEvent.click(screen.getByRole('switch', { name: 'Cabeçalho compacto' }));
 
     expect(onHeaderAction).toHaveBeenNthCalledWith(1, completeHeader, {
@@ -242,6 +247,8 @@ describe('painel do CifraInk', () => {
     );
     expect(screen.getByRole('textbox', { hidden: true, name: 'Título' })).toBeEnabled();
     expect(screen.getByRole('switch', { hidden: true, name: 'Mostrar título' })).not.toBeChecked();
+    expect(screen.getByRole('switch', { name: 'Mostrar tom' })).not.toBeChecked();
+    expect(screen.getByRole('switch', { name: 'Mostrar afinação' })).toBeChecked();
     expect(screen.getByRole('switch', { name: 'Cabeçalho compacto' })).toBeChecked();
   });
 
@@ -252,6 +259,8 @@ describe('painel do CifraInk', () => {
     expect(screen.getByRole('button', { name: 'ArtistaArtista original' })).toBeVisible();
     expect(screen.queryByRole('button', { name: /Compositor/ })).toBeNull();
     expect(screen.queryByRole('switch', { name: 'Mostrar marca' })).toBeNull();
+    expect(screen.getByRole('switch', { name: 'Mostrar tom' })).toBeVisible();
+    expect(screen.getByRole('switch', { name: 'Mostrar afinação' })).toBeVisible();
     expect(screen.getByRole('switch', { name: 'Cabeçalho compacto' })).toBeVisible();
   });
 
@@ -392,6 +401,7 @@ describe('painel do CifraInk', () => {
       target: { value: 'Alterado' },
     });
     fireEvent.click(screen.getByRole('switch', { name: 'Mostrar marca' }));
+    fireEvent.click(screen.getByRole('switch', { name: 'Mostrar afinação' }));
     fireEvent.click(screen.getByRole('switch', { name: 'Editar conteúdo' }));
     fireEvent.click(screen.getByRole('switch', { hidden: true, name: 'A' }));
     fireEvent.click(screen.getByRole('button', { name: 'Restaurar página' }));
@@ -401,6 +411,7 @@ describe('painel do CifraInk', () => {
       'Título original',
     );
     expect(screen.getByRole('switch', { name: 'Mostrar marca' })).toBeChecked();
+    expect(screen.getByRole('switch', { name: 'Mostrar afinação' })).toBeChecked();
     expect(screen.getByRole('switch', { name: 'Editar conteúdo' })).not.toBeChecked();
     expect(screen.getByRole('switch', { hidden: true, name: 'A' })).toBeChecked();
     expect(screen.getByRole('region', { name: 'CifraInk' })).toHaveAttribute(

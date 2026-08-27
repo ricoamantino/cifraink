@@ -7,12 +7,13 @@ Elas não são cópias da página, não preservam aparência visual e não cont�
 
 - Página observada:
   [Ah, Jesus / Coração Igual Ao Teu](https://www.cifraclub.com.br/julliany-souza/ah-jesus-coracao-igual-ao-teu-2-2/imprimir.html)
-- Última observação estrutural: 2026-08-25.
+- Última observação estrutural: 2026-08-27.
 
 A estrutura preservada inclui o wrapper intermediário direto da raiz de impressão, páginas em
 `section`, cabeçalho semântico, marca em
 `header > span > i`, conteúdo em `pre`, acordes em `b[data-chord-name]`, diagramas com
-`data-chord-mode` e controles nativos agrupados estruturalmente em `aside > div`.
+`data-chord-mode`, linhas de tom e afinação dentro de `[data-chord-config]` com botões identificados
+por `data-anchor` e controles nativos agrupados estruturalmente em `aside > div`.
 
 A marca real usa um sprite CSS externo. A fixture mantém somente sua relação estrutural, sem
 copiar classe, estilo ou asset.

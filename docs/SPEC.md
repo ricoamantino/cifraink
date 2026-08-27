@@ -388,6 +388,21 @@ preservado, alterações refletidas no PDF sem indicadores de edição e restaur
 aprovados. A auditoria do código confirma que o CifraInk apenas oculta sua interface em `@media print`
 e não registra listeners de impressão nem chama `window.print()`.
 
+### 6.5 Tom e afinação
+
+- [x] Representar nas fixtures as linhas estruturais de tom e afinação observadas na página real.
+- [x] Localizar as duas linhas por atributos semânticos, restritas às páginas de impressão.
+- [x] Mostrar ou ocultar tom e afinação independentemente.
+- [x] Ocultar controles de metadados ausentes sem bloquear os demais recursos.
+- [x] Restaurar somente a visibilidade capturada, preservando mudanças feitas pelos controles nativos.
+- [x] Integrar os switches ao grupo Cabeçalho sem criar estado ou módulo adicional.
+- [x] Cobrir adaptador, estado, painel e ciclo de vida com testes proporcionais ao risco.
+- [ ] Executar smoke na página real com o bundle atualizado e validar o resultado impresso.
+
+Validação automatizada de 2026-08-27: fixtures sanitizadas, seletores estruturais, isolamento da raiz,
+ausência independente, visibilidade reversível, preservação do valor nativo e restauração integrada
+ao painel cobertos. O smoke manual aguarda o recarregamento do bundle instalado no Chrome.
+
 ## 7. Robustez e compatibilidade — pós-lançamento
 
 Decisão de 2026-08-26: esta seção foi adiada sem ter suas tarefas removidas ou concluídas. Ela não
