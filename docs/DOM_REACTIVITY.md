@@ -43,6 +43,30 @@ sob a raiz, sempre limitando as consultas à área de impressão reconhecida.
 Em todos os cenários, a raiz de impressão, o cabeçalho, o título, o artista e o compositor
 permaneceram conectados e com a mesma identidade.
 
+### Hidratação na primeira navegação
+
+Em 2026-08-27, uma navegação nova revelou uma disputa entre a montagem do painel e a hidratação do
+React/Next.js do site. A linha do tempo aproximada observada foi:
+
+| Instante | Estado estrutural |
+|---:|---|
+| 224 ms | Raiz de impressão e controles nativos presentes; painel ainda ausente. |
+| 427 ms | Host do CifraInk montado inline durante `document.readyState="interactive"`. |
+| 1.353 ms | Árvore do site recriada pela hidratação; host do CifraInk desconectado. |
+| 1.702 ms | Documento completo sem o painel e erro React `#418` no bundle do site. |
+
+O React documenta o erro `#418` como incompatibilidade entre o HTML entregue e o cliente hidratado,
+incluindo extensões que alteram o HTML antes do carregamento do React entre as causas possíveis. O
+recarregamento apenas mascarava a disputa ao mudar o tempo de execução por causa do cache.
+
+A inicialização passou a aguardar o carregamento completo e uma oportunidade ociosa limitada antes
+de consultar ou modificar o DOM. A solução é cancelável pelo contexto do content script e não usa
+marcadores internos do Next.js, repetição de montagem ou `MutationObserver`.
+
+Após a correção, cinco navegações novas e um recarregamento foram exercitados no Chrome. Em todos os
+casos houve exatamente um host inline, ainda conectado mais de três segundos após `load`, sem nova
+ocorrência do erro React `#418`.
+
 ### Coluna de controles
 
 No viewport desktop observado, a raiz de impressão e o `aside` são filhos do mesmo contêiner. O
@@ -69,8 +93,10 @@ Há recriação comprovada de alvos que o MVP modificará, principalmente após 
 colunas e diagramas. Ainda assim, não há controles do CifraInk ativos nesta fase para demonstrar a
 necessidade de observação contínua.
 
-Nenhum listener ou `MutationObserver` será adicionado agora. Depois das fases 5 e 6, os mesmos
-cenários devem ser repetidos com edições e controles do CifraInk ativos. A implementação deve
+Nenhum listener permanente ou `MutationObserver` será adicionado agora. A espera pontual pelo evento
+`load` pertence somente à inicialização e é removida automaticamente pelo contexto WXT. Depois das
+fases 5 e 6, os mesmos cenários devem ser repetidos com edições e controles do CifraInk ativos. A
+implementação deve
 primeiro tentar reconsultas explícitas por `CifraClubPage` e reaplicar somente o estado perdido. Um
 observador só será aceito se essa estratégia não for suficiente.
 

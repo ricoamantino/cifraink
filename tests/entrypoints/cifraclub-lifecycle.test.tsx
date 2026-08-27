@@ -22,6 +22,8 @@ import { initializeCifraInk } from '../../entrypoints/cifraclub.content/lifecycl
 
 interface TestContext {
   readonly context: ContentScriptContext;
+  readonly idleTimeouts: Array<number | undefined>;
+  flushIdle(): void;
   invalidate(): void;
 }
 
@@ -29,21 +31,61 @@ let createdUis: ShadowRootContentScriptUi<Root>[] = [];
 let contexts: TestContext[] = [];
 let failOnMount = false;
 
-function createContext(): TestContext {
+function createContext(options: { readonly autoIdle?: boolean } = {}): TestContext {
   const invalidationCallbacks = new Set<() => void>();
+  const idleCallbacks = new Set<IdleRequestCallback>();
+  const idleTimeouts: Array<number | undefined> = [];
+  let invalid = false;
   const context = {
+    get isInvalid() {
+      return invalid;
+    },
     onInvalidated(callback: () => void) {
       invalidationCallbacks.add(callback);
       return () => invalidationCallbacks.delete(callback);
     },
+    addEventListener(
+      target: EventTarget,
+      type: string,
+      handler: EventListenerOrEventListenerObject,
+      listenerOptions?: AddEventListenerOptions,
+    ) {
+      target.addEventListener(type, handler, listenerOptions);
+      invalidationCallbacks.add(() => target.removeEventListener(type, handler, listenerOptions));
+    },
+    requestIdleCallback(callback: IdleRequestCallback, idleOptions?: IdleRequestOptions) {
+      idleCallbacks.add(callback);
+      idleTimeouts.push(idleOptions?.timeout);
+
+      if (options.autoIdle !== false) {
+        queueMicrotask(() => flushIdle());
+      }
+
+      return 1;
+    },
   } as unknown as ContentScriptContext;
+  const flushIdle = () => {
+    const deadline: IdleDeadline = {
+      didTimeout: false,
+      timeRemaining: () => 50,
+    };
+
+    for (const callback of idleCallbacks) {
+      callback(deadline);
+    }
+    idleCallbacks.clear();
+  };
   const testContext = {
     context,
+    flushIdle,
+    idleTimeouts,
     invalidate() {
+      invalid = true;
       for (const callback of invalidationCallbacks) {
         callback();
       }
       invalidationCallbacks.clear();
+      idleCallbacks.clear();
     },
   };
   contexts.push(testContext);
@@ -145,9 +187,92 @@ afterEach(async () => {
   });
   document.head.replaceChildren();
   document.body.replaceChildren();
+  vi.restoreAllMocks();
 });
 
 describe('inicialização do CifraInk', () => {
+  it('aguarda o carregamento completo e uma oportunidade ociosa antes de montar', async () => {
+    loadHtml(fullPageHtml);
+    vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading');
+    const testContext = createContext({ autoIdle: false });
+
+    const initialization = initializeCifraInk(testContext.context);
+    await Promise.resolve();
+
+    expect(mocks.createShadowRootUi).not.toHaveBeenCalled();
+
+    window.dispatchEvent(new Event('load'));
+    await Promise.resolve();
+
+    expect(mocks.createShadowRootUi).not.toHaveBeenCalled();
+    expect(testContext.idleTimeouts).toEqual([500]);
+
+    testContext.flushIdle();
+    await act(async () => initialization);
+
+    expect(mocks.createShadowRootUi).toHaveBeenCalledTimes(1);
+    expect(getPanelHost()).toBeInTheDocument();
+  });
+
+  it('ignora apenas a espera por load quando o documento já está completo', async () => {
+    loadHtml(fullPageHtml);
+    vi.spyOn(document, 'readyState', 'get').mockReturnValue('complete');
+    const testContext = createContext({ autoIdle: false });
+
+    const initialization = initializeCifraInk(testContext.context);
+    await Promise.resolve();
+
+    expect(mocks.createShadowRootUi).not.toHaveBeenCalled();
+
+    testContext.flushIdle();
+    await act(async () => initialization);
+
+    expect(mocks.createShadowRootUi).toHaveBeenCalledTimes(1);
+  });
+
+  it('reconsulta os controles nativos depois da estabilização da página', async () => {
+    loadHtml(fullPageHtml);
+    vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading');
+    const testContext = createContext({ autoIdle: false });
+    const initialControls = document.querySelector('aside > div');
+
+    const initialization = initializeCifraInk(testContext.context);
+    await Promise.resolve();
+
+    const replacementControls = document.createElement('div');
+    initialControls?.replaceWith(replacementControls);
+    window.dispatchEvent(new Event('load'));
+    await Promise.resolve();
+    testContext.flushIdle();
+    await act(async () => initialization);
+
+    expect(mocks.createShadowRootUi).toHaveBeenCalledWith(
+      testContext.context,
+      expect.objectContaining({ anchor: replacementControls }),
+    );
+    expect(initialControls?.querySelector('[data-cifraink="panel-host"]')).toBeNull();
+  });
+
+  it.each(['load', 'idle'])(
+    'encerra sem montar quando o contexto é invalidado durante %s',
+    async (stage) => {
+      loadHtml(fullPageHtml);
+      vi.spyOn(document, 'readyState', 'get').mockReturnValue(
+        stage === 'load' ? 'loading' : 'complete',
+      );
+      const testContext = createContext({ autoIdle: false });
+
+      const initialization = initializeCifraInk(testContext.context);
+      await Promise.resolve();
+
+      testContext.invalidate();
+      await expect(initialization).resolves.toBeUndefined();
+
+      expect(mocks.createShadowRootUi).not.toHaveBeenCalled();
+      expect(document.querySelector('[data-cifraink="panel-host"]')).toBeNull();
+    },
+  );
+
   it('monta o painel incompatível sem expor detalhes técnicos', async () => {
     loadHtml('<!DOCTYPE html><html><body><main>Página comum</main></body></html>');
     const { context } = createContext();
@@ -166,11 +291,20 @@ describe('inicialização do CifraInk', () => {
 
   it('mantém um único host em chamadas concorrentes e repetidas', async () => {
     loadHtml(fullPageHtml);
-    const { context } = createContext();
+    const testContext = createContext({ autoIdle: false });
+    const { context } = testContext;
     const nativeControls = document.querySelector('aside > div');
+    const firstInitialization = initializeCifraInk(context);
+    const secondInitialization = initializeCifraInk(context);
+
+    expect(firstInitialization).toBe(secondInitialization);
+    expect(mocks.createShadowRootUi).not.toHaveBeenCalled();
+
+    await Promise.resolve();
+    testContext.flushIdle();
 
     await act(async () => {
-      await Promise.all([initializeCifraInk(context), initializeCifraInk(context)]);
+      await Promise.all([firstInitialization, secondInitialization]);
       await initializeCifraInk(context);
     });
 
@@ -413,6 +547,7 @@ describe('inicialização do CifraInk', () => {
 
   it.each(['criação', 'montagem'])('preserva a página quando a %s da UI falha', async (stage) => {
     loadHtml(fullPageHtml);
+    const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const originalBody = document.body.innerHTML;
     const title = document.querySelector('h1');
 
@@ -436,5 +571,8 @@ describe('inicialização do CifraInk', () => {
 
     expect(document.body.innerHTML).toBe(originalBody);
     expect(document.querySelector('[data-cifraink="panel-host"]')).toBeNull();
+    expect(warning).toHaveBeenCalledExactlyOnceWith(
+      '[CifraInk] Não foi possível inicializar o painel.',
+    );
   });
 });

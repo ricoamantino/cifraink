@@ -1,4 +1,4 @@
-# Chrome Web Store — listagem 0.1.0
+# Chrome Web Store — listagem 0.1.1
 
 Campos definitivos para a primeira submissão pública do CifraInk.
 
@@ -7,7 +7,7 @@ Campos definitivos para a primeira submissão pública do CifraInk.
 | Campo | Valor |
 |---|---|
 | Nome | CifraInk |
-| Versão | 0.1.0 |
+| Versão | 0.1.1 |
 | Resumo | Edite e prepare cifras do Cifra Club para impressão. |
 | Categoria | Produtividade |
 | Idioma principal | Português (Brasil) |

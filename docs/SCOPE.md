@@ -150,6 +150,14 @@ Content script
 
 Não haverá service worker, mensageria interna ou página separada de editor no MVP.
 
+O content script permanece registrado em `document_idle`, mas não consulta nem modifica a árvore
+controlada pelo site enquanto sua hidratação inicial pode estar em andamento. Quando necessário, o
+ciclo de vida aguarda `window.load` e, em seguida, uma oportunidade ociosa limitada a 500 ms. Essa
+espera faz parte da inicialização única, é cancelada quando o contexto WXT é invalidado e termina
+antes de localizar a página ou os controles nativos. Assim, todas as referências usadas na montagem
+são obtidas do DOM estabilizado, sem depender de atrasos arbitrários, seletores internos do Next.js,
+tentativas periódicas ou observação permanente.
+
 ### 5.1 `CifraClubPage`
 
 É o único módulo que conhece a estrutura do site. Ele oferece métodos semânticos, por exemplo:

@@ -1,7 +1,7 @@
 # Procedimento de release
 
-Este documento descreve a publicação manual do CifraInk na Chrome Web Store. A versão inicial é
-`0.1.0`, pública, gratuita, global e em português do Brasil.
+Este documento descreve a publicação manual do CifraInk na Chrome Web Store. A versão candidata
+atual é `0.1.1`, pública, gratuita, global e em português do Brasil.
 
 ## 1. Preparação
 
@@ -35,11 +35,17 @@ dados locais.
 4. Comparar os hashes:
 
 ```sh
-shasum -a 256 .output/cifraink-0.1.0-chrome.zip
+shasum -a 256 .output/cifraink-0.1.1-chrome.zip
 ```
 
 Os dois valores devem ser idênticos. Registrar o checksum aprovado no release e nunca reconstruir o
 arquivo depois dessa aprovação.
+
+Checksum aprovado para o pacote candidato `0.1.1` em 2026-08-27:
+
+```text
+83d8c1840e31a2392770acca5a42dd1cf69a67e7733221d84358495bea964acf
+```
 
 ## 4. Teste do pacote final
 
@@ -61,12 +67,13 @@ Registrar navegador, sistema, commit, checksum e resultado. Restaurar a página 
 
 ## 5. Chrome Web Store
 
-1. Usar os campos definitivos de `docs/STORE_LISTING.md`.
-2. Enviar o ZIP aprovado e os PNGs de `store-assets/`.
-3. Preencher **Privacy practices** de acordo com `docs/SECURITY_REVIEW.md`.
-4. Revisar URLs públicas, distribuição global, preço gratuito e classificação não adulta.
-5. Escolher publicação adiada após a aprovação (**deferred publishing**), para liberar manualmente.
-6. Enviar para revisão. A submissão e a liberação não são automatizadas.
+1. Se a versão anterior ainda estiver em análise, cancelar essa análise antes de enviar a correção.
+2. Usar os campos definitivos de `docs/STORE_LISTING.md`.
+3. Enviar o ZIP aprovado da versão `0.1.1` e os PNGs de `store-assets/`.
+4. Preencher **Privacy practices** de acordo com `docs/SECURITY_REVIEW.md`.
+5. Revisar URLs públicas, distribuição global, preço gratuito e classificação não adulta.
+6. Escolher publicação adiada após a aprovação (**deferred publishing**), para liberar manualmente.
+7. Enviar para revisão. A submissão e a liberação não são automatizadas.
 
 Depois da aprovação, conferir a página pública antes de liberar. Criar a tag Git da versão somente no
 commit efetivamente publicado e anexar o checksum ao registro do release.

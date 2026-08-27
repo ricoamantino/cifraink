@@ -2,7 +2,7 @@
   "name": "cifraink",
   "description": "Edite e prepare cifras do Cifra Club para impressão.",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "packageManager": "pnpm@10.28.2",
   "engines": {

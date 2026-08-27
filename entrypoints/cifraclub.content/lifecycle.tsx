@@ -37,10 +37,80 @@ export function initializeCifraInk(ctx: ContentScriptContext): Promise<void> {
     return pendingInitialization;
   }
 
-  pendingInitialization = mountPanel(ctx).finally(() => {
+  pendingInitialization = initializeAfterPageReady(ctx).finally(() => {
     pendingInitialization = null;
   });
   return pendingInitialization;
+}
+
+async function initializeAfterPageReady(ctx: ContentScriptContext): Promise<void> {
+  if (!(await waitForPageReady(ctx)) || document.querySelector(panelHostSelector)) {
+    return;
+  }
+
+  await mountPanel(ctx);
+}
+
+async function waitForPageReady(ctx: ContentScriptContext): Promise<boolean> {
+  if (!(await waitForWindowLoad(ctx))) {
+    return false;
+  }
+
+  return waitForIdle(ctx);
+}
+
+function waitForWindowLoad(ctx: ContentScriptContext): Promise<boolean> {
+  if (ctx.isInvalid) {
+    return Promise.resolve(false);
+  }
+
+  if (document.readyState === 'complete') {
+    return Promise.resolve(true);
+  }
+
+  return new Promise((resolve) => {
+    let settled = false;
+    let removeInvalidated = () => {};
+    const settle = (ready: boolean) => {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+      removeInvalidated();
+      resolve(ready);
+    };
+    removeInvalidated = ctx.onInvalidated(() => settle(false));
+
+    ctx.addEventListener(window, 'load', () => settle(true), { once: true });
+
+    if (document.readyState === 'complete') {
+      settle(true);
+    }
+  });
+}
+
+function waitForIdle(ctx: ContentScriptContext): Promise<boolean> {
+  if (ctx.isInvalid) {
+    return Promise.resolve(false);
+  }
+
+  return new Promise((resolve) => {
+    let settled = false;
+    let removeInvalidated = () => {};
+    const settle = (ready: boolean) => {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+      removeInvalidated();
+      resolve(ready);
+    };
+    removeInvalidated = ctx.onInvalidated(() => settle(false));
+
+    ctx.requestIdleCallback(() => settle(true), { timeout: 500 });
+  });
 }
 
 async function mountPanel(ctx: ContentScriptContext): Promise<void> {
@@ -120,5 +190,6 @@ async function mountPanel(ctx: ContentScriptContext): Promise<void> {
   } catch {
     ui?.remove();
     restoreAll();
+    console.warn('[CifraInk] Não foi possível inicializar o painel.');
   }
 }

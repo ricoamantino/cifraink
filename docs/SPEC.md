@@ -201,6 +201,22 @@ colunas, tom e posição dos diagramas exercitados e restaurados; raiz e cabeça
 estáveis, enquanto páginas, acordes ou diagramas foram recriados conforme o controle. A integração
 reativa foi transferida para a fase 7, depois dos recursos do MVP.
 
+### 4.4 Inicialização após hidratação
+
+- [x] Aguardar `window.load` quando o documento ainda não estiver completo.
+- [x] Aguardar uma oportunidade ociosa com limite de 500 ms antes de consultar ou modificar o DOM.
+- [x] Compartilhar a espera entre inicializações concorrentes e revalidar a existência do host.
+- [x] Cancelar a espera com segurança quando o contexto WXT for invalidado.
+- [x] Reconsultar página e controles nativos somente após a estabilização inicial.
+- [x] Preservar a página e emitir aviso local sanitizado quando a montagem falhar.
+- [x] Validar cinco navegações novas no Chrome sem recarregar e sem erro React `#418`.
+
+Validação de 2026-08-27: carregamento, oportunidade ociosa, documento já completo,
+inicialização concorrente, invalidação, reconsulta do DOM e falhas de montagem cobertos por testes.
+No Chrome, cinco navegações novas e um recarregamento mantiveram exatamente um host inline conectado
+por mais de três segundos, sem novas ocorrências do erro React `#418`. Não foram adicionados observer,
+tentativas, dependências, permissões ou seletores internos do site.
+
 ## 5. Painel do CifraInk
 
 ### 5.1 Fundação visual
@@ -475,6 +491,11 @@ aprovados. Duas gerações do ZIP produziram o mesmo SHA-256
 `54df7f1ed9e442eef22c8d5c6f764d678834a633516c3d51a3cafcebaabb2fa2`; o pacote contém somente os
 dez arquivos autorizados e foi extraído para teste. Permanecem pendentes a instalação dessa cópia em
 perfil limpo e o checklist manual correspondente.
+
+Atualização de correção preparada em 2026-08-27 como `0.1.1`: build e ZIP limpos preservaram os dez
+arquivos autorizados. Duas gerações produziram o mesmo SHA-256
+`83d8c1840e31a2392770acca5a42dd1cf69a67e7733221d84358495bea964acf`. A instalação do pacote final
+em perfil limpo e o checklist manual permanecem pendentes antes do novo envio à loja.
 
 ## 11. Gate de estabilização pós-lançamento
 

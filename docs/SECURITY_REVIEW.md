@@ -1,7 +1,7 @@
 # Revisão de segurança e privacidade
 
-Auditoria realizada em 26 de agosto de 2026 sobre o código-fonte, o lockfile e o build Chrome MV3 do
-CifraInk 0.1.0.
+Auditoria atualizada em 27 de agosto de 2026 sobre o código-fonte, o lockfile e o build Chrome MV3 do
+CifraInk 0.1.1.
 
 ## Manifesto e acessos
 
