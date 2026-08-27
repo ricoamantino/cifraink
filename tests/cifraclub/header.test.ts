@@ -107,10 +107,10 @@ describe('controles do cabeçalho', () => {
 
   it('remove o espaço do agrupador somente quando os dois metadados estão ocultos', () => {
     const page = new CifraClubPage(parseHtml(fullPageHtml));
-    const config = page.getToneRow()?.parentElement;
+    const visibilityTarget = page.getChordConfigVisibilityTarget();
     let state = readHeaderControlState(page);
 
-    if (!config) {
+    if (!visibilityTarget) {
       throw new Error('Fixture sem agrupador de tom e afinação');
     }
 
@@ -119,26 +119,26 @@ describe('controles do cabeçalho', () => {
       target: 'tone',
       visible: false,
     });
-    expect(config.hidden).toBe(false);
+    expect(visibilityTarget.hidden).toBe(false);
 
     state = applyHeaderControlAction(page, state, {
       type: 'set-visibility',
       target: 'tuning',
       visible: false,
     });
-    expect(config.hidden).toBe(true);
+    expect(visibilityTarget.hidden).toBe(true);
 
     state = applyHeaderControlAction(page, state, {
       type: 'set-visibility',
       target: 'tone',
       visible: true,
     });
-    expect(config.hidden).toBe(false);
+    expect(visibilityTarget.hidden).toBe(false);
     expect(state.tone?.visible).toBe(true);
     expect(state.tuning?.visible).toBe(false);
 
     restoreAll();
-    expect(config.hidden).toBe(false);
+    expect(visibilityTarget.hidden).toBe(false);
   });
 
   it('omite apenas o metadado ausente', () => {

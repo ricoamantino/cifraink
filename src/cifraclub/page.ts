@@ -65,6 +65,16 @@ export class CifraClubPage {
     return this.getChordConfigRow(cifraClubSelectors.tuningValue);
   }
 
+  getChordConfigVisibilityTarget(): HTMLElement | null {
+    const config = this.getChordConfig();
+    const parent = config?.parentElement;
+    const page = parent?.parentElement;
+
+    return parent && page instanceof HTMLElement && this.getPages().includes(page)
+      ? parent
+      : config;
+  }
+
   getContentBlocks(): HTMLElement[] {
     return this.getPages().flatMap((page) =>
       Array.from(page.querySelectorAll<HTMLElement>(cifraClubSelectors.content)),
@@ -140,13 +150,19 @@ export class CifraClubPage {
   }
 
   private getChordConfigRow(valueSelector: string): HTMLElement | null {
+    const config = this.getChordConfig();
+    const value = config?.querySelector<HTMLElement>(valueSelector);
+    const row = value?.parentElement;
+
+    return config && row?.parentElement === config ? row : null;
+  }
+
+  private getChordConfig(): HTMLElement | null {
     for (const page of this.getPages()) {
       const config = page.querySelector<HTMLElement>(cifraClubSelectors.chordConfig);
-      const value = config?.querySelector<HTMLElement>(valueSelector);
-      const row = value?.parentElement;
 
-      if (config && row?.parentElement === config) {
-        return row;
+      if (config) {
+        return config;
       }
     }
 

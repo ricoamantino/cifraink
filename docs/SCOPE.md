@@ -174,6 +174,7 @@ interface CifraClubPage {
   getArtistVisibilityTarget(): HTMLElement | null;
   getToneRow(): HTMLElement | null;
   getTuningRow(): HTMLElement | null;
+  getChordConfigVisibilityTarget(): HTMLElement | null;
   getContentBlocks(): HTMLElement[];
   getChordDiagrams(): HTMLElement[];
   getChordDiagramEntries(): ChordDiagramEntry[];
@@ -292,8 +293,9 @@ deslocar a página.
 Os popovers usam a API nativa com
 `popover="auto"`, vínculo `popovertarget`, light dismiss, fechamento por Escape, foco inicial no
 controle principal e retorno do foco ao acionador. CSS Anchor Positioning abre o conteúdo à esquerda;
-em viewport estreita ou sem espaço suficiente, o fallback abre abaixo e limita a largura à viewport.
-Recolher o painel ou restaurar a página fecha os popovers abertos.
+o espaço entre acionador e superfície é de 8 px, igual ao dropdown nativo observado. Em viewport
+estreita ou sem espaço suficiente, o fallback abre abaixo com o mesmo espaço e limita a largura à
+viewport. Recolher o painel ou restaurar a página fecha os popovers abertos.
 
 O status de compatibilidade fica ao lado do nome CifraInk: indicador verde, âmbar ou vermelho, com a
 mensagem completa acessível. Apenas os estados parcial e incompatível exibem também aviso textual.
@@ -339,8 +341,8 @@ funcional do cabeçalho. O adaptador localiza suas linhas pelos atributos semân
 altera somente a visibilidade do contêiner direto. Os controles nativos responsáveis pelos valores
 permanecem fora do alcance dessas mutações. Restaurar a página não desfaz uma transposição ou mudança
 de afinação realizada pelo site; apenas devolve a visibilidade capturada pelo CifraInk. Quando ambos
-os metadados ficam ocultos, seu agrupador vazio também é ocultado para não preservar margem residual;
-mostrar qualquer uma das linhas torna o agrupador visível novamente.
+os metadados ficam ocultos, o wrapper estrutural externo também é ocultado para não preservar sua
+margem inferior nativa; mostrar qualquer uma das linhas torna o agrupador visível novamente.
 
 O modo compacto altera somente `gap` e `margin-bottom` do cabeçalho, `font-size` e `line-height` de
 título e artista, e `margin-top` do compositor. Desativá-lo restaura essas propriedades capturadas,

@@ -395,9 +395,10 @@ describe('inicialização do CifraInk', () => {
       'button[data-anchor="--chord-tuning"]',
     )?.parentElement;
     const chordConfig = tone?.parentElement;
+    const chordConfigWrapper = chordConfig?.parentElement;
     const titleLink = title?.parentElement;
 
-    if (!title || !artist || !composer || !header || !tone || !tuning || !chordConfig) {
+    if (!title || !artist || !composer || !header || !tone || !tuning || !chordConfigWrapper) {
       throw new Error('Fixture sem cabeçalho completo');
     }
 
@@ -424,7 +425,7 @@ describe('inicialização do CifraInk', () => {
     expect(artist.parentElement?.hidden).toBe(true);
     expect(tone.hidden).toBe(true);
     expect(tuning.hidden).toBe(true);
-    expect(chordConfig.hidden).toBe(true);
+    expect(chordConfigWrapper.hidden).toBe(true);
     expect(header.style.getPropertyValue('gap')).toBe('0px');
     expect(title.style.getPropertyValue('font-size')).toBe('16px');
     expect(getPanelControl<HTMLInputElement>('Título')).toHaveValue('Título pela interface');
@@ -445,7 +446,7 @@ describe('inicialização do CifraInk', () => {
     expect(artist.parentElement?.hidden).toBe(false);
     expect(tone.hidden).toBe(false);
     expect(tuning.hidden).toBe(false);
-    expect(chordConfig.hidden).toBe(false);
+    expect(chordConfigWrapper.hidden).toBe(false);
     expect(header.style.getPropertyValue('gap')).toBe('');
     expect(title.style.getPropertyValue('font-size')).toBe('');
     expect(getPanelControl<HTMLInputElement>('Título')).toHaveValue('Canção de Teste');

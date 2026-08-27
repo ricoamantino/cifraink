@@ -35,6 +35,7 @@ describe('CifraClubPage', () => {
     expect(page.getToneRow()?.querySelector('button')?.textContent).toBe('A');
     expect(page.getTuningRow()?.querySelector('b')?.textContent).toBe('Afinação:');
     expect(page.getTuningRow()?.querySelector('button')?.textContent).toBe('E A D G B E');
+    expect(page.getChordConfigVisibilityTarget()?.parentElement?.tagName).toBe('SECTION');
     expect(page.getContentBlocks()).toHaveLength(2);
     expect(page.getChordDiagramSection()?.textContent).toContain('Bm7');
     expect(page.getChordDiagrams()).toHaveLength(2);
@@ -230,6 +231,7 @@ describe('CifraClubPage', () => {
     page.getArtistVisibilityTarget();
     page.getToneRow();
     page.getTuningRow();
+    page.getChordConfigVisibilityTarget();
     page.getContentBlocks();
     page.getChordDiagramSection();
     page.getChordDiagrams();

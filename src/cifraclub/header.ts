@@ -101,10 +101,10 @@ export function applyHeaderControlAction(
 function syncChordConfigVisibility(page: CifraClubPage): void {
   const tone = page.getToneRow();
   const tuning = page.getTuningRow();
-  const config = tone?.parentElement ?? tuning?.parentElement;
+  const visibilityTarget = page.getChordConfigVisibilityTarget();
 
-  if (config) {
-    setVisible(config, Boolean((tone && !tone.hidden) || (tuning && !tuning.hidden)));
+  if (visibilityTarget) {
+    setVisible(visibilityTarget, Boolean((tone && !tone.hidden) || (tuning && !tuning.hidden)));
   }
 }
 

@@ -309,6 +309,10 @@ e diagramas permaneceram dentro da viewport; foco inicial, retorno por Escape, l
 interno, recolhimento e reabertura foram aprovados. Em viewport comum, a montagem inline voltou ao
 agrupador nativo. A impressão foi aprovada na 6.4.
 
+Ajuste visual de 2026-08-27: a distância entre acionador e dropdown foi medida em 8 px no controle
+nativo e 4 px no CifraInk. Popovers laterais e seu fallback inferior passaram a usar os mesmos 8 px,
+sem alterar dimensões, alinhamento ou comportamento.
+
 O redimensionamento de uma página já aberta ainda faz o Cifra Club recriar o agrupador responsivo e
 remover o host inline. A recuperação após essa recriação permanece corretamente atribuída à fase 7 e
 não altera a aprovação do fallback durante a inicialização.
@@ -405,7 +409,15 @@ e não registra listeners de impressão nem chama `window.print()`.
 
 Validação automatizada de 2026-08-27: fixtures sanitizadas, seletores estruturais, isolamento da raiz,
 ausência independente, visibilidade reversível, preservação do valor nativo e restauração integrada
-ao painel cobertos. O smoke manual aguarda o recarregamento do bundle instalado no Chrome.
+ao painel cobertos. No smoke manual, as linhas foram ocultadas independentemente, os controles
+nativos permaneceram funcionais e a restauração devolveu o estado inicial. A repetição visual no
+resultado impresso permanece pendente.
+
+Correção de 2026-08-27: a inspeção combinada identificou 20 px residuais no wrapper externo da
+configuração de acordes. O adaptador passou a reconhecer esse alvo estrutural e a visibilidade
+conjunta remove sua margem sem alterar os controles nativos ou as linhas individuais. A medição no
+Chrome confirmou espaço residual efetivo de 0 px, popover lateral a 8 px do acionador e restauração
+exata dos dois agrupadores.
 
 ## 7. Robustez e compatibilidade — pós-lançamento
 

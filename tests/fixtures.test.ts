@@ -68,6 +68,7 @@ describe.each(fixtures)('$name', ({ diagramCount, hasComposer, html, pageCount }
       '[data-chord-config="true"][data-chord-select="true"]',
     );
     expect(chordConfig?.children).toHaveLength(2);
+    expect(chordConfig?.parentElement?.parentElement?.tagName).toBe('SECTION');
     expect(
       chordConfig?.querySelector('button[data-anchor="--chord-tone"]')?.parentElement?.tagName,
     ).toBe('DIV');
