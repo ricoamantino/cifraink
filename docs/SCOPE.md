@@ -74,6 +74,8 @@ O sucesso do MVP será medido pela confiabilidade desse fluxo, não pela quantid
 - Mostrar ou ocultar diagramas individualmente.
 - Restaurar a visibilidade original de cada item.
 - Não duplicar a visibilidade da seção completa, já oferecida pelo controle nativo.
+- Reconhecer diagramas de violão, viola caipira, ukulele e cavaco pelo contrato estrutural comum;
+  violão permanece como baseline e `data-tuning` é metadado opcional.
 
 #### Interface
 

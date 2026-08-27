@@ -115,6 +115,23 @@ Validação de 2026-08-25: wrapper intermediário e hierarquia direta cobertos, 
 limitados à raiz reconhecida e fixtures sanitizadas atualizadas. No Chrome, `inspect()` reconheceu a
 página real como compatível, com quatro blocos musicais e o painel montado inline.
 
+### 2.6 Compatibilidade de diagramas por instrumento
+
+- [x] Reconhecer diagramas pelo contrato comum de `data-chord-mode` e `data-mount`.
+- [x] Manter `data-tuning` opcional sem regredir o violão usado como baseline.
+- [x] Cobrir violão, viola caipira, ukulele e cavaco sem duplicar fixtures completas.
+- [x] Preservar nomes, alvos estruturais, ordem, visibilidade e restauração por instrumento.
+- [x] Ignorar diagramas incompletos ou fora das páginas de impressão reconhecidas.
+- [x] Validar as quatro variantes nas páginas reais do Cifra Club.
+
+Validação automatizada de 2026-08-27: os quatro modos foram derivados da fixture sanitizada e
+aprovados para localização, diagnóstico, nomes, alvos estruturais, visibilidade e restauração. O
+violão preservou `data-tuning`; viola caipira, ukulele e cavaco foram reconhecidos sem o atributo.
+Foram aprovados 131 testes em `pnpm check`, `pnpm build`, manifesto MV3 inalterado e
+`git diff --check`. No Chrome, violão, viola caipira, ukulele e cavaco apresentaram um único painel,
+nove diagramas e o seletor individual funcional. Ocultação e restauração foram aprovadas sem
+atributos ou estilos residuais; o violão manteve os mesmos nove itens com `data-tuning`.
+
 ## 3. Alterações reversíveis do DOM
 
 ### 3.1 Snapshot

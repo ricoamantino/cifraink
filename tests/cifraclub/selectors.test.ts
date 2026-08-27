@@ -70,6 +70,29 @@ describe('seletores do Cifra Club', () => {
     expect(nativeControls.querySelector(cifraClubSelectors.content)).toBeNull();
   });
 
+  it('exige a montagem estrutural e ignora diagramas fora da raiz', () => {
+    const document = parseFixture();
+    const diagrams = Array.from(document.querySelectorAll<HTMLElement>('[data-chord-mode]'));
+    const incompleteDiagram = diagrams[0];
+    const externalDiagram = diagrams[1]?.cloneNode(true);
+
+    if (!incompleteDiagram || !(externalDiagram instanceof HTMLElement)) {
+      throw new Error('Fixture sem diagramas completos');
+    }
+
+    incompleteDiagram.removeAttribute('data-mount');
+    document.body.append(externalDiagram);
+
+    const printRoot = document.querySelector(cifraClubSelectors.printRoot);
+    const recognized = Array.from(
+      printRoot?.querySelectorAll(cifraClubSelectors.chordDiagram) ?? [],
+    );
+
+    expect(recognized).toHaveLength(1);
+    expect(recognized).not.toContain(incompleteDiagram);
+    expect(recognized).not.toContain(externalDiagram);
+  });
+
   it('não depende de classes geradas', () => {
     const selectors = Object.values(cifraClubSelectors).join(' ');
 

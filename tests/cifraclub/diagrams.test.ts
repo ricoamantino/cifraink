@@ -10,11 +10,67 @@ function parsePage(html = fullPageHtml): { document: Document; page: CifraClubPa
   return { document, page: new CifraClubPage(document) };
 }
 
+const instruments = [
+  { mode: 'guitar', name: 'violão', tuning: true },
+  { mode: 'viola', name: 'viola caipira', tuning: false },
+  { mode: 'ukulele', name: 'ukulele', tuning: false },
+  { mode: 'cavaco', name: 'cavaco', tuning: false },
+] as const;
+
 afterEach(() => {
   restoreAll();
 });
 
 describe('controles dos diagramas', () => {
+  describe.each(instruments)('$name', ({ mode, tuning }) => {
+    it('localiza, controla e restaura os diagramas', () => {
+      const { document, page } = parsePage();
+      const fixtureDiagrams = Array.from(
+        document.querySelectorAll<HTMLElement>('[data-chord-mode]'),
+      );
+
+      for (const diagram of fixtureDiagrams) {
+        diagram.dataset.chordMode = mode;
+
+        if (!tuning) {
+          diagram.removeAttribute('data-tuning');
+        }
+      }
+
+      const diagrams = page.getChordDiagrams();
+      const entries = page.getChordDiagramEntries();
+
+      expect(diagrams).toHaveLength(2);
+      expect(diagrams.every((diagram) => diagram.dataset.chordMode === mode)).toBe(true);
+      expect(diagrams.every((diagram) => diagram.hasAttribute('data-tuning'))).toBe(tuning);
+      expect(page.getChordDiagramSection()).not.toBeNull();
+      expect(entries.map((entry) => entry.name)).toEqual(['A', 'Bm7']);
+      expect(entries.every((entry) => entry.visibilityTarget.tagName === 'LI')).toBe(true);
+      expect(page.inspect()).toMatchObject({ status: 'compatible', chordDiagrams: true });
+      expect(readDiagramControlState(page)).toMatchObject({ available: true });
+
+      const target = entries[0]?.visibilityTarget;
+
+      if (!target) {
+        throw new Error('Fixture sem alvo de visibilidade');
+      }
+
+      applyDiagramControlAction(page, {
+        type: 'set-diagram-visible',
+        index: 0,
+        visible: false,
+      });
+
+      expect(target.hidden).toBe(true);
+      expect(readDiagramControlState(page).items[0]?.visible).toBe(false);
+
+      restoreAll();
+
+      expect(target.hidden).toBe(false);
+      expect(readDiagramControlState(page).items[0]?.visible).toBe(true);
+    });
+  });
+
   it('lê nomes, disponibilidade e visibilidade diretamente do DOM', () => {
     const { page } = parsePage();
 

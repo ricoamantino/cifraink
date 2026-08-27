@@ -14,7 +14,7 @@ export const cifraClubSelectors = {
   tuningValue: 'button[data-anchor="--chord-tuning"]',
   content: ':scope > pre',
   chord: 'b[data-chord-name][data-chord-original-text]',
-  chordDiagram: '[data-chord-mode][data-mount][data-tuning]',
+  chordDiagram: '[data-chord-mode][data-mount]',
   chordDiagramName: ':scope strong',
   chordDiagramItem: 'li',
   // O agrupador dos controles é o filho estrutural do aside irmão da área de impressão.
