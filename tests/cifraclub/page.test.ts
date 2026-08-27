@@ -29,6 +29,8 @@ describe('CifraClubPage', () => {
     expect(page.getTitle()?.textContent).toBe('Canção de Teste');
     expect(page.getArtist()?.textContent).toBe('Artista de Teste');
     expect(page.getComposer()?.textContent).toBe('Composição de: Pessoa Autora');
+    expect(page.getTitleVisibilityTarget()?.tagName).toBe('A');
+    expect(page.getArtistVisibilityTarget()?.tagName).toBe('A');
     expect(page.getToneRow()?.querySelector('b')?.textContent).toBe('Tom:');
     expect(page.getToneRow()?.querySelector('button')?.textContent).toBe('A');
     expect(page.getTuningRow()?.querySelector('b')?.textContent).toBe('Afinação:');
@@ -224,6 +226,8 @@ describe('CifraClubPage', () => {
     page.getTitle();
     page.getArtist();
     page.getComposer();
+    page.getTitleVisibilityTarget();
+    page.getArtistVisibilityTarget();
     page.getToneRow();
     page.getTuningRow();
     page.getContentBlocks();

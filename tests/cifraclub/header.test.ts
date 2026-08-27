@@ -233,7 +233,8 @@ describe('controles do cabeçalho', () => {
       visible: false,
     });
 
-    expect(page.getTitle()?.hidden).toBe(true);
+    expect(page.getTitle()?.hidden).toBe(false);
+    expect(page.getTitleVisibilityTarget()?.hidden).toBe(true);
     expect(page.getBrand()?.hidden).toBe(true);
     expect(state.title?.visible).toBe(false);
     expect(state.brand?.visible).toBe(false);
@@ -249,6 +250,43 @@ describe('controles do cabeçalho', () => {
 
     expect(replacement.textContent).toBe('Alvo reconsultado');
     expect(state.title?.value).toBe('Alvo reconsultado');
+  });
+
+  it('remove wrappers vazios e oculta o cabeçalho quando nenhum recurso permanece visível', () => {
+    const page = new CifraClubPage(parseHtml(fullPageHtml));
+    const header = page.getHeader();
+    let state = readHeaderControlState(page);
+
+    if (!header) {
+      throw new Error('Fixture sem cabeçalho');
+    }
+
+    for (const target of ['title', 'artist', 'composer', 'brand'] as const) {
+      state = applyHeaderControlAction(page, state, {
+        type: 'set-visibility',
+        target,
+        visible: false,
+      });
+    }
+
+    expect(page.getTitleVisibilityTarget()?.hidden).toBe(true);
+    expect(page.getArtistVisibilityTarget()?.hidden).toBe(true);
+    expect(page.getTitle()?.hidden).toBe(false);
+    expect(page.getArtist()?.hidden).toBe(false);
+    expect(header.hidden).toBe(true);
+
+    state = applyHeaderControlAction(page, state, {
+      type: 'set-visibility',
+      target: 'title',
+      visible: true,
+    });
+
+    expect(page.getTitleVisibilityTarget()?.hidden).toBe(false);
+    expect(header.hidden).toBe(false);
+    expect(state.title?.visible).toBe(true);
+
+    restoreAll();
+    expect(header.hidden).toBe(false);
   });
 
   it('compacta e descompacta sem consumir texto, visibilidade ou estilos externos', () => {
@@ -288,13 +326,15 @@ describe('controles do cabeçalho', () => {
     expect(header.style.getPropertyValue('margin-bottom')).toBe('');
     expect(header.style.getPropertyValue('padding-left')).toBe('3px');
     expect(title.textContent).toBe('Título alterado');
-    expect(title.hidden).toBe(true);
+    expect(title.hidden).toBe(false);
+    expect(page.getTitleVisibilityTarget()?.hidden).toBe(true);
     expect(state.compact).toBe(false);
 
     restoreAll();
 
     expect(title.textContent).toBe('Canção de Teste');
     expect(title.hidden).toBe(false);
+    expect(page.getTitleVisibilityTarget()?.hidden).toBe(false);
     expect(header.style.getPropertyValue('padding-left')).toBe('3px');
   });
 });

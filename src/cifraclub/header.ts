@@ -52,8 +52,8 @@ export function readHeaderControlState(page: CifraClubPage, compact = false): He
   const header = page.getHeader();
 
   return {
-    title: readTextControl(page.getTitle()),
-    artist: readTextControl(page.getArtist()),
+    title: readTextControl(page.getTitle(), false, page.getTitleVisibilityTarget()),
+    artist: readTextControl(page.getArtist(), false, page.getArtistVisibilityTarget()),
     composer: readTextControl(page.getComposer(), true),
     tone: readVisibilityControl(page.getToneRow()),
     tuning: readVisibilityControl(page.getTuningRow()),
@@ -86,6 +86,8 @@ export function applyHeaderControlAction(
 
       if (action.target === 'tone' || action.target === 'tuning') {
         syncChordConfigVisibility(page);
+      } else {
+        syncHeaderVisibility(page);
       }
     }
 
@@ -106,6 +108,23 @@ function syncChordConfigVisibility(page: CifraClubPage): void {
   }
 }
 
+function syncHeaderVisibility(page: CifraClubPage): void {
+  const header = page.getHeader();
+  const targets = [
+    page.getTitleVisibilityTarget(),
+    page.getArtistVisibilityTarget(),
+    page.getComposer(),
+    page.getBrand(),
+  ];
+
+  if (header) {
+    setVisible(
+      header,
+      targets.some((target) => target && !target.hidden),
+    );
+  }
+}
+
 export function hasHeaderControls(state: HeaderControlState): boolean {
   return (
     state.compactAvailable ||
@@ -121,6 +140,7 @@ export function hasHeaderControls(state: HeaderControlState): boolean {
 function readTextControl(
   element: HTMLElement | null,
   composer = false,
+  visibilityTarget: HTMLElement | null = element,
 ): HeaderTextControlState | null {
   if (!element) {
     return null;
@@ -130,7 +150,7 @@ function readTextControl(
 
   return {
     value: composer ? readComposerValue(text) : text,
-    visible: !element.hidden,
+    visible: visibilityTarget ? !visibilityTarget.hidden : !element.hidden,
   };
 }
 
@@ -173,14 +193,18 @@ function getVisibilityElement(
   target: HeaderVisibilityTarget,
 ): HTMLElement | null {
   switch (target) {
+    case 'title':
+      return page.getTitleVisibilityTarget();
+    case 'artist':
+      return page.getArtistVisibilityTarget();
     case 'tone':
       return page.getToneRow();
     case 'tuning':
       return page.getTuningRow();
     case 'brand':
       return page.getBrand();
-    default:
-      return getTextElement(page, target);
+    case 'composer':
+      return page.getComposer();
   }
 }
 

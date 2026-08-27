@@ -420,7 +420,8 @@ describe('inicialização do CifraInk', () => {
     expect(title.textContent).toBe('Título pela interface');
     expect(title.parentElement).toBe(titleLink);
     expect(composer.textContent).toBe('Composição de:');
-    expect(artist.hidden).toBe(true);
+    expect(artist.hidden).toBe(false);
+    expect(artist.parentElement?.hidden).toBe(true);
     expect(tone.hidden).toBe(true);
     expect(tuning.hidden).toBe(true);
     expect(chordConfig.hidden).toBe(true);
@@ -441,6 +442,7 @@ describe('inicialização do CifraInk', () => {
     expect(title.textContent).toBe('Canção de Teste');
     expect(composer.textContent).toBe('Composição de: Pessoa Autora');
     expect(artist.hidden).toBe(false);
+    expect(artist.parentElement?.hidden).toBe(false);
     expect(tone.hidden).toBe(false);
     expect(tuning.hidden).toBe(false);
     expect(chordConfig.hidden).toBe(false);

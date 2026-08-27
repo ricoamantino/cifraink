@@ -170,6 +170,8 @@ interface CifraClubPage {
   getTitle(): HTMLElement | null;
   getArtist(): HTMLElement | null;
   getComposer(): HTMLElement | null;
+  getTitleVisibilityTarget(): HTMLElement | null;
+  getArtistVisibilityTarget(): HTMLElement | null;
   getToneRow(): HTMLElement | null;
   getTuningRow(): HTMLElement | null;
   getContentBlocks(): HTMLElement[];
@@ -326,6 +328,11 @@ Os controles do cabeçalho leem seu estado inicial pelo adaptador e aplicam cada
 reconsultado. O compositor é apresentado sem o prefixo `Composição de:`, mas o prefixo permanece no
 DOM mesmo quando seu valor editável estiver vazio. Inputs continuam disponíveis quando o elemento é
 ocultado e recursos ausentes não geram controles.
+
+Título e artista preservam seus elementos semânticos editáveis, mas a visibilidade é aplicada aos
+links ancestrais reconhecidos pelo adaptador para não deixar itens flex vazios. Quando título,
+artista, compositor e marca ficam todos ocultos, o próprio cabeçalho também é ocultado para remover
+seu espaçamento externo; mostrar qualquer recurso torna o cabeçalho visível novamente.
 
 Tom e afinação são metadados opcionais da primeira página impressa e aparecem no mesmo grupo
 funcional do cabeçalho. O adaptador localiza suas linhas pelos atributos semânticos dos botões e

@@ -32,6 +32,14 @@ export class CifraClubPage {
     return this.getHeader()?.querySelector<HTMLElement>(cifraClubSelectors.artist) ?? null;
   }
 
+  getTitleVisibilityTarget(): HTMLElement | null {
+    return this.getHeaderTextVisibilityTarget(this.getTitle());
+  }
+
+  getArtistVisibilityTarget(): HTMLElement | null {
+    return this.getHeaderTextVisibilityTarget(this.getArtist());
+  }
+
   getComposer(): HTMLElement | null {
     const candidates = this.getHeader()?.querySelectorAll<HTMLElement>(
       cifraClubSelectors.composerCandidate,
@@ -143,6 +151,13 @@ export class CifraClubPage {
     }
 
     return null;
+  }
+
+  private getHeaderTextVisibilityTarget(element: HTMLElement | null): HTMLElement | null {
+    const header = this.getHeader();
+    const parent = element?.parentElement;
+
+    return parent?.tagName === 'A' && parent.parentElement === header ? parent : element;
   }
 
   private getPages(): HTMLElement[] {

@@ -341,6 +341,10 @@ Correção de 2026-08-26: a releitura do compositor passou a remover apenas o pr
 separador, preservando espaços finais e consecutivos durante a digitação. O caso possui teste de
 regressão e foi aprovado com 119 testes em `pnpm check` e `pnpm build`.
 
+Correção de 2026-08-27: título e artista passaram a ocultar seus links contêineres, e o cabeçalho
+completo é ocultado quando nenhum dos quatro recursos permanece visível. A mudança remove itens flex
+e margem externa residuais sem apagar, mover ou recriar elementos do site.
+
 ### 6.2 Conteúdo musical
 
 - [x] Ativar edição do contêiner musical reconhecido.
