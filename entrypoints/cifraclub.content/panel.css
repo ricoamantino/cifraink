@@ -242,8 +242,19 @@
 }
 
 .cifraink-control-row:active,
-.cifraink-field-toggle:active,
+.cifraink-field-toggle:active {
+  background: var(--cifraink-control-active);
+}
+
 .cifraink-control-item:has(.cifraink-side-popover:popover-open) .cifraink-control-row {
+  background: transparent;
+}
+
+.cifraink-control-item:has(.cifraink-side-popover:popover-open) .cifraink-control-row:hover {
+  background: var(--cifraink-control-hover);
+}
+
+.cifraink-control-item:has(.cifraink-side-popover:popover-open) .cifraink-control-row:active {
   background: var(--cifraink-control-active);
 }
 
@@ -386,7 +397,7 @@
 }
 
 .cifraink-side-popover[data-variant="editor"] .cifraink-control-item {
-  min-height: 40px;
+  min-height: 48px;
 }
 
 .cifraink-side-popover__divider {
@@ -398,8 +409,8 @@
 }
 
 .cifraink-side-popover[data-variant="editor"] .cifraink-field-toggle {
-  min-height: 40px;
-  padding: 10px;
+  min-height: 48px;
+  padding: var(--cifraink-space-2) var(--cifraink-space-3);
 }
 
 .cifraink-diagram-options {
@@ -411,32 +422,77 @@
   scrollbar-width: auto;
 }
 
-.cifraink-diagram-options .cifraink-control-item {
+.cifraink-diagram-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+  align-items: center;
   min-height: 40px;
   margin-right: 8px;
+  padding: 5px 10px;
+  border-radius: 10px;
 }
 
-.cifraink-diagram-options .cifraink-control-item + .cifraink-control-item::before {
-  display: none;
+.cifraink-diagram-item:hover {
+  background: var(--cifraink-control-hover);
 }
 
-.cifraink-diagram-options .cifraink-field-toggle {
-  min-height: 40px;
-  padding: 10px;
-  gap: 6px;
+.cifraink-diagram-item__name,
+.cifraink-diagram-item__name-input {
+  min-width: 0;
+  height: 30px;
+  padding: 0;
+  overflow: hidden;
+  color: var(--cifraink-text);
+  font: inherit;
   line-height: 18px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: transparent;
+  border: 0;
 }
 
-.cifraink-diagram-options .cifraink-field-toggle__input {
+.cifraink-diagram-item__name {
+  cursor: text;
+}
+
+.cifraink-diagram-item__name-input {
+  padding: 0 6px;
+  background: var(--cifraink-surface);
+  border: 1px solid var(--cifraink-border);
+  border-radius: 8px;
+  outline: none;
+}
+
+.cifraink-diagram-item__name:focus-visible,
+.cifraink-diagram-item__name-input:focus-visible,
+.cifraink-diagram-switch:focus-visible {
+  outline: 2px solid var(--cifraink-focus);
+  outline-offset: 2px;
+}
+
+.cifraink-diagram-item__actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.cifraink-diagram-switch {
+  position: relative;
+  display: block;
   width: 20px;
   height: 20px;
+  margin: 0;
   padding: 0;
+  appearance: none;
+  cursor: pointer;
   background: transparent;
   border: 0;
   border-radius: 50%;
 }
 
-.cifraink-diagram-options .cifraink-field-toggle__input::before {
+.cifraink-diagram-switch::before {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -449,27 +505,39 @@
   transition: border-color 100ms ease-in;
 }
 
-.cifraink-diagram-options .cifraink-field-toggle__input::after {
+.cifraink-diagram-switch::after {
   position: absolute;
   top: 50%;
   left: 50%;
+  display: block;
   width: 8px;
   height: 8px;
+  content: "";
   background: transparent;
+  border-radius: 50%;
   transform: translate(-50%, -50%);
   transition: background 100ms ease-in;
 }
 
-.cifraink-diagram-options .cifraink-field-toggle__input:checked {
+.cifraink-diagram-switch:checked {
   background: transparent;
 }
 
-.cifraink-diagram-options .cifraink-field-toggle__input:checked::before {
+.cifraink-diagram-switch--diagram:checked::before {
   border-color: var(--cifraink-accent);
 }
 
-.cifraink-diagram-options .cifraink-field-toggle__input:checked::after {
+.cifraink-diagram-switch--diagram:checked::after {
   background: var(--cifraink-accent);
+  transform: translate(-50%, -50%);
+}
+
+.cifraink-diagram-switch--markings:checked::before {
+  border-color: #262626;
+}
+
+.cifraink-diagram-switch--markings:checked::after {
+  background: #262626;
   transform: translate(-50%, -50%);
 }
 

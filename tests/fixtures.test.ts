@@ -76,6 +76,10 @@ describe.each(fixtures)('$name', ({ diagramCount, hasComposer, html, pageCount }
       chordConfig?.querySelector('button[data-anchor="--chord-tuning"]')?.parentElement?.tagName,
     ).toBe('DIV');
     expect(document.querySelectorAll('[data-chord-mode="guitar"]')).toHaveLength(diagramCount);
+    expect(document.querySelectorAll('[data-chord-label="true"]')).toHaveLength(diagramCount);
+    expect(document.querySelectorAll('[data-instrument="guitar"]')).toHaveLength(diagramCount);
+    expect(document.querySelectorAll('[data-string]')).toHaveLength(diagramCount === 0 ? 0 : 3);
+    expect(document.querySelectorAll('[data-status]')).toHaveLength(diagramCount * 2);
     expect(document.querySelector('aside')).not.toBeNull();
     expect(document.querySelector('aside > div')).not.toBeNull();
     expect(document.querySelector('aside pre')).toBeNull();

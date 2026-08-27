@@ -51,7 +51,17 @@ describe('seletores do Cifra Club', () => {
     const diagrams = Array.from(printRoot.querySelectorAll(cifraClubSelectors.chordDiagram));
 
     expect(diagrams).toHaveLength(2);
-    expect(diagrams[0]?.querySelector(cifraClubSelectors.chordDiagramName)?.textContent).toBe('A');
+    const firstName = diagrams[0]?.querySelector(cifraClubSelectors.chordDiagramName);
+    const firstBoard = firstName?.nextElementSibling;
+    const firstStatusRow = firstBoard?.nextElementSibling;
+    const secondName = diagrams[1]?.querySelector(cifraClubSelectors.chordDiagramName);
+    const secondBoard = secondName?.nextElementSibling;
+
+    expect(firstName?.textContent).toBe('A');
+    expect(firstBoard?.querySelector(cifraClubSelectors.chordDiagramGrid)).not.toBeNull();
+    expect(firstBoard?.querySelectorAll(cifraClubSelectors.chordDiagramPosition)).toHaveLength(2);
+    expect(secondBoard?.querySelectorAll(cifraClubSelectors.chordDiagramOffset)).toHaveLength(1);
+    expect(firstStatusRow?.querySelectorAll(cifraClubSelectors.chordDiagramStatus)).toHaveLength(2);
     expect(diagrams[0]?.closest(cifraClubSelectors.chordDiagramItem)?.tagName).toBe('LI');
   });
 

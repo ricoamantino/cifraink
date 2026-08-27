@@ -4,6 +4,8 @@ import { cifraClubSelectors, cifraClubText } from './selectors';
 export interface ChordDiagramEntry {
   readonly diagram: HTMLElement;
   readonly name: string | null;
+  readonly nameElement: HTMLElement | null;
+  readonly markingTargets: readonly HTMLElement[];
   readonly visibilityTarget: HTMLElement;
 }
 
@@ -107,14 +109,14 @@ export class CifraClubPage {
 
     return this.getChordDiagrams().map((diagram) => {
       const item = diagram.closest<HTMLElement>(cifraClubSelectors.chordDiagramItem);
-      const normalizedName = diagram
-        .querySelector<HTMLElement>(cifraClubSelectors.chordDiagramName)
-        ?.textContent?.replace(/\s+/g, ' ')
-        .trim();
+      const nameElement = diagram.querySelector<HTMLElement>(cifraClubSelectors.chordDiagramName);
+      const normalizedName = nameElement?.textContent?.replace(/\s+/g, ' ').trim();
 
       return {
         diagram,
+        markingTargets: this.getChordDiagramMarkingTargets(diagram),
         name: normalizedName || null,
+        nameElement,
         visibilityTarget: item && section.contains(item) ? item : diagram,
       };
     });
@@ -167,6 +169,36 @@ export class CifraClubPage {
     }
 
     return null;
+  }
+
+  private getChordDiagramMarkingTargets(diagram: HTMLElement): HTMLElement[] {
+    const grid = diagram.querySelector<HTMLElement>(cifraClubSelectors.chordDiagramGrid);
+    const board = grid?.parentElement;
+    const content = board?.parentElement;
+
+    if (
+      !grid ||
+      !content ||
+      !board ||
+      board.parentElement !== content ||
+      !diagram.contains(content)
+    ) {
+      return [];
+    }
+
+    const positions = Array.from(
+      board.querySelectorAll<HTMLElement>(cifraClubSelectors.chordDiagramPosition),
+    );
+    const offsets = Array.from(
+      board.querySelectorAll<HTMLElement>(cifraClubSelectors.chordDiagramOffset),
+    );
+    const statusRow = board.nextElementSibling;
+    const statuses =
+      statusRow?.parentElement === content
+        ? Array.from(statusRow.querySelectorAll<HTMLElement>(cifraClubSelectors.chordDiagramStatus))
+        : [];
+
+    return [...positions, ...offsets, ...statuses];
   }
 
   private getHeaderTextVisibilityTarget(element: HTMLElement | null): HTMLElement | null {

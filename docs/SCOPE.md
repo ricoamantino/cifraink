@@ -72,6 +72,9 @@ O sucesso do MVP será medido pela confiabilidade desse fluxo, não pela quantid
 #### Diagramas
 
 - Mostrar ou ocultar diagramas individualmente.
+- Editar o rótulo impresso de cada diagrama sem alterar acordes da cifra, áudio ou montagem.
+- Mostrar ou ocultar em conjunto as marcações internas: posições, pestanas, estados das cordas e
+  número da casa inicial.
 - Restaurar a visibilidade original de cada item.
 - Não duplicar a visibilidade da seção completa, já oferecida pelo controle nativo.
 - Reconhecer diagramas de violão, viola caipira, ukulele e cavaco pelo contrato estrutural comum;
@@ -92,7 +95,7 @@ O sucesso do MVP será medido pela confiabilidade desse fluxo, não pela quantid
 ### 4.2 Depois do MVP
 
 - Rascunhos por música.
-- Renomear e anotar diagramas.
+- Anotar diagramas.
 - Reordenar diagramas.
 - Mover diagramas entre páginas.
 - Desfazer/refazer além do histórico nativo de edição de texto.
@@ -129,8 +132,8 @@ Esta matriz registra todas as funções observadas no projeto legado. “Depois�
 | Mostrar ou ocultar todos os diagramas | Usar o controle nativo; não duplicar no painel | Nativo |
 | Mostrar ou ocultar cada diagrama | Manter | MVP |
 | Compactar espaçamento dos diagramas | Não manter; não acrescenta valor suficiente ao MVP | Fora |
-| Renomear um acorde no diagrama | Preservar como evolução após validar identidade estável dos acordes | Depois |
-| Mostrar ou ocultar marcações de posição do acorde | Preservar como controle individual do diagrama | Depois |
+| Renomear um acorde no diagrama | Editar somente o rótulo impresso, identificado pelo índice atual | MVP |
+| Mostrar ou ocultar marcações de posição do acorde | Manter como controle individual e reversível do diagrama | MVP |
 | Adicionar descrição ao diagrama | Preservar como anotação opcional | Depois |
 | Criar uma área de diagramas em todas as páginas | Não replicar literalmente; reavaliar como posicionamento seguro | Depois |
 | Mover um diagrama para outra página | Preservar somente se o paginador aceitar movimentação sem perda de conteúdo | Depois |
@@ -278,15 +281,17 @@ campo não é repetido visualmente dentro do dropdown, mas seu `<label>` permane
 tecnologias assistivas. Entre o input e a visibilidade, um `<hr>` de 1 px ocupa toda a largura interna
 e mantém 8 px de respiro vertical em cada lado, repetindo a divisão entre os grupos “No fim” e
 “Canhoto” do seletor nativo de diagramas. O input mantém 36 px de altura para preservar legibilidade e
-uma área de edição adequada. A linha de visibilidade tem 40 px e compartilha o recuo efetivo de 14 px
-da faixa de controle.
+uma área de edição adequada. A linha de visibilidade tem 48 px e usa o mesmo padding de `8px 12px`
+das linhas funcionais dos blocos principais.
 
 Diagramas usam o mesmo padrão lateral, mostrando a contagem visível e uma lista rolável de opções
 individuais baseada no dropdown nativo de capotraste: largura de 206 px, altura
 máxima de 222 px, padding de 4 px, opções de 40 px com padding de 10 px, raio de 12 px, texto de 14 px
 com linha de 18 px e sem separadores. A lista mantém scroll interno nativo do Chrome; cada opção
-reserva uma caixa de 20 px para um anel circular visível de 16 px, cinza `#ababab` quando desligado e
-laranja `#ee6600` quando ligado. O preenchimento central selecionado mede 8 px.
+reserva uma caixa de 20 px para cada anel circular visível de 16 px. O controle do diagrama completo
+é laranja `#ee6600` quando ligado; o controle de suas marcações é preto `#262626` e só aparece quando
+o diagrama está visível e possui marcações reconhecidas. Ambos ficam cinza `#ababab` quando
+desligados. O preenchimento central selecionado mede 8 px.
 Como no controle observado, a lista ocupa 202 px, reserva 12 px para a barra e deixa 190 px para cada
 opção. Cada superfície de hover reserva 8 px adicionais à direita, mantendo 12 px até a borda externa
 do dropdown e evitando contato visual com o scroll. Padding, trilho e thumb ficam sob a renderização
@@ -358,15 +363,24 @@ filhos originais somente quando houver diferença estrutural; o próprio `<pre>`
 alterados preservam sua identidade.
 
 Os controles de diagramas também reconsultam o DOM a cada ação. Cada entrada reúne o elemento
-visual, o nome normalizado e o alvo de visibilidade: o `<li>` ancestral quando ele pertence à seção,
-ou o próprio diagrama como fallback. Ações individuais usam o índice atual, nunca o texto do acorde
-como identificador. Nomes repetidos recebem sufixos de ocorrência, como `A (1)` e `A (2)`, e nomes
-ausentes usam `Diagrama N`.
+visual, o rótulo em `[data-chord-label]`, as marcações reconhecidas e o alvo de visibilidade: o `<li>`
+ancestral quando ele pertence à seção, ou o próprio diagrama como fallback. Ações individuais usam o
+índice atual, nunca o texto do acorde como identificador. Nomes repetidos recebem sufixos de
+ocorrência, como `A (1)` e `A (2)`, e nomes vazios ou ausentes usam `Diagrama N`.
+
+Clicar no nome abre um input na própria linha e atualiza imediatamente apenas o rótulo impresso.
+Enter ou perda de foco encerram a edição; Escape preserva o valor já digitado e segue o fechamento
+nativo do popover. A edição não modifica `data-mount`, acordes presentes no conteúdo ou reprodução
+de áudio. As marcações são as posições e pestanas `div[data-string]`, estados das cordas
+`[data-status]` e o número estrutural da casa inicial junto à grade `[data-instrument]`. Ocultá-las
+preserva grade, nome, botão nativo e dimensões do diagrama.
 
 A lista individual fica em um popover lateral nativo aberto pela linha **Diagramas individuais**. A
-linha mostra a quantidade visível em relação ao total e o popover segue dimensões, opções e scroll do
-dropdown nativo de capotraste. Como diagramas aceitam múltiplas escolhas, os controles preservam
-semântica de switch apesar do indicador circular inspirado no seletor nativo. O painel não oferece
+linha mostra a quantidade de diagramas visíveis em relação ao total e o popover segue dimensões,
+opções e scroll do dropdown nativo de capotraste. Cada linha oferece um switch laranja para o
+diagrama inteiro e, quando aplicável, um switch preto para suas marcações. Como diagramas aceitam
+múltiplas escolhas, os controles preservam semântica de switch apesar do indicador circular
+inspirado no seletor nativo. O painel não oferece
 visibilidade da seção completa nem compactação: o primeiro recurso já
 existe nos controles nativos e o segundo foi retirado por não acrescentar valor suficiente ao MVP.
 

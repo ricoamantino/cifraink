@@ -31,6 +31,11 @@ describe('controles dos diagramas', () => {
 
       for (const diagram of fixtureDiagrams) {
         diagram.dataset.chordMode = mode;
+        const grid = diagram.querySelector<HTMLElement>('[data-instrument]');
+
+        if (grid) {
+          grid.dataset.instrument = mode;
+        }
 
         if (!tuning) {
           diagram.removeAttribute('data-tuning');
@@ -45,6 +50,8 @@ describe('controles dos diagramas', () => {
       expect(diagrams.every((diagram) => diagram.hasAttribute('data-tuning'))).toBe(tuning);
       expect(page.getChordDiagramSection()).not.toBeNull();
       expect(entries.map((entry) => entry.name)).toEqual(['A', 'Bm7']);
+      expect(entries.every((entry) => entry.nameElement?.dataset.chordLabel === 'true')).toBe(true);
+      expect(entries.every((entry) => entry.markingTargets.length > 0)).toBe(true);
       expect(entries.every((entry) => entry.visibilityTarget.tagName === 'LI')).toBe(true);
       expect(page.inspect()).toMatchObject({ status: 'compatible', chordDiagrams: true });
       expect(readDiagramControlState(page)).toMatchObject({ available: true });
@@ -77,8 +84,22 @@ describe('controles dos diagramas', () => {
     expect(readDiagramControlState(page)).toEqual({
       available: true,
       items: [
-        { index: 0, label: 'A', visible: true },
-        { index: 1, label: 'Bm7', visible: true },
+        {
+          index: 0,
+          label: 'A',
+          markingsAvailable: true,
+          markingsVisible: true,
+          name: 'A',
+          visible: true,
+        },
+        {
+          index: 1,
+          label: 'Bm7',
+          markingsAvailable: true,
+          markingsVisible: true,
+          name: 'Bm7',
+          visible: true,
+        },
       ],
     });
   });
@@ -156,6 +177,113 @@ describe('controles dos diagramas', () => {
 
     expect(firstItem.isEqualNode(original)).toBe(true);
     expect(readDiagramControlState(page).items[0]?.visible).toBe(true);
+  });
+
+  it('oculta marcações, edita o nome e restaura sem afetar grade ou irmãos', () => {
+    const { page } = parsePage();
+    const entries = page.getChordDiagramEntries();
+    const first = entries[0];
+    const second = entries[1];
+    const grid = first?.diagram.querySelector<HTMLElement>('[data-instrument]');
+    const playButton = first?.diagram.querySelector<HTMLButtonElement>('[data-chord-play-button]');
+    const originalName = first?.nameElement?.textContent;
+
+    if (!first?.nameElement || !second || !grid) {
+      throw new Error('Fixture sem estrutura completa de marcações');
+    }
+
+    let state = applyDiagramControlAction(page, {
+      type: 'set-diagram-markings-visible',
+      index: 0,
+      visible: false,
+    });
+
+    expect(first.markingTargets.every((target) => target.hidden)).toBe(true);
+    expect(first.markingTargets.every((target) => target.style.display === 'none')).toBe(true);
+    expect(second.markingTargets.every((target) => !target.hidden)).toBe(true);
+    expect(grid.hidden).toBe(false);
+    expect(playButton?.hidden ?? false).toBe(false);
+    expect(first.nameElement.hidden).toBe(false);
+    expect(state.items[0]?.markingsVisible).toBe(false);
+
+    state = applyDiagramControlAction(page, {
+      type: 'set-diagram-name',
+      index: 0,
+      value: 'A editado',
+    });
+
+    expect(first.nameElement.textContent).toBe('A editado');
+    expect(state.items[0]).toMatchObject({ label: 'A editado', name: 'A editado' });
+
+    restoreAll();
+
+    expect(first.nameElement.textContent).toBe(originalName);
+    expect(first.markingTargets.every((target) => !target.hidden)).toBe(true);
+    expect(first.markingTargets.every((target) => !target.hasAttribute('style'))).toBe(true);
+    expect(readDiagramControlState(page).items[0]).toMatchObject({
+      label: 'A',
+      markingsVisible: true,
+      name: 'A',
+    });
+  });
+
+  it('mantém recursos independentes quando nome ou marcações não são reconhecidos', () => {
+    const { page } = parsePage();
+    const entry = page.getChordDiagramEntries()[0];
+
+    if (!entry?.nameElement) {
+      throw new Error('Fixture sem nome de diagrama');
+    }
+
+    entry.nameElement.removeAttribute('data-chord-label');
+    const state = readDiagramControlState(page);
+
+    expect(state.items[0]).toMatchObject({
+      label: 'Diagrama 1',
+      markingsAvailable: true,
+      name: null,
+      visible: true,
+    });
+    expect(
+      applyDiagramControlAction(page, {
+        type: 'set-diagram-name',
+        index: 0,
+        value: 'Ignorado',
+      }).items[0]?.name,
+    ).toBeNull();
+
+    const grid = page
+      .getChordDiagramEntries()[1]
+      ?.diagram.querySelector<HTMLElement>('[data-instrument]');
+    grid?.removeAttribute('data-instrument');
+
+    expect(readDiagramControlState(page).items[1]).toMatchObject({
+      label: 'Bm7',
+      markingsAvailable: false,
+      name: 'Bm7',
+      visible: true,
+    });
+  });
+
+  it('ignora elementos semelhantes fora da estrutura de marcações', () => {
+    const { document, page } = parsePage();
+    const entry = page.getChordDiagramEntries()[0];
+
+    if (!entry) {
+      throw new Error('Fixture sem diagrama');
+    }
+
+    const externalPosition = document.createElement('div');
+    externalPosition.dataset.string = '99';
+    entry.diagram.append(externalPosition);
+
+    const targets = page.getChordDiagramEntries()[0]?.markingTargets ?? [];
+
+    expect(targets).not.toContain(externalPosition);
+    expect(targets).not.toContain(entry.diagram.querySelector<HTMLElement>('[data-instrument]'));
+    expect(targets).not.toContain(
+      entry.diagram.querySelector<HTMLElement>('[data-chord-play-button]'),
+    );
   });
 
   it('ignora índice inexistente sem afetar os itens', () => {

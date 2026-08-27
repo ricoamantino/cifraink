@@ -2,8 +2,8 @@ import { Grid3X3Icon as Grid3x3Icon } from '@hugeicons/core-free-icons';
 import { useId } from 'react';
 import type { DiagramControlAction, DiagramControlState } from '../../src/cifraclub/diagrams';
 import { ControlRow } from '../../src/components/ControlRow';
-import { FieldToggle } from '../../src/components/FieldToggle';
 import { SidePopover } from '../../src/components/SidePopover';
+import { DiagramItemRow } from './DiagramItemRow';
 
 interface DiagramSectionProps {
   readonly state: DiagramControlState;
@@ -29,14 +29,7 @@ export function DiagramSection({ state, onAction }: DiagramSectionProps) {
       <SidePopover id={popoverId} label="Diagramas individuais" scrollable>
         <div className="cifraink-diagram-options">
           {state.items.map((item) => (
-            <FieldToggle
-              checked={item.visible}
-              key={item.index}
-              label={item.label}
-              onChange={(visible) =>
-                onAction({ type: 'set-diagram-visible', index: item.index, visible })
-              }
-            />
+            <DiagramItemRow item={item} key={item.index} onAction={onAction} />
           ))}
         </div>
       </SidePopover>

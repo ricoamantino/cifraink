@@ -58,8 +58,23 @@ Fim do exemplo sanitizado.
                 data-size="default"
                 data-tuning="E A D G B E"
               >
-                <strong>A</strong>
-                <button type="button" aria-label="Tocar acorde"></button>
+                <div>
+                  <strong data-chord-label="true">A</strong>
+                  <div>
+                    <button
+                      type="button"
+                      aria-label="Tocar acorde"
+                      data-chord-play-button="true"
+                    ></button>
+                    <i data-instrument="guitar" data-position="firstFret"></i>
+                    <div data-fret="2" data-string="3"><i></i></div>
+                    <div data-string="2"><i></i></div>
+                  </div>
+                  <div>
+                    <i data-status="notPlayed"></i>
+                    <i data-status="played"></i>
+                  </div>
+                </div>
               </div>
             </li>
             <li>
@@ -69,8 +84,23 @@ Fim do exemplo sanitizado.
                 data-size="default"
                 data-tuning="E A D G B E"
               >
-                <strong>Bm7</strong>
-                <button type="button" aria-label="Tocar acorde"></button>
+                <div>
+                  <strong data-chord-label="true">Bm7</strong>
+                  <div>
+                    <button
+                      type="button"
+                      aria-label="Tocar acorde"
+                      data-chord-play-button="true"
+                    ></button>
+                    <i data-instrument="guitar" data-position="offset"></i>
+                    <span>2</span>
+                    <div data-fret="2" data-string="5"><i></i></div>
+                  </div>
+                  <div>
+                    <i data-status="bass"></i>
+                    <i data-status="played"></i>
+                  </div>
+                </div>
               </div>
             </li>
           </ul>

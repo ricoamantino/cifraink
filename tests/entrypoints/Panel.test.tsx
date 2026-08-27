@@ -48,8 +48,22 @@ const unavailableContent = {
 const availableDiagrams = {
   available: true,
   items: [
-    { index: 0, label: 'A', visible: true },
-    { index: 1, label: 'Bm7', visible: true },
+    {
+      index: 0,
+      label: 'A',
+      markingsAvailable: true,
+      markingsVisible: true,
+      name: 'A',
+      visible: true,
+    },
+    {
+      index: 1,
+      label: 'Bm7',
+      markingsAvailable: true,
+      markingsVisible: true,
+      name: 'Bm7',
+      visible: true,
+    },
   ],
 } satisfies DiagramControlState;
 
@@ -99,7 +113,17 @@ function updateDiagramState(
   return {
     ...current,
     items: current.items.map((item) =>
-      item.index === action.index ? { ...item, visible: action.visible } : item,
+      item.index !== action.index
+        ? item
+        : action.type === 'set-diagram-visible'
+          ? { ...item, visible: action.visible }
+          : action.type === 'set-diagram-markings-visible'
+            ? { ...item, markingsVisible: action.visible }
+            : {
+                ...item,
+                label: action.value.trim() || `Diagrama ${item.index + 1}`,
+                name: action.value,
+              },
     ),
   };
 }
@@ -305,10 +329,12 @@ describe('painel do CifraInk', () => {
     expect(screen.getByRole('region', { name: 'Documento' })).toBeVisible();
   });
 
-  it('relaciona a linha ao seletor lateral e controla diagramas por índice', () => {
-    const onDiagramAction = vi.fn((action: DiagramControlAction) =>
-      updateDiagramState(availableDiagrams, action),
-    );
+  it('edita nomes e controla diagrama e marcações por índice', () => {
+    let diagramState: DiagramControlState = availableDiagrams;
+    const onDiagramAction = vi.fn((action: DiagramControlAction) => {
+      diagramState = updateDiagramState(diagramState, action);
+      return diagramState;
+    });
     render(
       panel(
         'compatible',
@@ -331,16 +357,92 @@ describe('painel do CifraInk', () => {
     expect(popover).toHaveAttribute('data-scrollable', 'true');
     expect(popover).toHaveAttribute('data-variant', 'selection');
 
-    const firstDiagram = screen.getByRole('switch', { hidden: true, name: 'A' });
-    fireEvent.click(firstDiagram);
+    const firstDiagram = screen.getByRole('switch', {
+      hidden: true,
+      name: 'Mostrar diagrama A',
+    });
+    const firstMarkings = screen.getByRole('switch', {
+      hidden: true,
+      name: 'Mostrar posições de A',
+    });
+
+    expect(firstDiagram).toBeChecked();
+    expect(firstDiagram).toHaveAttribute('title', 'Mostrar diagrama');
+    expect(firstMarkings).toBeChecked();
+    expect(firstMarkings).toHaveAttribute('title', 'Mostrar posições');
+
+    fireEvent.click(firstMarkings);
+
+    expect(onDiagramAction).toHaveBeenCalledWith({
+      type: 'set-diagram-markings-visible',
+      index: 0,
+      visible: false,
+    });
+    expect(firstMarkings).not.toBeChecked();
+
+    fireEvent.click(screen.getByRole('button', { hidden: true, name: 'Editar nome de A' }));
+    const nameInput = screen.getByRole('textbox', { hidden: true, name: 'Nome do diagrama 1' });
+    expect(nameInput).toHaveFocus();
+    fireEvent.change(nameInput, { target: { value: 'A novo' } });
+
+    expect(onDiagramAction).toHaveBeenCalledWith({
+      type: 'set-diagram-name',
+      index: 0,
+      value: 'A novo',
+    });
+
+    fireEvent.keyDown(nameInput, { key: 'Enter' });
+    expect(
+      screen.getByRole('button', { hidden: true, name: 'Editar nome de A novo' }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('switch', { hidden: true, name: 'Mostrar diagrama A novo' }));
 
     expect(onDiagramAction).toHaveBeenCalledWith({
       type: 'set-diagram-visible',
       index: 0,
       visible: false,
     });
-    expect(firstDiagram).not.toBeChecked();
-    expect(screen.getByRole('switch', { hidden: true, name: 'Bm7' })).toBeChecked();
+    expect(
+      screen.queryByRole('switch', { hidden: true, name: 'Mostrar posições de A novo' }),
+    ).toBeNull();
+    expect(
+      screen.getByRole('switch', { hidden: true, name: 'Mostrar diagrama Bm7' }),
+    ).toBeChecked();
+  });
+
+  it('mantém edição imediata ao sair com Escape e usa fallback para nome vazio', () => {
+    let diagramState: DiagramControlState = availableDiagrams;
+    const onDiagramAction = vi.fn((action: DiagramControlAction) => {
+      diagramState = updateDiagramState(diagramState, action);
+      return diagramState;
+    });
+    render(
+      panel(
+        'compatible',
+        completeHeader,
+        () => {},
+        updateHeaderState,
+        availableContent,
+        (action) => ({ available: true, editable: action.editable }),
+        availableDiagrams,
+        onDiagramAction,
+      ),
+    );
+
+    fireEvent.click(screen.getByRole('button', { hidden: true, name: 'Editar nome de A' }));
+    const nameInput = screen.getByRole('textbox', { hidden: true, name: 'Nome do diagrama 1' });
+    fireEvent.change(nameInput, { target: { value: '' } });
+    fireEvent.keyDown(nameInput, { key: 'Escape' });
+
+    expect(
+      screen.getByRole('button', { hidden: true, name: 'Editar nome de Diagrama 1' }),
+    ).toBeInTheDocument();
+    expect(onDiagramAction).toHaveBeenLastCalledWith({
+      type: 'set-diagram-name',
+      index: 0,
+      value: '',
+    });
   });
 
   it('omite a seção Diagramas quando nenhum diagrama está disponível', () => {
@@ -403,7 +505,7 @@ describe('painel do CifraInk', () => {
     fireEvent.click(screen.getByRole('switch', { name: 'Mostrar marca' }));
     fireEvent.click(screen.getByRole('switch', { name: 'Mostrar afinação' }));
     fireEvent.click(screen.getByRole('switch', { name: 'Editar conteúdo' }));
-    fireEvent.click(screen.getByRole('switch', { hidden: true, name: 'A' }));
+    fireEvent.click(screen.getByRole('switch', { hidden: true, name: 'Mostrar diagrama A' }));
     fireEvent.click(screen.getByRole('button', { name: 'Restaurar página' }));
 
     expect(onRestore).toHaveBeenCalledOnce();
@@ -413,7 +515,7 @@ describe('painel do CifraInk', () => {
     expect(screen.getByRole('switch', { name: 'Mostrar marca' })).toBeChecked();
     expect(screen.getByRole('switch', { name: 'Mostrar afinação' })).toBeChecked();
     expect(screen.getByRole('switch', { name: 'Editar conteúdo' })).not.toBeChecked();
-    expect(screen.getByRole('switch', { hidden: true, name: 'A' })).toBeChecked();
+    expect(screen.getByRole('switch', { hidden: true, name: 'Mostrar diagrama A' })).toBeChecked();
     expect(screen.getByRole('region', { name: 'CifraInk' })).toHaveAttribute(
       'data-collapsed',
       'false',

@@ -1,9 +1,12 @@
-import { setVisible } from '../dom/mutations';
+import { setText, setVisible } from '../dom/mutations';
 import type { CifraClubPage } from './page';
 
 export interface DiagramItemControlState {
   readonly index: number;
   readonly label: string;
+  readonly markingsAvailable: boolean;
+  readonly markingsVisible: boolean;
+  readonly name: string | null;
   readonly visible: boolean;
 }
 
@@ -12,11 +15,22 @@ export interface DiagramControlState {
   readonly items: readonly DiagramItemControlState[];
 }
 
-export type DiagramControlAction = {
-  readonly type: 'set-diagram-visible';
-  readonly index: number;
-  readonly visible: boolean;
-};
+export type DiagramControlAction =
+  | {
+      readonly type: 'set-diagram-visible';
+      readonly index: number;
+      readonly visible: boolean;
+    }
+  | {
+      readonly type: 'set-diagram-markings-visible';
+      readonly index: number;
+      readonly visible: boolean;
+    }
+  | {
+      readonly type: 'set-diagram-name';
+      readonly index: number;
+      readonly value: string;
+    };
 
 export function readDiagramControlState(page: CifraClubPage): DiagramControlState {
   const section = page.getChordDiagramSection();
@@ -35,7 +49,15 @@ export function applyDiagramControlAction(
   const entry = page.getChordDiagramEntries()[action.index];
 
   if (entry) {
-    setVisible(entry.visibilityTarget, action.visible);
+    if (action.type === 'set-diagram-visible') {
+      setVisible(entry.visibilityTarget, action.visible);
+    } else if (action.type === 'set-diagram-markings-visible') {
+      for (const target of entry.markingTargets) {
+        setVisible(target, action.visible);
+      }
+    } else if (entry.nameElement) {
+      setText(entry.nameElement, action.value);
+    }
   }
 
   return readDiagramControlState(page);
@@ -67,6 +89,10 @@ function createItemStates(
     return {
       index,
       label,
+      markingsAvailable: entry.markingTargets.length > 0,
+      markingsVisible:
+        entry.markingTargets.length > 0 && entry.markingTargets.every((target) => !target.hidden),
+      name: entry.nameElement?.textContent ?? null,
       visible: !entry.visibilityTarget.hidden,
     };
   });

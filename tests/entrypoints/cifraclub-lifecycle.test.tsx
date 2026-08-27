@@ -124,6 +124,18 @@ function getPanelControl<T extends HTMLInputElement>(label: string): T {
   return control;
 }
 
+function getPanelElementByLabel<T extends HTMLElement>(label: string): T {
+  const element = Array.from(
+    getPanelHost().shadowRoot?.querySelectorAll<HTMLElement>('[aria-label]') ?? [],
+  ).find((candidate) => candidate.getAttribute('aria-label') === label);
+
+  if (!element) {
+    throw new Error(`Elemento não encontrado: ${label}`);
+  }
+
+  return element as T;
+}
+
 beforeEach(() => {
   createdUis = [];
   contexts = [];
@@ -505,7 +517,7 @@ describe('inicialização do CifraInk', () => {
     expect(getPanelControl<HTMLInputElement>('Editar conteúdo')).not.toBeChecked();
   });
 
-  it('oculta e restaura diagramas individuais pela interface', async () => {
+  it('edita, esvazia, oculta e restaura diagramas pela interface', async () => {
     loadHtml(fullPageHtml);
     const { context } = createContext();
 
@@ -517,9 +529,15 @@ describe('inicialização do CifraInk', () => {
       .querySelector<HTMLElement>('[data-chord-mode]')
       ?.closest<HTMLElement>('section');
     const items = Array.from(section?.querySelectorAll<HTMLElement>('li') ?? []);
+    const firstDiagram = items[0]?.querySelector<HTMLElement>('[data-chord-mode]');
+    const name = firstDiagram?.querySelector<HTMLElement>('[data-chord-label="true"]');
+    const grid = firstDiagram?.querySelector<HTMLElement>('[data-instrument]');
+    const markings = Array.from(
+      firstDiagram?.querySelectorAll<HTMLElement>('div[data-string], [data-status]') ?? [],
+    );
     const originalFirstItem = items[0]?.cloneNode(true);
 
-    if (!section || items.length === 0) {
+    if (!section || items.length === 0 || !firstDiagram || !name || !grid) {
       throw new Error('Fixture sem diagramas completos');
     }
 
@@ -533,11 +551,38 @@ describe('inicialização do CifraInk', () => {
     ).toBe(true);
 
     await act(async () => {
-      getPanelControl<HTMLInputElement>('A').click();
+      getPanelElementByLabel<HTMLInputElement>('Mostrar posições de A').click();
     });
 
+    expect(markings.every((marking) => marking.hidden)).toBe(true);
+    expect(grid.hidden).toBe(false);
+
+    await act(async () => {
+      getPanelElementByLabel<HTMLButtonElement>('Editar nome de A').click();
+    });
+    const nameInput = getPanelElementByLabel<HTMLInputElement>('Nome do diagrama 1');
+
+    await act(async () => {
+      fireEvent.change(nameInput, { target: { value: 'A editado' } });
+      nameInput.blur();
+      getPanelElementByLabel<HTMLInputElement>('Mostrar diagrama A editado').click();
+    });
+
+    expect(name.textContent).toBe('A editado');
     expect(items[0]?.hidden).toBe(true);
     expect(items[1]?.hidden).toBe(false);
+    expect(
+      getPanelHost().shadowRoot?.querySelector('[aria-label="Mostrar posições de A editado"]'),
+    ).toBeNull();
+
+    await act(async () => {
+      getPanelElementByLabel<HTMLInputElement>('Mostrar diagrama A editado').click();
+    });
+
+    expect(items[0]?.hidden).toBe(false);
+    expect(
+      getPanelElementByLabel<HTMLInputElement>('Mostrar posições de A editado'),
+    ).not.toBeChecked();
 
     await act(async () => {
       getPanelHost()
@@ -546,7 +591,8 @@ describe('inicialização do CifraInk', () => {
     });
 
     expect(items[0]?.isEqualNode(originalFirstItem ?? null)).toBe(true);
-    expect(getPanelControl<HTMLInputElement>('A')).toBeChecked();
+    expect(getPanelElementByLabel<HTMLInputElement>('Mostrar diagrama A')).toBeChecked();
+    expect(getPanelElementByLabel<HTMLInputElement>('Mostrar posições de A')).toBeChecked();
   });
 
   it('omite apenas o controle do compositor quando ele não existe', async () => {

@@ -436,6 +436,29 @@ conjunta remove sua margem sem alterar os controles nativos ou as linhas individ
 Chrome confirmou espaço residual efetivo de 0 px, popover lateral a 8 px do acionador e restauração
 exata dos dois agrupadores.
 
+### 6.6 Nomes e marcações dos diagramas
+
+- [x] Localizar rótulo, grade, posições, pestanas, estados das cordas e casa inicial por estrutura.
+- [x] Editar imediatamente o rótulo impresso sem alterar montagem, acordes ou áudio.
+- [x] Ocultar e mostrar todas as marcações reconhecidas de um diagrama em uma única ação.
+- [x] Preservar grade, nome, botão nativo, dimensões e diagramas irmãos.
+- [x] Exibir o controle preto de marcações somente quando disponível e o diagrama estiver visível.
+- [x] Manter o controle laranja do diagrama completo e a contagem baseada somente nessa visibilidade.
+- [x] Tratar nomes vazios, repetidos e estruturas opcionais sem impedir os demais recursos.
+- [x] Restaurar nomes e marcações exatamente ao estado inicial da sessão.
+- [x] Cobrir adaptador, estado, interface e ciclo de vida nos quatro instrumentos observados.
+- [ ] Validar nome, marcações, restauração e impressão nas páginas reais dos quatro instrumentos.
+
+Anotações textuais e edição da montagem interna do acorde permanecem fora do MVP. A identificação
+continua baseada no índice atual da sessão e o DOM é reconsultado em cada ação.
+
+Validação automatizada de 2026-08-27: fixtures sanitizadas, descoberta estrutural independente do
+rótulo, quatro instrumentos, estruturas opcionais, isolamento de grade e botão nativo, ações por
+índice, nomes vazios e repetidos, dois switches acessíveis, edição por Enter, blur e Escape, estado
+preservado ao reexibir o diagrama e restauração integrada cobertos. Foram aprovados 135 testes em
+`pnpm check`, `pnpm build` e `git diff --check`, sem mudanças em manifesto, permissões, versão ou
+dependências. O smoke real permanece pendente do recarregamento da extensão no Chrome.
+
 ## 7. Robustez e compatibilidade — pós-lançamento
 
 Decisão de 2026-08-26: esta seção foi adiada sem ter suas tarefas removidas ou concluídas. Ela não
@@ -565,9 +588,8 @@ itens pendentes das fases 7 e 8 não bloqueiam a submissão inicial definida na 
 
 ### Funções preservadas do legado
 
-- [ ] Avaliar renomear acordes nos diagramas.
 - [ ] Avaliar anotações nos diagramas.
-- [ ] Avaliar mostrar ou ocultar posições internas do acorde.
+- [ ] Avaliar edição da montagem interna dos acordes.
 - [ ] Avaliar reordenação de diagramas.
 - [ ] Avaliar posicionamento de diagramas por página.
 - [ ] Avaliar popup com status e instruções úteis.

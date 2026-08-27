@@ -12,9 +12,11 @@ Elas não são cópias da página, não preservam aparência visual e não cont�
 A estrutura preservada inclui o wrapper intermediário direto da raiz de impressão, páginas em
 `section`, cabeçalho semântico, marca em
 `header > span > i`, conteúdo em `pre`, acordes em `b[data-chord-name]`, diagramas com
-`data-chord-mode` e `data-mount`, linhas de tom e afinação dentro de `[data-chord-config]` com botões
-identificados por `data-anchor`, seu wrapper estrutural direto e controles nativos agrupados em
-`aside > div`. A fixture principal representa violão e preserva `data-tuning`; os testes derivam
+`data-chord-mode` e `data-mount`, rótulos em `[data-chord-label]`, grades em `[data-instrument]` e
+marcações mínimas por `data-string`, `data-status` e offset estrutural, linhas de tom e afinação
+dentro de `[data-chord-config]` com botões identificados por `data-anchor`, seu wrapper estrutural
+direto e controles nativos agrupados em `aside > div`. A fixture principal representa violão e
+preserva `data-tuning`; os testes derivam
 viola caipira, ukulele e cavaco sem esse atributo opcional, sem duplicar documentos completos.
 
 A marca real usa um sprite CSS externo. A fixture mantém somente sua relação estrutural, sem

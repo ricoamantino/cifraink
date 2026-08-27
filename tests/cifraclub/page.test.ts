@@ -39,10 +39,24 @@ describe('CifraClubPage', () => {
     expect(page.getContentBlocks()).toHaveLength(2);
     expect(page.getChordDiagramSection()?.textContent).toContain('Bm7');
     expect(page.getChordDiagrams()).toHaveLength(2);
-    expect(page.getChordDiagramEntries().map((entry) => entry.name)).toEqual(['A', 'Bm7']);
+    const diagramEntries = page.getChordDiagramEntries();
+    expect(diagramEntries.map((entry) => entry.name)).toEqual(['A', 'Bm7']);
+    expect(diagramEntries.map((entry) => entry.nameElement?.dataset.chordLabel)).toEqual([
+      'true',
+      'true',
+    ]);
+    expect(diagramEntries.map((entry) => entry.markingTargets.length)).toEqual([4, 4]);
     expect(
-      page.getChordDiagramEntries().every((entry) => entry.visibilityTarget.tagName === 'LI'),
+      diagramEntries.every((entry) =>
+        entry.markingTargets.every(
+          (target) =>
+            !target.matches('[data-instrument]') &&
+            !target.matches('[data-chord-play-button]') &&
+            !target.matches('[data-chord-label]'),
+        ),
+      ),
     ).toBe(true);
+    expect(diagramEntries.every((entry) => entry.visibilityTarget.tagName === 'LI')).toBe(true);
     expect(page.getBrand()).not.toBeNull();
     expect(page.getHeader()?.tagName).toBe('HEADER');
     expect(page.getNativeControls()?.textContent).toContain('Imprimir');

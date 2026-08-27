@@ -15,7 +15,11 @@ export const cifraClubSelectors = {
   content: ':scope > pre',
   chord: 'b[data-chord-name][data-chord-original-text]',
   chordDiagram: '[data-chord-mode][data-mount]',
-  chordDiagramName: ':scope strong',
+  chordDiagramName: '[data-chord-label="true"]',
+  chordDiagramGrid: '[data-instrument]',
+  chordDiagramPosition: ':scope > div[data-string]',
+  chordDiagramOffset: ':scope > span',
+  chordDiagramStatus: ':scope > [data-status]',
   chordDiagramItem: 'li',
   // O agrupador dos controles é o filho estrutural do aside irmão da área de impressão.
   nativeControls: ':scope > aside > div',
